@@ -5,8 +5,21 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node --use_strict ./src/main.js"
+    "start": "node --use_strict ./src/main.js",
+    "lint": "eslint src --color"
   },
   "author": "Tod Gentille",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "google-auth-library": "^3.1.0",
+    "googleapis": "^37.2.0"
+  },
+  "devDependencies": {
+    "@types/gapi": "0.0.36",
+    "@types/node": "^11.9.5",
+    "chai": "^4.2.0",
+    "eslint": "^5.14.1",
+    "mocha": "^6.0.2",
+    "sinon": "^7.2.5"
+  }
 }
