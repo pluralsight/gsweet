@@ -1,4 +1,4 @@
-const authHelper = require("./googleAuthHelper");
+const authHelper = require("../googleAuthHelper");
 const {google} = require("googleapis");
 
 let _sheetService = undefined;

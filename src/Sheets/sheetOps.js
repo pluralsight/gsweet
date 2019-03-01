@@ -1,4 +1,4 @@
-
+const logger = require("../utils/logger");
 let _sheetAccess;
 
 const init = (sheetAccess) => {
@@ -16,10 +16,10 @@ const setColumnData = async (sheetId, range, data) => {
       valueInputOption: "USER_ENTERED",
       resource,
     });
-    console.log(`${result.data.updatedCells} cells updated at range: ${result.data.updatedRange}`);
+    logger.info(`${result.data.updatedCells} cells updated at range: ${result.data.updatedRange}`);
     return result; // only needed for testing
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 };
 
@@ -34,7 +34,7 @@ const getSheetValues = async (spreadsheetId, range) => {
     );
     return result.data.values;
   } catch (err) {
-    console.log("Error trying to get range values\n", err);
+    logger.info("Error trying to get range values\n", err);
   }
 };
 
