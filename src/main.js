@@ -19,6 +19,8 @@ const main = async () => {
 
   const id = await driveOps.driveGetFileIdFromName("Courses to be Retired");
   logger.info(id);
+  const fileList = await driveOps.listFiles();
+  logger.info(JSON.stringify(fileList));
 };
 
 main();

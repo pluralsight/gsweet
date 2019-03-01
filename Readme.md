@@ -13,3 +13,8 @@ drive-credentials.json
 
 
 Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these files. What I have name `client_secret.json` here is what they call `credentials.json` in those directions. You want to create a separate new project to follow that tutorial. Once you are finished you can just copy over the files it creates and name the per the above names.
+
+
+## Using the Google Apis
+
+Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive). 
