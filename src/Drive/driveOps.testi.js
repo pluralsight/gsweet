@@ -1,9 +1,11 @@
 const chai = require("chai");
-chai.should();
+const should = chai.should();
 const ds = require("./driveService");
 const driveOps = require("./driveOps");
 
-const TEST_FILE = "node integration test file";
+const TEST_FILE = "node-test-sheet";
+const TEST_DOC_FILE = "node-test-doc";
+const SUBFOLDER_TEST_FILE = "sheet-in-subfolder";
 const NO_FILES = "a long name that should n-o-t exist in google drive";
 const MULTIPLE_FILES = "Untitled spreadsheet";
 const NODE_TEST_FOLDER_ID = "1SetfeHTL-ArgyDxsQkyFYUbZxGOnTDhB";
@@ -63,21 +65,35 @@ describe("INTEGRATION TEST driveOps module", function () {
       files.length.should.be.above(0);
     });
 
-    it.only("should find just files (not folders)", async () => {
+    it("should find just files (not folders)", async () => {
       const files = await driveOps.getFilesInFolderId(NODE_TEST_FOLDER_ID, mimeType.FILE);
       files.forEach(entry => {
         entry.mimeType.should.not.equal(FOLDER_TYPE);
       });
     });
 
-    it.only("should find just spreadsheets", async () => {
+    it("should find just spreadsheets", async () => {
       const files = await driveOps.getFilesInFolderId(NODE_TEST_FOLDER_ID, mimeType.SPREADSHEET);
       files.forEach(entry => {
         entry.mimeType.should.equal(SPREADSHEET_TYPE);
       });
-
     });
   });
 
+  describe.only("GetFilesRecursively() ", () => {
+    it("should find files at root and subfolder ", async () => {
+      const files = await driveOps.getFilesRecursively(NODE_TEST_FOLDER_ID, undefined);
+      files.find(e => e.name === SUBFOLDER_TEST_FILE).should.not.be.undefined;
+      files.find(e => e.name === TEST_FILE).should.not.be.undefined;
+      files.find(e => e.name === TEST_DOC_FILE).should.not.be.undefined;
 
+    });
+
+    it("should find spreadsheet files only at root and subfolder ", async () => {
+      const files = await driveOps.getFilesRecursively(NODE_TEST_FOLDER_ID, mimeType.SPREADSHEET);
+      files.find(e => e.name === SUBFOLDER_TEST_FILE).should.not.be.undefined;
+      files.find(e => e.name === TEST_FILE).should.not.be.undefined;
+      should.not.exist(files.find(e => e.name === TEST_DOC_FILE));
+    });
+  });
 });

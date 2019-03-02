@@ -31,7 +31,14 @@ const main = async () => {
   // console.log(folderFiles);
 
   const moreFiles = await driveOps.getFilesInFolderId(LB_FOLDER_ID, driveOps.mimeType.FOLDER);
-  console.log(moreFiles);
+  logger.info(JSON.stringify(moreFiles));
+  logger.info("----------");
+
+  const children = await driveOps.getChildren(LB_FOLDER_ID);
+  logger.info(JSON.stringify(children));
+
+
+
 };
 
 main();

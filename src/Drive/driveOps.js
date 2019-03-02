@@ -1,3 +1,4 @@
+const logger = require("../utils/logger");
 let _driveService;
 
 const MAX_FILES_PER_PAGE = 10;
@@ -68,14 +69,42 @@ const getFilesInFolderId = async (folderId, mimeType = undefined) => {
       fields: "nextPageToken, files(id, name, mimeType)",
     })
     .catch(error => {
-      throw (`\r\nFor parent folder ${folderId} - The Google Drive API returned:${error}`);
+      throw (`\r\nFor parent folder ${folderId} - files.list() returned:${error}`);
     });
   const {files} = response.data;
   return files;
 };
 
+const getFilesRecursively = async (folderId, desiredType = undefined) => {
+  let result = [];
+  const folderType = mimeType.getType(mimeType.FOLDER);
+  const files = await getFilesInFolderId(folderId, undefined);
+  for (const entry of files) {
+    if (entry.mimeType === folderType) {
+      const subFolderFiles = await getFilesRecursively(entry.id, desiredType);
+      result = result.concat(subFolderFiles);
+    } else {
+      if ((desiredType === undefined) || (entry.mimeType === mimeType.getType(desiredType))) {
+        result.push(entry);
+      }
+    }
+  }
+  return result;
+};
+
+const getChildren = async (folderId) => {
+  const response = await _driveService.children.list(
+    {
+      folderId,
+    })
+    .catch(error => {
+      throw (`\r\nFor parent folder ${folderId} - children.list() returned:${error}`);
+    });
+  return response.data.files;
+};
+
 const getMimeTypeClause = (type) => {
-  if (mimeType === undefined) {
+  if (type === undefined) {
     return "";
   }
 
@@ -92,6 +121,8 @@ module.exports = {
   getFileIdFromName,
   listFiles,
   getFilesInFolderId,
+  getFilesRecursively,
+  getChildren,
   MAX_FILES_PER_PAGE,
   mimeType,
 };
