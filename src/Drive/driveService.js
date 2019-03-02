@@ -14,12 +14,10 @@ const init = (svc = undefined) => {
   return _driveService;
 };
 
-const getDriveServiceDefault = () => {
-  return google.drive({
-    version: "v3",
-    auth: authHelper.getGoogleDriveAuth()
-  });
-};
+const getDriveServiceDefault = () => google.drive({
+  version: "v3",
+  auth: authHelper.getGoogleDriveAuth(),
+});
 
 module.exports = {
   init,

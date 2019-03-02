@@ -4,7 +4,8 @@
   "description": "A project designed to help with writing scripts to run against gSuite ",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha  --use_strict  \"src/**/*.test.js\"",
+    "testi": "mocha --use_strict --reporter list \"src/**/*.testi.js\"",
     "start": "node --use_strict ./src/main.js",
     "lint": "eslint src --color"
   },

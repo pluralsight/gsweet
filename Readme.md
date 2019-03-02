@@ -14,7 +14,11 @@ drive-credentials.json
 
 Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these files. What I have name `client_secret.json` here is what they call `credentials.json` in those directions. You want to create a separate new project to follow that tutorial. Once you are finished you can just copy over the files it creates and name the per the above names.
 
+## Testing
 
-## Using the Google Apis
+I have found unit tests for a lot of the core API functionality to be of limited usefulness. I did write them such that the actual API call could be stubbed out. However, most of the core API functionality has little  logic. This project is set up such that unit tests will be writing with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with `npm test` and the integration tests with `npm run testi`. When first cloning and 
+## Reference on Using the Google Apis
 
 Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive). 
+
+The [Drive API](https://developers.google.com/drive/api/v3/folder) 
