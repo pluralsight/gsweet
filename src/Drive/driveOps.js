@@ -1,7 +1,9 @@
+/**
+ * @module
+ */
 const logger = require("../utils/logger");
+const MAX_FILES_PER_PAGE = 1000;
 let _driveService;
-
-const MAX_FILES_PER_PAGE = 10;
 
 const mimeType = {
   FOLDER: 1,
@@ -18,6 +20,10 @@ const mimeType = {
 };
 // see https://developers.google.com/drive/api/v3/mime-types  for all the types
 
+// see https://developers.google.com/drive/api/v3/reference/files for all file metadata
+// a few we aren't using that might be interesting are starred, shared, description
+const fileMetaForNameSearch = "files(id, name)";
+const fileMetaForFolderSearch = "files(id, name, mimeType)";
 
 const init = (driveService) => {
   _driveService = driveService;
@@ -28,20 +34,35 @@ const getFileIdFromName = async (filename) => {
   return file.id;
 };
 
+/**
+ * Get a single file for the passed name. If a single file isn't found
+ * an error is thrown.
+ * @param {string} filename 
+ */
 const getFileByName = async (filename) => {
   const files = await getFilesByName(filename);
-  if (files.length != 1) {
+  if (files.length !== 1) {
     throw (`Found ${files.length} files.`);
   }
   return files[0];
 };
 
-const getFilesByName = async (filename) => {
+/**
+ * Get a list of files/folders that match (either exact or partial) the passed string
+ * @param {string} filename - the filename to find
+ * @param {bool} partial - if true does a contains match on the filename  
+ * @returns {Array.<{id,name}>}  array of objects with {id, name} properties
+ */
+const getFilesByName = async (filename, partial = undefined) => {
+  let query = `name='${filename}'`;
+  if (partial) {
+    query = `name contains '${filename}'`;
+  }
   const response = await _driveService.files.list(
     {
-      q: `name='${filename}'`,
+      q: query,
       pageSize: MAX_FILES_PER_PAGE,
-      fields: "nextPageToken, files(id, name)",
+      fields: `nextPageToken, ${fileMetaForNameSearch}`,
     })
     .catch(error => {
       throw (`\r\nFor ${filename} - The Google Drive API returned:${error}`);
@@ -50,35 +71,94 @@ const getFilesByName = async (filename) => {
   return files;
 };
 
+/**
+ * Just get the files for the user. Will only return the google API max
+ * of 1000 files.
+ * @returns {Array.<{name, id, mimeType}>} 
+ */
 const listFiles = async () => {
   const response = await _driveService.files.list({
-    pageSize: 10,
-    fields: "files(id,name)",
+    fields: `${fileMetaForFolderSearch}`,
+    pageSize: MAX_FILES_PER_PAGE,
   })
     .catch(error => {throw (error);});
 
   return response.data.files;
 };
 
-const getFilesInFolderId = async (folderId, mimeType = undefined) => {
+/**
+ * Example of how to use the nextPageToken to get all the files
+ * in a folder when there are more than 1000
+ */
+const countAllFiles = async () => {
+  let nextPage = null; // start on first page
+  let totalCount = 0;
+  do {
+    const response = await _driveService.files.list({
+      pageToken: nextPage,
+      fields: `nextPageToken, ${fileMetaForFolderSearch}`,
+      pageSize: MAX_FILES_PER_PAGE,
+    })
+      .catch(error => {
+        logger.debug(JSON.stringify(error));
+      });
+    nextPage = response.data.nextPageToken;
+    if (response.data.files !== undefined) {
+      totalCount += response.data.files.length;
+    }
+
+    logger.debug(nextPage);
+  } while (nextPage !== undefined && totalCount < 20000);
+  logger.info(`Total file count: ${totalCount}`);
+};
+
+/**
+ * Get all the Files in the passed folderId - the query syntax reads oddly
+ * The api is querying wether the parents collection contains the passed id. 
+ * the field is parents and the operator is in. see https://developers.google.com/drive/api/v3/search-parameters
+ * @param {string} folderId 
+ * @param {enum} mimeType (optional) enum Type defined here to specify type of file to get 
+ */
+const getFilesInFolder = async (folderId, mimeType = undefined) => {
   const mimeClause = getMimeTypeClause(mimeType);
   const response = await _driveService.files.list(
     {
       q: `parents in '${folderId}' ${mimeClause}`,
-      // pageSize: MAX_FILES_PER_PAGE,
-      fields: "nextPageToken, files(id, name, mimeType)",
+      pageSize: MAX_FILES_PER_PAGE,
+      fields: `nextPageToken, ${fileMetaForFolderSearch}`,
     })
     .catch(error => {
       throw (`\r\nFor parent folder ${folderId} - files.list() returned:${error}`);
     });
+  const nextToken = response.data.nextPageToken;
+  if (nextToken !== undefined) {
+    logger.debug(`NEXT PAGE TOKEN ${response.data.nextPageToken}`);
+  }
+
   const {files} = response.data;
   return files;
 };
 
+/**
+ * Get just the names of the files in the specified folder ID
+ * @param {string} folderId 
+ * @param {enum} mimeType 
+ * @returns {Object[]} array of strings containing filenames
+ */
+const getFileNamesInFolder = async (folderId, mimeType = undefined) => {
+  const files = await getFilesInFolder(folderId, mimeType);
+  return files.map(e => e.name);
+};
+
+/**
+ * Get the files in the parent folder and all the children folders
+ * @param {string} folderId - parent folder
+ * @param {enum} desiredType - (optional) type of files desired
+ */
 const getFilesRecursively = async (folderId, desiredType = undefined) => {
   let result = [];
   const folderType = mimeType.getType(mimeType.FOLDER);
-  const files = await getFilesInFolderId(folderId, undefined);
+  const files = await getFilesInFolder(folderId, undefined);
   for (const entry of files) {
     if (entry.mimeType === folderType) {
       const subFolderFiles = await getFilesRecursively(entry.id, desiredType);
@@ -92,26 +172,22 @@ const getFilesRecursively = async (folderId, desiredType = undefined) => {
   return result;
 };
 
-const getChildren = async (folderId) => {
-  const response = await _driveService.children.list(
-    {
-      folderId,
-    })
-    .catch(error => {
-      throw (`\r\nFor parent folder ${folderId} - children.list() returned:${error}`);
-    });
-  return response.data.files;
-};
-
+/**
+ * Private helper function to ook up the mimetype string for the passed enum and construct and "and" clause that
+ * can be used in the API search query. The FILE enum isn't a type the API understands
+ * but we use it to mean any type of file but NOT a folder. 
+ * 
+ * @param {enum} type - (optional) enum for type of file 
+ */
 const getMimeTypeClause = (type) => {
   if (type === undefined) {
     return "";
   }
 
   if (type === mimeType.FILE) {
-    return `and mimeType != '${mimeType.properties[mimeType.FOLDER].type}'`;
+    return `and mimeType != '${mimeType.getType(mimeType.FOLDER)}'`;
   }
-  return `and mimeType = '${mimeType.properties[type].type}'`;
+  return `and mimeType = '${mimeType.getType(type)}'`;
 };
 
 module.exports = {
@@ -120,9 +196,9 @@ module.exports = {
   getFilesByName,
   getFileIdFromName,
   listFiles,
-  getFilesInFolderId,
+  countAllFiles,
+  getFilesInFolder,
+  getFileNamesInFolder,
   getFilesRecursively,
-  getChildren,
-  MAX_FILES_PER_PAGE,
   mimeType,
 };

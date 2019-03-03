@@ -17,27 +17,38 @@ const main = async () => {
   const driveService = ds.init();
   driveOps.init(driveService);
 
-  // const id = await driveOps.getFileIdFromName("Courses to be Retired");
-  // logger.info(id);
-  // const fileList = await driveOps.listFiles();
-  // logger.info(JSON.stringify(fileList));
-
-
   const LB_FOLDER_ID = "1svR6YuJIfkfJZEDb9XTlt82s57Kagbxg";
-  // const folderFiles = await driveOps.getSubFoldersInFolderId(LB_FOLDER_ID)
-  //   .catch(error => {console.log(error);});
+  const READY_DB_ID = "17ztaxi-kM0RYk-XG3vUFKloExewpFLeM";
+  const root = "root";
 
-  // logger.info(folderFiles);
-  // console.log(folderFiles);
 
-  const moreFiles = await driveOps.getFilesInFolderId(LB_FOLDER_ID, driveOps.mimeType.FOLDER);
-  logger.info(JSON.stringify(moreFiles));
+  const files = await driveOps.getFilesInFolder(root, driveOps.mimeType.FOLDER)
+    .catch(error => {
+      logger.debug(error);
+    });
+  // let names = files.map(e => e.name);
+  logger.info(JSON.stringify(files.map(e => e.name)));
   logger.info("----------");
 
-  const children = await driveOps.getChildren(LB_FOLDER_ID);
-  logger.info(JSON.stringify(children));
+  const moreFiles = await driveOps.getFilesInFolder(LB_FOLDER_ID, driveOps.mimeType.FOLDER)
+    .catch(error => {
+      logger.debug(error);
+    });
+  logger.info(moreFiles.map(e => e.name));
+  logger.info("----------");
+
+  // const dbFiles = await driveOps.getFilesInFolderId(READY_DB_ID, driveOps.mimeType.FOLDER)
+  //   .catch(error => {
+  //     logger.debug(error);
+  //   });
+  // names = dbFiles.map(e => e.name);
+  // logger.info(JSON.stringify(names));
 
 
+  // await driveOps.countAllFiles()
+  //   .catch(error => {
+  //     logger.debug(error);
+  //   });
 
 };
 

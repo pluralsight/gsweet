@@ -7,7 +7,8 @@
     "test": "mocha  --use_strict  \"src/**/*.test.js\"",
     "testi": "mocha --use_strict --reporter list \"src/**/*.testi.js\"",
     "start": "node --use_strict ./src/main.js",
-    "lint": "eslint src --color"
+    "lint": "eslint src --color",
+    "doc": "./node_modules/.bin/jsdoc src/**/*.js"
   },
   "author": "Tod Gentille",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "@types/node": "^11.9.5",
     "chai": "^4.2.0",
     "eslint": "^5.14.1",
+    "jsdoc": "^3.5.5",
     "mocha": "^6.0.2",
     "sinon": "^7.2.5"
   }
