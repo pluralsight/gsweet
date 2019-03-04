@@ -5,6 +5,8 @@
  * [documentation for mime-types](https://developers.google.com/drive/api/v3/mime-types)  
  * [documentation for all file meta data](https://developers.google.com/drive/api/v3/reference/files)    
  * a few meta types we aren't using that might be interesting are `starred, shared, description`
+ *   
+ * NOTE: Before using init() **MUST** be called and a driveService passed in.  
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  */
@@ -88,7 +90,7 @@ const getFileByName = async (filename) => {
 /**
  * Get a list of files/folders that match (either exact or partial) the passed string
  * @param {string} filename - the filename to find
- * @param {boolean} partial - if true does a contains match on the filename  
+ * @param {boolean=} partial - if true does a contains match on the filename  
  * @returns {Promise<Array.<{id,name}>>}  array of objects with {id, name} properties
  */
 const getFilesByName = async (filename, partial = undefined) => {
@@ -160,7 +162,7 @@ const countAllFiles = async () => {
  * the field is `parents` and the operator is `in`.  
  * [Google docs on search parameters](https://developers.google.com/drive/api/v3/search-parameters)  
  * @param {string} folderId 
- * @param {mimeType} desiredType (optional) enum Type defined here to specify type of file to get 
+ * @param {mimeType=} desiredType enum Type defined here to specify type of file to get 
  * @returns {Promise<Array<{name, id, mimeType}>>} array of file objects where each object has the properties
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
@@ -188,7 +190,7 @@ const getFilesInFolder = async (folderId, desiredType = undefined) => {
 /**
  * Get just the names of the files in the specified `folderId`
  * @param {string} folderId 
- * @param {mimeType} desiredType 
+ * @param {mimeType=} desiredType 
  * @returns {Promise<Array.<string>>} array of strings containing filenames
  */
 const getFileNamesInFolder = async (folderId, desiredType = undefined) => {
@@ -200,7 +202,7 @@ const getFileNamesInFolder = async (folderId, desiredType = undefined) => {
 /**
  * Get the files in the parent folder and all the children folders
  * @param {string} folderId - parent folder
- * @param {mimeType} desiredType - (optional) type of files desired
+ * @param {mimeType=} desiredType - type of files desired
  * @returns {Promise<Array.<{name,id,mimeType}>>} array of file objects where each object has the properties 
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
@@ -227,7 +229,7 @@ const getFilesRecursively = async (folderId, desiredType = undefined) => {
  * can be used in the API search query. The FILE enum isn't a type the API understands
  * but we use it to mean any type of file but NOT a folder. 
  * @protected
- * @param {mimeType} type - (optional) enum for type of file 
+ * @param {mimeType=} type - enum for type of file 
  * @returns {string} the additional clause to limit the search for the specified type. For example if mimeType.SPREADSHEET 
  * was passed in  
  * ->  `and mimeType = application/vnd.google-apps.spreadsheet`  

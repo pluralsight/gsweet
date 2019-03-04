@@ -3,7 +3,7 @@ const chai = require("chai");
 chai.should();
 const ds = require("./driveService");
 const driveOps = require("./driveOps");
-
+const logger = require("../utils/logger");
 
 /**
  * Fake the service used by the Google Drive API. We will just send back
@@ -53,20 +53,40 @@ const {mimeType} = driveOps;
 before(() => {
   const fakeService = ds.init(fakeDriveService);
   driveOps.init(fakeService);
+  logger.level = "info";
+});
+
+after(() => {
+  logger.level = "debug";
 });
 
 describe.only("name or description of test", () => {
 
   it("getFileByName() ", async () => {
     const result = await driveOps.getFileByName("anyName");
-    console.log(result);
-    true.should.be.true;
+    logger.debug(result);
+    result.name.should.contain("fakeName");
   });
 
-  it.only("getFilesInFolder()", async () => {
-    const result = await driveOps.getFilesInFolder("anyName", mimeType.SPREADSHEET);
-    console.log(result);
-    console.log(fakeDriveService.fields);
-    true.should.be.true;
+  describe("getFilesInFolder() should ", () => {
+
+    it("return filename and specified mimeType clause when not FOLDER", async () => {
+      const result = await driveOps.getFilesInFolder("anyFolderId", mimeType.SPREADSHEET);
+      logger.debug(result);
+      logger.debug(fakeDriveService.q);
+      const query = fakeDriveService.q;
+      const clause = new RegExp(`anyFolderId.+ mimeType = \\'${mimeType.getType(mimeType.SPREADSHEET)}`);
+      fakeDriveService.fields.should.contain("mimeType");
+      query.should.match(clause);
+
+    });
+  });
+
+  it("return filename and mimeType != FOLDER when FILE specified", async () => {
+    await driveOps.getFilesInFolder("anyFolderId", mimeType.FILE);
+    logger.debug(fakeDriveService.q);
+    const query = fakeDriveService.q;
+    const clause = new RegExp(`anyFolderId.+ mimeType != \\'${mimeType.getType(mimeType.FOLDER)}`);
+    query.should.match(clause);
   });
 });

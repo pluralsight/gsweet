@@ -29,14 +29,15 @@ const main = async () => {
     });
   // let names = files.map(e => e.name);
   logger.info(JSON.stringify(files.map(e => e.name)));
-  logger.info("----------");
+  logger.debug("----------");
 
   const moreFiles = await driveOps.getFilesInFolder(LB_FOLDER_ID, driveOps.mimeType.FOLDER)
     .catch(error => {
       logger.debug(error);
     });
   logger.info(moreFiles.map(e => e.name));
-  logger.info("----------");
+  logger.debug("----------");
+  logger.silly("======");
 
   // const dbFiles = await driveOps.getFilesInFolderId(READY_DB_ID, driveOps.mimeType.FOLDER)
   //   .catch(error => {

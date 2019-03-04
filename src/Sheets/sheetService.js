@@ -1,11 +1,28 @@
-/** @module */
-const authHelper = require("../googleAuthHelper");
-const {google} = require("googleapis");
+/**
+ * @file Creat the Google drive service needed to hit the Drive API
+ * @author Tod Gentille 
+ * @requires NPM:googleapis
+ * @requires ../googleAuthHelper
+ * @module
+ */
 
+const {google} = require("googleapis");
+const authHelper = require("../googleAuthHelper");
+
+/** holds the sheetService created by init()  
+ *  @type {Object} 
+ */
 let _sheetService = undefined;
 
+/**
+ *  This needs to be called just once.
+ *  The results of this function are stored in `_sheetService`.
+ *  If no service is passed to init it grabs the default Google Sheet Service.
+ *  Passing the service in makes it easy to do unit testing since a Fake can
+ *  be passed in.
+ * @returns {Object} - the service. Typically not needed by caller.
+ */
 const init = (sheetService = undefined) => {
-  // If a value is passed in always use it. Typicallly used for unit testing
   if (sheetService !== undefined) {
     _sheetService = sheetService;
   }
@@ -17,9 +34,11 @@ const init = (sheetService = undefined) => {
   }
   return _sheetService;
 };
-// This needs to be run just once, when the program runs, normally from init().
-// The results of this function are stored in _sheetService.
-// If _sheetService is  null when it's needed this method is auto called.
+
+/**
+ * Get the default Google Sheet API service.
+ * @returns {Object} the actual Google Sheet Service
+ */
 const getSheetServiceDefault = () => {
   const auth = authHelper.getGoogleSheetAuth();
   return google.sheets({version: "v4", auth});
