@@ -1,8 +1,18 @@
+// @ts-check
+/** @module */
 /**
- * @module
+ * @file Handles talking to the Google Drive API  
+ * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
+ * 
+ * @author Tod Gentille <tod-gentille@pluralsight.com>
+ * @license GPL-3.0-or-later
+ * 
  */
+
 const logger = require("../utils/logger");
+
 let _sheetAccess;
+
 
 /**
  * Set up this module with the object that allows access to the google sheet
@@ -15,57 +25,79 @@ const init = (sheetAccess) => {
 };
 
 /**
- * Set a range of data in a target sheet with an array of arrays of data
- * [[r1c1,r1c2],[r2c1,r2c2]]
+ * Set a range of data in a target sheet with an array of arrays of data  
+ * `[[r1c1,r1c2],[r2c1,r2c2]]`
  * if a sparse array is sent the missing cells in the range are skipped 
  * (i.e. they aren't overwritten)
- * @param {string} sheetId 
- * @param {string} range 
- * @param {Array} data 
- * @returns {Object} with config and data properties. config.data.values is the data sent
- * data{updatedRange, updatedRows, updatedColumns and updatedCells} can be used for testing 
+ * @param {Object.<{id,range}>} sheetRange 
+ * @param {Array.<Array>} data 
+ * 
+ * @returns {Promise<{config,data}>} object with many props including confif.data and data
+ * ```
+ * {  
+ *   config: {
+ *     ...
+ *     data: {
+ *       values: [[2D array of data sent]]
+ *           }
+ *     }...
+ *   data: {
+ *     ...
+ *     updatedRange,   
+ *     updatedRows,   
+ *     updatedColumns,  
+ *     updatedCells ,
+ *     ...
+ *   }
+ * }
+ * ```   
+ * these properties can be useful for testing 
  */
-const setRangeData = async (sheetId, range, data) => {
+const setRangeData = async (sheetRange, data) => {
+
   const resource = {
     values: data,
   };
   try {
     const result = await _sheetAccess.spreadsheets.values.update({
-      spreadsheetId: sheetId,
-      range,
+      spreadsheetId: sheetRange.id,
+      range: sheetRange.range,
       valueInputOption: "USER_ENTERED",
       resource,
     });
-    // logger.info(`${result.data.updatedCells} cells updated at range: ${result.data.updatedRange}`);
+    // logger.info(JSON.stringify(result, null, 2));
     return result; // only needed for testing
   } catch (err) {
     logger.error(err);
   }
 };
 
+
 /**
  * Convenience function that will take a string or number primitive and wrap
  * it into a 2D array to write to the spreadsheet.
- * @param {string} spreadsheetId 
- * @param {string} cell range value that specifics a single cell
- * @param {string|number} newValue 
+ * @param {Object.<{id,range}>} sheetRange - where the range property should specify a single cell
+ * @param {string|number} newValue  primitive value that gets put inside 2D array
+ * 
+ * @returns {Promise<Object>} see setRangeData for details on returned Object
  */
-const setSheetCell = async (spreadsheetId, cell, newValue) => {
-  return await setRangeData(spreadsheetId, cell, [[newValue]]);
-};
+const setSheetCell = async (sheetRange, newValue) => await setRangeData(sheetRange, [[newValue]]);
+
+
 /**
  * Get all the cells in the specified range. If a given row has no data in the 
  * final cells for a row, the array for that row is shortened. If a row has no
  * data no array for that row is returned.
- * @param {string} spreadsheetId 
- * @param {string} range - includes the tab (aka sheet) name Sheet1:A2:C4 
+ * @param {{id, range}} sheetRange  range property should include name of tab `Tab1!A2:C6`
+ * 
+ * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column). 
  */
-const getSheetValues = async (spreadsheetId, range) => {
+const getSheetValues = async (sheetRange) => {
   try {
     const result = await _sheetAccess.spreadsheets.values.get(
       {
-        spreadsheetId,
-        range,
+        spreadsheetId: sheetRange.id,
+        range: sheetRange.range,
       }
     );
     return result.data.values;

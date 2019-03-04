@@ -1,3 +1,4 @@
+/** @module */
 const authHelper = require("../googleAuthHelper");
 const {google} = require("googleapis");
 

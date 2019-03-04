@@ -4,14 +4,15 @@
   "description": "A project designed to help with writing scripts to run against gSuite ",
   "main": "main.js",
   "scripts": {
-    "test": "mocha  --use_strict  \"src/**/*.test.js\"",
-    "testi": "mocha --use_strict --reporter list \"src/**/*.testi.js\"",
+    "test": "mocha  --use_strict   \"src/**/*.test.js\"",
+    "test:int": "mocha --use_strict --reporter list \"src/**/*.testi.js\" ",
+    "test:all": "run-p test   test:int",
     "start": "node --use_strict ./src/main.js",
     "lint": "eslint src --color",
-    "doc": "./node_modules/.bin/jsdoc src/**/*.js"
+    "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md"
   },
   "author": "Tod Gentille",
-  "license": "ISC",
+  "license": "GPL-3.0-or-later",
   "dependencies": {
     "google-auth-library": "^3.1.0",
     "googleapis": "^37.2.0",
@@ -24,6 +25,7 @@
     "eslint": "^5.14.1",
     "jsdoc": "^3.5.5",
     "mocha": "^6.0.2",
+    "npm-run-all": "^4.1.5",
     "sinon": "^7.2.5"
   }
 }
