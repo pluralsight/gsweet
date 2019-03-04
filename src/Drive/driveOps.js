@@ -7,7 +7,6 @@
  * a few meta types we aren't using that might be interesting are `starred, shared, description`
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
-
  */
 
 const logger = require("../utils/logger");
@@ -16,7 +15,6 @@ let _driveService;
 
 /**
  * Enum for the currently supported google mime-types
- * [documentation for all the Google mime-types](https://developers.google.com/drive/api/v3/mime-types)  
  * @readonly
  * @enum {any}
  */
@@ -40,7 +38,7 @@ const mimeType = {
 
 /**  the file fields to return on a search by name 
  * @protected
- * @const {string} 
+ * @const {string}   
  * @default  */
 const FILE_META_FOR_NAME_SEARCH = "files(id, name)";
 /** the file fields to return on getting all files in a folder 

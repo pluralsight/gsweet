@@ -29,7 +29,10 @@ const driveOps = require("./driveOps");
 const fakeDriveService = {
   files: {
     list: async ({q, pageSize, fields}) => {
-      console.log(q, pageSize, fields);
+      // console.log(q, pageSize, fields);
+      fakeDriveService.q = q;
+      fakeDriveService.pageSize = pageSize;
+      fakeDriveService.fields = fields;
       // todo based on q
       return ({
         testEcho: {
@@ -60,9 +63,10 @@ describe.only("name or description of test", () => {
     true.should.be.true;
   });
 
-  it("getFilesInFolder()", async () => {
+  it.only("getFilesInFolder()", async () => {
     const result = await driveOps.getFilesInFolder("anyName", mimeType.SPREADSHEET);
     console.log(result);
+    console.log(fakeDriveService.fields);
     true.should.be.true;
   });
 });
