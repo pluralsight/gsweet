@@ -17,6 +17,9 @@ const NODE_TEST_FOLDER_ID = "1SetfeHTL-ArgyDxsQkyFYUbZxGOnTDhB";
 const MIN_GOOGLE_ID_LENGTH = 10;
 const MAX_FILES_PER_QUERY = 1000;
 
+before(() => {logger.level = "info";});
+after(() => {logger.level = "debug";});
+
 describe("INTEGRATION TEST driveOps module", function () {
   this.timeout(10000);
   const {mimeType} = driveOps;
@@ -41,12 +44,9 @@ describe("INTEGRATION TEST driveOps module", function () {
       const files = await driveOps.getFilesByName(PLURALSIGHT_FILES, true);
       files.length.should.equal(MAX_FILES_PER_QUERY);
     });
-
-
   });
 
   describe("getFileIdFromName() should", () => {
-
     it("get the TEST_FILE id", async () => {
       const id = await driveOps.getFileIdFromName(TEST_FILE);
       id.length.should.be.above(MIN_GOOGLE_ID_LENGTH);
@@ -109,7 +109,6 @@ describe("INTEGRATION TEST driveOps module", function () {
       files.find(e => e.name === SUBFOLDER_TEST_FILE).should.not.be.undefined;
       files.find(e => e.name === TEST_FILE).should.not.be.undefined;
       files.find(e => e.name === TEST_DOC_FILE).should.not.be.undefined;
-
     });
 
     it("find spreadsheet files only at root and subfolder ", async () => {

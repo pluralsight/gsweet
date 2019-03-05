@@ -28,7 +28,7 @@ const init = (sheetAccess) => {
  * `[[r1c1,r1c2],[r2c1,r2c2]]`
  * if a sparse array is sent the missing cells in the range are skipped 
  * (i.e. they aren't overwritten)
- * @param {Object.<id,range>} sheetRange 
+ * @param {Object.<id,range,data>} sheetRangeData 
  * @param {Array.<Array>} data 
  * 
  * @returns {Promise<{config,data}>} object with many props including confif.data and data
@@ -52,15 +52,14 @@ const init = (sheetAccess) => {
  * ```   
  * these properties can be useful for testing 
  */
-const setRangeData = async (sheetRange, data) => {
-
+const setRangeData = async (sheetRangeData) => {
   const resource = {
-    values: data,
+    values: sheetRangeData.data,
   };
   try {
     const result = await _sheetAccess.spreadsheets.values.update({
-      spreadsheetId: sheetRange.id,
-      range: sheetRange.range,
+      spreadsheetId: sheetRangeData.id,
+      range: sheetRangeData.range,
       valueInputOption: "USER_ENTERED",
       resource,
     });
@@ -75,13 +74,15 @@ const setRangeData = async (sheetRange, data) => {
 /**
  * Convenience function that will take a string or number primitive and wrap
  * it into a 2D array to write to the spreadsheet.
- * @param {Object.<id,range>} sheetRange - where the range property should specify a single cell
+ * @param {Object.<id,range,value>} sheetRangeValue - where the range property should specify a single cell
  * @param {string|number} newValue  primitive value that gets put inside 2D array
  * 
  * @returns {Promise<Object>} see setRangeData for details on returned Object
  */
-const setSheetCell = async (sheetRange, newValue) => await setRangeData(sheetRange, [[newValue]]);
-
+const setSheetCell = async (sheetRangeValue) => {
+  sheetRangeValue.data = [[sheetRangeValue.value]];
+  return await setRangeData(sheetRangeValue);
+};
 
 /**
  * Get all the cells in the specified range. If a given row has no data in the 

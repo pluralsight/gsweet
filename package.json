@@ -1,8 +1,12 @@
 {
-  "name": "gsuite-helper",
-  "version": "1.0.0",
+  "name": "gsweet",
+  "version": "0.1.5",
   "description": "A project designed to help with writing scripts to run against gSuite ",
-  "main": "main.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ps-dev/gsuite-helper.git"
+  },
+  "main": "./src/main.js",
   "scripts": {
     "test": "mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --use_strict --reporter list \"src/**/*.testi.js\" ",
@@ -14,6 +18,7 @@
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "dotenv": "^6.2.0",
     "google-auth-library": "^3.1.0",
     "googleapis": "^37.2.0",
     "winston": "^3.2.1"

@@ -45,7 +45,7 @@ const fakeDriveService = {
         },
       });
     },
-  }
+  },
 };
 
 const {mimeType} = driveOps;
@@ -60,16 +60,14 @@ after(() => {
   logger.level = "debug";
 });
 
-describe.only("name or description of test", () => {
-
-  it("getFileByName() ", async () => {
+describe("driveOps module", () => {
+  it("getFileByName() should return file with expected name ", async () => {
     const result = await driveOps.getFileByName("anyName");
     logger.debug(result);
     result.name.should.contain("fakeName");
   });
 
   describe("getFilesInFolder() should ", () => {
-
     it("return filename and specified mimeType clause when not FOLDER", async () => {
       const result = await driveOps.getFilesInFolder("anyFolderId", mimeType.SPREADSHEET);
       logger.debug(result);
@@ -78,7 +76,6 @@ describe.only("name or description of test", () => {
       const clause = new RegExp(`anyFolderId.+ mimeType = \\'${mimeType.getType(mimeType.SPREADSHEET)}`);
       fakeDriveService.fields.should.contain("mimeType");
       query.should.match(clause);
-
     });
   });
 

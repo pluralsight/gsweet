@@ -1,15 +1,18 @@
 // @ts-check
 /** @module */
 /**
- * @file Handles talking to the Google Spreadsheet API  
- * [documentation for mime-types](https://developers.google.com/drive/api/v3/mime-types)  
- * [documentation for all file meta data](https://developers.google.com/drive/api/v3/reference/files)    
+ * @file Handles talking to the Google Spreadsheet API 
+ *  ## Links to Google Drive documentation 
+ * [mime-types](https://developers.google.com/drive/api/v3/mime-types)  
+ * [all file meta data](https://developers.google.com/drive/api/v3/reference/files)  
+ * [search parameters](https://developers.google.com/drive/api/v3/search-parameters)  
  * a few meta types we aren't using that might be interesting are `starred, shared, description`
  *   
  * NOTE: Before using init() **MUST** be called and a driveService passed in.  
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  */
+const ds = require("./driveService");
 
 const logger = require("../utils/logger");
 const MAX_FILES_PER_PAGE = 1000;
@@ -58,6 +61,10 @@ const FILE_META_FOR_FOLDER_SEARCH = "files(id, name, mimeType)";
 const init = (driveService) => {
   _driveService = driveService;
 };
+
+const autoInit = () => {
+  _driveService = ds.init();
+}
 
 
 /**
@@ -248,6 +255,7 @@ const getMimeTypeClause = (type) => {
 
 
 module.exports = {
+  autoInit,
   init,
   getFileByName,
   getFilesByName,

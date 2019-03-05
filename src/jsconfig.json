@@ -1,0 +1,8 @@
+{
+  "target": "es2017",
+  "checkJs": true,
+  "exclude": [
+    "node_modules",
+    "out"
+  ]
+}

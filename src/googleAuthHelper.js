@@ -1,5 +1,6 @@
 const googleAuth = require("google-auth-library");
-const secrets = require("../_local/client_secret.json");
+// const secrets = require("../_local/client_secret.json");
+const secrets = require("/_local/client_secret.json");
 const sheetsCreds = require("../_local/sheet-credentials.json");
 const driveCreds = require("../_local/drive-credentials.json");
 // const {Oauth2Client} = require ("google-auth-library");
