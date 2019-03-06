@@ -7,6 +7,7 @@ const should = chai.should();
 const ss = require("./sheetService");
 const sheetOps = require("./sheetOps");
 const logger = require("../utils/logger");
+require("dotenv-json").load({path: "/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json", debug: "true"})
 
 before(() => {logger.level = "info";});
 after(() => {logger.level = "debug";});

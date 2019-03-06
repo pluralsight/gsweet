@@ -1,4 +1,3 @@
-
 const driveOps = require("./Drive/driveOps");
 const sheetOps = require("./sheets/sheetOps");
 module.exports = {
@@ -37,18 +36,18 @@ module.exports = {
 //   logger.debug("----------");
 //   logger.silly("======");
 
-  // const dbFiles = await driveOps.getFilesInFolderId(READY_DB_ID, driveOps.mimeType.FOLDER)
-  //   .catch(error => {
-  //     logger.debug(error);
-  //   });
-  // names = dbFiles.map(e => e.name);
-  // logger.info(JSON.stringify(names));
+// const dbFiles = await driveOps.getFilesInFolderId(READY_DB_ID, driveOps.mimeType.FOLDER)
+//   .catch(error => {
+//     logger.debug(error);
+//   });
+// names = dbFiles.map(e => e.name);
+// logger.info(JSON.stringify(names));
 
 
-  // await driveOps.countAllFiles()
-  //   .catch(error => {
-  //     logger.debug(error);
-  //   });
+// await driveOps.countAllFiles()
+//   .catch(error => {
+//     logger.debug(error);
+//   });
 // };
 
 // main();

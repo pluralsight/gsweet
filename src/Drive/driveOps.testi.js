@@ -3,6 +3,8 @@
  */
 const chai = require("chai");
 const should = chai.should();
+
+require("dotenv-json").load({path: "/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json", debug: "true"})
 const ds = require("./driveService");
 const driveOps = require("./driveOps");
 const logger = require("../utils/logger");
