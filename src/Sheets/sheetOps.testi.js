@@ -88,7 +88,7 @@ describe("INTEGRATION TESTS sheetOps module", function () {
       numCells.should.equal(expectedNumCells);
     });
 
-    it.only("return a shortened array when a row ends with a blank cell", async () => {
+    it("return a shortened array when a row ends with a blank cell", async () => {
       const data = [[1, 2, ""], [4, 5, 6]];
       const expectedNumCells = await setTestData(data);
       const result = await sheetOps.getSheetValues(sheetRange);
