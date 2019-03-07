@@ -1,5 +1,6 @@
 const googleAuth = require("google-auth-library")
 
+let gsweet
 let clientSecrets
 let sheetsCreds
 let driveCreds
@@ -7,14 +8,13 @@ let driveCreds
 let initialized = false
 
 const init = () => {
-  if (process.env.client_secrets === undefined ||
-    process.env.drive_credentials === undefined ||
-    process.env.sheet_credentials === undefined) {
+  if (process.env.gsweet === undefined) {
     throw ("environment variables with credentials are missing")
   }
-  clientSecrets = JSON.parse(process.env.client_secrets)
-  sheetsCreds = JSON.parse(process.env.sheet_credentials)
-  driveCreds = JSON.parse(process.env.drive_credentials)
+  gsweet = JSON.parse(process.env.gsweet)
+  clientSecrets = gsweet.client_secrets
+  sheetsCreds = gsweet.sheet_credentials
+  driveCreds = gsweet.drive_credentials
   initialized = true
 }
 

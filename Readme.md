@@ -41,14 +41,16 @@ const main = async () => {
 
 ## Authentication
 
-If you clone this repo it will not contain the needed authorization pieces. You will need to create a `.env.json` file to the root level of your project. The json object should have this format. _A full example is in the reference section of this read me.
+If you clone this repo it will not contain the needed authorization pieces. You will need to create a `.env.json` file at the root level of your project. The json object should have the following structure:
 
 ```JSON
- "client_secrets": {
-  },
-  "drive_credentials": {
-  },
-  "sheet_credentials": {
+"gsweet":{
+   "client_secrets": {
+    },
+    "drive_credentials": {
+    },
+    "sheet_credentials": {
+    }
   }
 }
 ```
@@ -87,32 +89,35 @@ This project uses JSDoc and the `out` folder contains the processed documentatio
 ### Full .json.env example 
 
 ```JSON
- "client_secrets": {
-    "installed": {
-      "client_id": "your id goes here",
-      "project_id": "your project id",
-      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-      "token_uri": "https://accounts.google.com/o/oauth2/token",
-      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-      "client_secret": "your client secret",
-      "redirect_uris": [
-        "urn:ietf:wg:oauth:2.0:oob",
-        "http://localhost"
-      ]
-    }
-  },
-  "drive_credentials": {
-    "access_token": "a really long token",
-    "refresh_token": "a shorter token",
-    "token_type": "Bearer",
-    "expiry_date": 123
-  },
-  "sheet_credentials": {
-    "access_token": "your token",
-    "refresh_token": "the refresh toeken",
-    "scope": "https://www.googleapis.com/auth/spreadsheets",
-    "token_type": "Bearer",
-    "expiry_date": 123
+{
+  "gsweet":{
+    "client_secrets": {
+        "installed": {
+          "client_id": "your id goes here",
+          "project_id": "your project id",
+          "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+          "token_uri": "https://accounts.google.com/o/oauth2/token",
+          "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+          "client_secret": "your client secret",
+          "redirect_uris": [
+            "urn:ietf:wg:oauth:2.0:oob",
+            "http://localhost"
+          ]
+        }
+      },
+      "drive_credentials": {
+        "access_token": "a really long token",
+        "refresh_token": "a shorter token",
+        "token_type": "Bearer",
+        "expiry_date": 123
+      },
+      "sheet_credentials": {
+        "access_token": "your token",
+        "refresh_token": "the refresh toeken",
+        "scope": "https://www.googleapis.com/auth/spreadsheets",
+        "token_type": "Bearer",
+        "expiry_date": 123
+      }
   }
 }
 ```

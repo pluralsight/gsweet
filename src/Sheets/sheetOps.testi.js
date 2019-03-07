@@ -31,7 +31,7 @@ describe("INTEGRATION TESTS sheetOps module", function () {
     sheetRange.data = [["Row1Test"], ["Row2Test"]]
   })
 
-  describe("setRangeData() should", () => {
+  describe.only("setRangeData() should", () => {
     it("set a single value when passed a [[oneItem]] 2D array", async () => {
       sheetRange.data = [["Row1TestMe"]]
       const result = await sheetOps.setRangeData(sheetRange)
