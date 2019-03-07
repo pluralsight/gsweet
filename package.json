@@ -23,6 +23,21 @@
     "googleapis": "^37.2.0",
     "winston": "^3.2.1"
   },
+  "keywords": [
+    "gsuite",
+    "gsweet",
+    "sheet api",
+    "doc api",
+    "drive api",
+    "drive",
+    "spreadsheet",
+    "sheet",
+    "api",
+    "gsuite helper",
+    "google office",
+    "google suite",
+    "google"
+  ],
   "devDependencies": {
     "@types/gapi": "0.0.36",
     "@types/node": "^11.9.5",

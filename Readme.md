@@ -1,4 +1,4 @@
-# gSuite Helper
+# gsweet Helper
 
 ## Summary
 
