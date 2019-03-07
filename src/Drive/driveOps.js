@@ -62,6 +62,7 @@ const init = (driveService) => {
   _driveService = driveService;
 };
 
+/** just get the default service and use it */
 const autoInit = () => {
   _driveService = ds.init();
 }

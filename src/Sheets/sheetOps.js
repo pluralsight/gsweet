@@ -7,22 +7,26 @@
  * @license GPL-3.0-or-later
  * @module
  */
+const ss = require("./sheetService")
+const logger = require("../utils/logger")
 
-const logger = require("../utils/logger");
-
-let _sheetAccess;
+let _sheetService
 
 
 /**
  * Set up this module with the object that allows access to the google sheet
  * calls. Typically from the value returned by sheetService.init(). When testing
  * a mocked object can be passed in. Only needs to be done once. 
- * @param {Object} sheetAccess optional  
+ * @param {Object} sheetService optional  
  */
-const init = (sheetAccess) => {
-  _sheetAccess = sheetAccess;
+const init = (sheetService) => {
+  _sheetService = sheetService
 };
 
+/** just get the default service and use it */
+const autoInit = () => {
+  _sheetService = ss.init()
+}
 /**
  * Set a range of data in a target sheet with an array of arrays of data  
  * `[[r1c1,r1c2],[r2c1,r2c2]]`
@@ -31,7 +35,7 @@ const init = (sheetAccess) => {
  * @param {Object.<id,range,data>} sheetRangeData 
  * @param {Array.<Array>} data 
  * 
- * @returns {Promise<{config,data}>} object with many props including confif.data and data
+ * @returns {Promise<{config,data}>} object with many props including config.data and data
  * ```
  * {  
  *   config: {
@@ -55,20 +59,20 @@ const init = (sheetAccess) => {
 const setRangeData = async (sheetRangeData) => {
   const resource = {
     values: sheetRangeData.data,
-  };
+  }
   try {
-    const result = await _sheetAccess.spreadsheets.values.update({
+    const result = await _sheetService.spreadsheets.values.update({
       spreadsheetId: sheetRangeData.id,
       range: sheetRangeData.range,
       valueInputOption: "USER_ENTERED",
       resource,
-    });
+    })
     // logger.info(JSON.stringify(result, null, 2));
-    return result; // only needed for testing
+    return result // only needed for testing
   } catch (err) {
-    logger.error(err);
+    logger.error(err)
   }
-};
+}
 
 
 /**
@@ -80,8 +84,8 @@ const setRangeData = async (sheetRangeData) => {
  * @returns {Promise<Object>} see setRangeData for details on returned Object
  */
 const setSheetCell = async (sheetRangeValue) => {
-  sheetRangeValue.data = [[sheetRangeValue.value]];
-  return await setRangeData(sheetRangeValue);
+  sheetRangeValue.data = [[sheetRangeValue.value]]
+  return await setRangeData(sheetRangeValue)
 };
 
 /**
@@ -94,22 +98,23 @@ const setSheetCell = async (sheetRangeValue) => {
  */
 const getSheetValues = async (sheetRange) => {
   try {
-    const result = await _sheetAccess.spreadsheets.values.get(
+    const result = await _sheetService.spreadsheets.values.get(
       {
         spreadsheetId: sheetRange.id,
         range: sheetRange.range,
       }
-    );
-    return result.data.values;
+    )
+    return result.data.values
   } catch (err) {
-    logger.error("Error trying to get range values\n", JSON.stringify(err));
+    logger.error("Error trying to get range values\n", JSON.stringify(err))
   }
-};
+}
 
 
 module.exports = {
   init,
+  autoInit,
   getSheetValues,
   setRangeData,
   setSheetCell,
-};
+}

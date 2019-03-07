@@ -1,45 +1,76 @@
-# gsweet Helper
+# gsweet
 
 ## Summary
 
-A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite. It is **highly** likely that this project will end up containing a number of useful tools that take advantage of gSuite. If that is the case it is suggested that additional ReadMe documents be created in the subfolder that hosts any particular tool to describe its purpoose. Ideally, at some point we could extract the core reusable portions of this project and package them as an npm library to make it reusable across many projects. One stumbling block right now is the authentication issue. 
+A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite.  
 
-## Authentication (when developing)
+## Installation 
 
-If you clone this repo it will not contain the needed authorization pieces. You will need to create a `.env` file and add variables that hold the required JSON objects as strings. These variables will be called
-CLIENT_SECRETS  
-SHEET_CREDS  
-DRIVE_CREDS  
+`npm i gsweet --save`
+`npm i env-create`
 
-Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. Once you have them in json format in a file you can write a short utility to require() the file and then use 
+## Basic Use
 
-```javascript
-fs.writeFileSync("secret.txt", JSON.stringify(data));  
-```
-
-Then copy the contents of `secret.txt` into for example the single quotes below:
-`CLIENT_SECRETS =''`
-Repeat that process for the sheet and drive credentials and you're done. The environment variables are only used in the googleAuthHelper.js file.  
-
-## Authentication (for another project)
-
-In your destination project just clone your .env file and put it at the root folder. 
-You can either install this project using a relative or absolute file syntax. For example
-`npm i ../gsuite-helper`
-the name of the package is gsweet. So you then require like
+Once you have authentication set up basic usage looks like this:
 
 ```javascript
-const {driveOps} = require("gsweet");
-driveOps.autoInit();
-const result = driveOps.getFileByName("SomeDriveFile");
+const {driveOps, sheetOps} = require("gsweet")
+require("env-create").load({path: "/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json"});
+
+const main = async () => {
+  driveOps.autoInit()
+  const TEST_FILE = "node-test-sheet"
+  let result = await driveOps.getFilesByName(TEST_FILE)
+  console.log(result)
+
+  const sheetRange = {
+    id: "105LhrjQp75T4Q4mZ337ydosno6tjKjDzXNutXf24c1c",
+    range: "Sheet1!A1",
+    data: [["Test1"], ["Test2"]],
+  }
+  sheetOps.autoInit()
+  result = await sheetOps.setRangeData(sheetRange)
+  console.log(result.config.data.values) // just showing the values passed in
+  console.log("Num Cells Updated:", result.data.updatedCells)
+  // console.log(result) if you want to see all the fields available
+
+  sheetRange.value = "Convenient for writing a single cell";
+  await sheetOps.setSheetCell(sheetRange);
+}
 ```
 
-A more convenient way to use the package, especially if it is still under development is to go the root directory of the development folder and use `npm link`. That creates a sym link with the package.json name of gsweet. Then in any folder where you want to use it can type
-`npm link gsweet` and it will be installed and linked dynamically.  
+## Authentication
+
+If you clone this repo it will not contain the needed authorization pieces. You will need to create a `.env.json` file to the root level of your project. The json object should have this format. _A full example is in the reference section of this read me.
+
+```JSON
+ "client_secrets": {
+  },
+  "drive_credentials": {
+  },
+  "sheet_credentials": {
+  }
+}
+```
+
+You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. The `env-create` package takes care of creating the needed environment variables and this package will use those environment varialbles and JSON.parse them into the required objects. If you store your credentials in the root folder of your project in a file named `.env.json` you can simplify the require to 
+`require("env-create).load()` 
 
 ## Testing
 
-I have found unit tests for a lot of the core API functionality to be of limited usefulness. I did write the "ops" files such that the actual API call could be easily faked. However, most of the core API functionality has little  logic. This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with `npm test` and the integration tests with `npm run test:int`. 
+This package contains both unit tests and integration tests. The integration tests are fragile since they require access to specific files and folders in google drive. The constants for th ese files are stored in the `test-data/integration.json`. Modify that document to contain the names and ids for your files. The expected structure of the test data is
+test-folder
+```
+---node-test-subfolder
+  |---doc-in-subfolder
+  |---sheet-in-subfolder
+  node-test-sheet
+  node-test-doc
+```
+
+The top of the integration test files also uses `create-env` to load credentials. You will need to change that path to point to your credentials json file.
+
+This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with `npm test` and the integration tests with `npm run test:int`. 
 
 ## Reference on Using the Google Apis
 
@@ -51,5 +82,37 @@ The [Drive API](https://developers.google.com/drive/api/v3/folder)
 
 This project uses JSDoc and the `out` folder contains the processed documentation
 
-## Using this package
+## Reference
 
+### Full .json.env example 
+
+```JSON
+ "client_secrets": {
+    "installed": {
+      "client_id": "your id goes here",
+      "project_id": "your project id",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://accounts.google.com/o/oauth2/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_secret": "your client secret",
+      "redirect_uris": [
+        "urn:ietf:wg:oauth:2.0:oob",
+        "http://localhost"
+      ]
+    }
+  },
+  "drive_credentials": {
+    "access_token": "a really long token",
+    "refresh_token": "a shorter token",
+    "token_type": "Bearer",
+    "expiry_date": 123
+  },
+  "sheet_credentials": {
+    "access_token": "your token",
+    "refresh_token": "the refresh toeken",
+    "scope": "https://www.googleapis.com/auth/spreadsheets",
+    "token_type": "Bearer",
+    "expiry_date": 123
+  }
+}
+```

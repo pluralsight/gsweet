@@ -18,7 +18,7 @@
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",
   "dependencies": {
-    "dotenv": "^6.2.0",
+    "env-create": "^1.0.3",
     "google-auth-library": "^3.1.0",
     "googleapis": "^37.2.0",
     "winston": "^3.2.1"

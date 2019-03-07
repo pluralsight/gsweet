@@ -1,0 +1,14 @@
+{
+  "drive": {
+    "sheetFile": "node-test-sheet",
+    "docFile": "node-test-doc",
+    "subfolder": "sheet-in-subfolder",
+    "folderId": "1SetfeHTL-ArgyDxsQkyFYUbZxGOnTDhB",
+    "subfolderSheet": "sheet-in-subfolder",
+    "subfolderDoc": "doc-in-subfolder"
+  },
+  "sheet": {
+    "id": "105LhrjQp75T4Q4mZ337ydosno6tjKjDzXNutXf24c1c",
+    "tabName": "Sheet1"
+  }
+}
