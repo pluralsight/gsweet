@@ -6,16 +6,14 @@ A project for gathering the core methods and tools for making it easier to write
 
 ## Installation 
 
-`npm i gsweet --save`
-`npm i env-create`
+`npm i gsweet --save`  
 
 ## Basic Use
 
 Once you have authentication set up basic usage looks like this:
 
 ```javascript
-const {driveOps, sheetOps} = require("gsweet")
-require("env-create").load({path: "/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json"});
+const {driveOps, sheetOps} = require("gsweet").auth()
 
 const main = async () => {
   driveOps.autoInit()
@@ -55,8 +53,11 @@ If you clone this repo it will not contain the needed authorization pieces. You 
 }
 ```
 
-You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. The `env-create` package takes care of creating the needed environment variables and this package will use those environment varialbles and JSON.parse them into the required objects. If you store your credentials in the root folder of your project in a file named `.env.json` you can simplify the require to 
-`require("env-create).load()` 
+You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. The `auth()` call creates the needed environment variables and this package will use those environment variables and JSON.parse them into the required objects. If you store your credentials in a different folder or with a different file name you can pass the path to the file in the `auth()` call.
+
+```javascript
+const {driveOps, sheetOps} = require("gsweet").auth("/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json")
+```
 
 ## Testing
 
