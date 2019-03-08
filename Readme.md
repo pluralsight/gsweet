@@ -64,7 +64,7 @@ gsweet.auth("/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json")
 
 ## Testing
 
-This package contains both unit tests and integration tests. The integration tests are fragile since they require access to specific files and folders in google drive. The constants for th ese files are stored in the `test-data/integration.json`. Modify that document to contain the names and ids for your files. The expected structure of the test data is
+This package contains both unit tests and integration tests. The integration tests are fragile since they require access to specific files and folders in google drive. The constants for these files are stored in the `test-data/integration.json`. Modify that document to contain the names and ids for your files. The expected structure of the test data is
 test-folder
 ```
 ---node-test-subfolder
@@ -86,7 +86,7 @@ The [Drive API](https://developers.google.com/drive/api/v3/folder)
 
 ## Additional Documentation
 
-This project uses JSDoc and the `out` folder contains the processed documentation
+This project uses JSDoc and the `out` folder contains the processed documentation. When using this package in VSCode you'll get type ahead on the methods as usual, but also hovering over the function name will show the JSDoc details including the example call syntax. This is especially helpful as most of the calls take objects with specific property names and the docs show you exactly how to name the properties.
 
 ## Reference
 
