@@ -52,6 +52,7 @@ const autoInit = () => {
 /**
  * Get a list of files/folders that match  
  * @example getFiles({withName:"someName", exactMatch:true})
+ * @param   {Object.<{withName:string,exactMatch:bool}>} fileOptions
   * @returns {Promise<Array.<{id,name}>>}  
  */
 const getFiles = async (fileOptions) => {
@@ -78,6 +79,7 @@ const getFiles = async (fileOptions) => {
 /**
  * Get a single file for the passed name. If a single file isn't found an error is thrown.  
  * @example getFile({withName:"someName"})
+ * @param {Object.<{withName:string}>} withName
  * @returns {Promise<{FILE_META_FOR_NAME_SEARCH}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
  */
 const getFile = async ({withName}) => {
@@ -92,6 +94,7 @@ const getFile = async ({withName}) => {
 /**
  * Convenience function that returns the id for a file  
  * @example getFileId({withName:"SomeName"})
+ * @param {Object.<{withName:string,exactMatch:bool}>}
  * @returns {Promise<string>} google id for the file
  */
 const getFileId = async (withNameObj) => {
@@ -146,6 +149,7 @@ const countAllFiles = async () => {
 /**
  * Get all the Files in the passed folderId   (ofType is optional)  
  * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
+ * @param {Object.<{withFolderId,ofType}>} folderOptions
  * @returns {Promise<Array<{name, id, mimeType}>>} array of file objects where each object has the properties
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
@@ -175,6 +179,7 @@ const getFilesInFolder = async (folderOptions) => {
 /**
  * Get just the names of the files in the folder (ofType is optional)  
  * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
+ * @param {Object.<{withFolderId,ofType}>} folderOptions
  * @returns {Promise<Array.<string>>} array of strings containing filenames
  */
 const getFileNamesInFolder = async (folderOptions) => {
@@ -186,6 +191,7 @@ const getFileNamesInFolder = async (folderOptions) => {
 /**
  * Get the files in the parent folder and all the children folders (ofType is optional)  
  * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
+ * @param {Object.<{withFolderId,ofType}>} folderOptions
  * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of file objects where each object has the properties 
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH` 
  */
