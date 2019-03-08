@@ -7,6 +7,7 @@
     "url": "git://github.com/ps-dev/gsuite-helper.git"
   },
   "main": "./src/main.js",
+  "types": "./src/gsweetTypes.d.ts",
   "scripts": {
     "test": "mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --use_strict --reporter list \"src/**/*.testi.js\" ",

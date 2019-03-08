@@ -14,7 +14,9 @@
  */
 const ds = require("./driveService")
 
+
 const logger = require("../utils/logger")
+
 const MAX_FILES_PER_PAGE = 1000
 let _driveService
 
@@ -52,7 +54,7 @@ const autoInit = () => {
 /**
  * Get a list of files/folders that match  
  * @example getFiles({withName:"someName", exactMatch:true})
- * @param   {Object.<{withName,exactMatch}>} fileOptions
+ * @param   {MyFileOptions} fileOptions
   * @returns {Promise<Array.<{id,name}>>}  
  */
 const getFiles = async (fileOptions) => {
@@ -79,7 +81,7 @@ const getFiles = async (fileOptions) => {
 /**
  * Get a single file for the passed name. If a single file isn't found an error is thrown.  
  * @example getFile({withName:"someName"})
- * @param {Object.<{withName}>} withName
+ * @param {FileOptions} withName
  * @returns {Promise<{id,name}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
  */
 const getFile = async ({withName}) => {
@@ -94,7 +96,7 @@ const getFile = async ({withName}) => {
 /**
  * Convenience function that returns the id for a file  
  * @example getFileId({withName:"SomeName"})
- * @param {Object.<{withName,exactMatch}>} withNameObj
+ * @param {FileOptions} withNameObj
  * @returns {Promise<string>} google id for the file
  */
 const getFileId = async (withNameObj) => {
