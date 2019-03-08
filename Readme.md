@@ -21,7 +21,7 @@ const {driveOps, sheetOps} = gsweet
 const main = async () => {
   driveOps.autoInit()
   const TEST_FILE = "node-test-sheet"
-  let result = await driveOps.getFilesByName(TEST_FILE)
+  let result = await driveOps.getFiles({withName:TEST_FILE,exactMatch:true})
   console.log(result)
 
   const sheetRange = {
