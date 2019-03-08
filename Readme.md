@@ -10,22 +10,37 @@ A project for gathering the core methods and tools for making it easier to write
 
 ## Basic Use
 
-Once you have authentication set up basic usage looks like this:
+Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require this package like this:
 
 ```javascript
-const gsweet = require("gsweet")
-gsweet.auth()
-const {driveOps, sheetOps} = gsweet
+const {driveOps, sheetOps} = require("gsweet")()
+```
 
+**Note** the parentheses after the package name. In this example the lack of a parameter is telling the package to look for `.env.json` at the root of the project. If your credential files live somewhere else you can just pass in a relative or absolute path like this
 
-const main = async () => {
+```javascript
+const {driveOps, sheetOps} = require("gsweet")("/Users/user-name/ENV_VARS/envJsonFilename)
+```
+
+The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.  
+
+A full example usage of the package might look like this
+
+```javascript
+const {driveOps, sheetOps} = require("gsweet")()
+
+const main = async () => { 
+  // Drive Examples
   driveOps.autoInit()
-  const TEST_FILE = "node-test-sheet"
-  let result = await driveOps.getFiles({withName:TEST_FILE,exactMatch:true})
+  const TEST_FILE = "<name of sheet in your drive>"
+  let result = await driveOps.getFiles({withName: TEST_FILE})
   console.log(result)
 
+  console.log(full)
+
+  // Sheet Examples
   const sheetRange = {
-    id: "105LhrjQp75T4Q4mZ337ydosno6tjKjDzXNutXf24c1c",
+    id: "<google id of a sheet in your drive>",
     range: "Sheet1!A1",
     data: [["Test1"], ["Test2"]],
   }
@@ -33,11 +48,9 @@ const main = async () => {
   result = await sheetOps.setRangeData(sheetRange)
   console.log(result.config.data.values) // just showing the values passed in
   console.log("Num Cells Updated:", result.data.updatedCells)
-  // console.log(result) if you want to see all the fields available
 
-  sheetRange.value = "Convenient for writing a single cell";
-  await sheetOps.setSheetCell(sheetRange);
 }
+main()
 ```
 
 ## Authentication
@@ -56,16 +69,13 @@ If you clone this repo it will not contain the needed authorization pieces. You 
 }
 ```
 
-You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. The `auth()` call creates the needed environment variables and this package will use those environment variables and JSON.parse them into the required objects. If you store your credentials in a different folder or with a different file name you can pass the path to the file in the `auth()` call.
-
-```javascript
-gsweet.auth("/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json")
-```
+You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. You can see a [full example](#Full-.json.env-example) of the JSOn file in the Reference section of this Readme.
 
 ## Testing
 
 This package contains both unit tests and integration tests. The integration tests are fragile since they require access to specific files and folders in google drive. The constants for these files are stored in the `test-data/integration.json`. Modify that document to contain the names and ids for your files. The expected structure of the test data is
 test-folder
+
 ```
 ---node-test-subfolder
   |---doc-in-subfolder
@@ -76,17 +86,23 @@ test-folder
 
 The top of the integration test files also uses `create-env` to load credentials. You will need to change that path to point to your credentials json file.
 
-This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with `npm test` and the integration tests with `npm run test:int`. 
+This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with 
+`npm test` -- the unit tests  
+`npm run test:int` -- the integration tests  
+`npm run test:all` -- both unit and integration tests
 
 ## Reference on Using the Google Apis
 
-Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive). 
+This is information for anyone contributing to (rather than using) this project.
 
-The [Drive API](https://developers.google.com/drive/api/v3/folder) 
+Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive).  
+
+The [Drive API](https://developers.google.com/drive/api/v3/folder)  
 
 ## Additional Documentation
 
-This project uses JSDoc and the `out` folder contains the processed documentation. When using this package in VSCode you'll get type ahead on the methods as usual, but also hovering over the function name will show the JSDoc details including the example call syntax. This is especially helpful as most of the calls take objects with specific property names and the docs show you exactly how to name the properties.
+This project uses JSDoc comments. When using this package in VSCode you'll get type ahead on the methods as usual, but also hovering over the function name will show the JSDoc details including the example call syntax. This is especially helpful as most of the calls take objects with specific property names and the docs show you exactly how to name the properties. If you want to generate the HTML documentation in an `/out` folder at the root of the project use:  
+`npm run doc`
 
 ## Reference
 

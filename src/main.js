@@ -1,12 +1,11 @@
-const driveOps = require("./Drive/driveOps")
-const sheetOps = require("./sheets/sheetOps")
 const envCreate = require("env-create")
 
-const auth = (filePath) => {
-  envCreate.load({path: filePath})
-}
-module.exports = {
-  driveOps,
-  sheetOps,
-  auth,
+module.exports = function (envJsonPath) {
+  envCreate.load({path: envJsonPath})
+  const driveOps = require("./Drive/driveOps")
+  const sheetOps = require("./sheets/sheetOps")
+  return module.exports = {
+    driveOps,
+    sheetOps,
+  }
 }
