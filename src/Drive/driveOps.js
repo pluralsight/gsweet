@@ -2,27 +2,23 @@
 /** @module */
 /**
  * @file Handles talking to the Google Spreadsheet API 
- *  ## Links to Google Drive documentation 
- * [mime-types](https://developers.google.com/drive/api/v3/mime-types)  
- * [all file meta data](https://developers.google.com/drive/api/v3/reference/files)  
- * [search parameters](https://developers.google.com/drive/api/v3/search-parameters)  
+ *  ## Links to Google Drive documentation   
+ * [mime-types](https://developers.google.com/drive/api/v3/mime-types)   
+ * [all file meta data](https://developers.google.com/drive/api/v3/reference/files)   
+ * [search parameters](https://developers.google.com/drive/api/v3/search-parameters)   
  * a few meta types we aren't using that might be interesting are `starred, shared, description`
  *   
  * NOTE: Before using init() **MUST** be called and a driveService passed in.  
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  */
-const ds = require("./driveService");
+const ds = require("./driveService")
 
-const logger = require("../utils/logger");
-const MAX_FILES_PER_PAGE = 1000;
-let _driveService;
+const logger = require("../utils/logger")
+const MAX_FILES_PER_PAGE = 1000
+let _driveService
 
-/**
- * Enum for the currently supported google mime-types
- * @readonly
- * @enum {any}
- */
+/** Enum for the currently supported google mime-types */
 const mimeType = {
   /** @type {number} */
   FOLDER: 1, /**  FILE is not a google recognized value, used to mean anything other than a folder. */
@@ -38,74 +34,31 @@ const mimeType = {
   },
   /**  Convenience function to return the google mime-types- called with our ENUM value */
   getType: (value) => mimeType.properties[value].type,
-};
-
-
-/**  the file fields to return on a search by name 
- * @protected
- * @const {string}   
- * @default  */
-const FILE_META_FOR_NAME_SEARCH = "files(id, name)";
-/** the file fields to return on getting all files in a folder 
- * @protected
- * @const {string} 
- * @default */
-const FILE_META_FOR_FOLDER_SEARCH = "files(id, name, mimeType)";
-
-/**
- * Set up this module with the object that allows access to the google sheet
- * calls. Typically from the value returned by driveService.init(). When testing
- * a mocked object can be passed in. Only needs to be done once. 
- * @param {Object} driveService optional  
- */
-const init = (driveService) => {
-  _driveService = driveService;
-};
-
-/** just get the default service and use it */
-const autoInit = () => {
-  _driveService = ds.init();
 }
 
+const FILE_META_FOR_NAME_SEARCH = "files(id, name)"
+const FILE_META_FOR_FOLDER_SEARCH = "files(id, name, mimeType)"
+
+/** Allow access to google drive APIs via the driveService (this version for testing) */
+const init = (driveService) => {
+  _driveService = driveService
+}
+
+/** In production just call this to set up access to the drive APIs */
+const autoInit = () => {
+  _driveService = ds.init()
+}
 
 /**
- * Convenience function that returns the id for a file
- * @param {string} filename 
- * @returns {Promise<string>} google id for the file
+ * Get a list of files/folders that match  
+ * @example getFiles({withName:"someName", exactMatch:true})
+  * @returns {Promise<Array.<{id,name}>>}  
  */
-const getFileIdFromName = async (filename) => {
-  const file = await getFileByName(filename);
-  return file.id;
-};
-
-
-/**
- * Get a single file for the passed name. If a single file isn't found
- * an error is thrown.
- *  @author Tod Gentille <tod-gentille@pluralsight.com>
- * @param {string} filename 
- * @returns {Promise<{name, id}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
- */
-const getFileByName = async (filename) => {
-  const files = await getFilesByName(filename);
-  if (files.length !== 1) {
-    throw (`Found ${files.length} files.`);
-  }
-  return files[0];
-};
-
-
-/**
- * Get a list of files/folders that match (either exact or partial) the passed string
- * @param {string} filename - the filename to find
- * @param {boolean=} partial - if true does a contains match on the filename  
- * @returns {Promise<Array.<{id,name}>>}  array of objects with {id, name} properties
- */
-const getFilesByName = async (filename, partial = undefined) => {
-  let query = `name='${filename}'`;
-  if (partial) {
-    query = `name contains '${filename}'`;
-  }
+const getFiles = async (fileOptions) => {
+  const {withName} = fileOptions
+  const {exactMatch} = fileOptions
+  // NOTE: The filename has to be quoted  
+  const query = `name ${exactMatch ? " = " : "contains"} '${withName}'`
   const response = await _driveService.files.list(
     {
       q: query,
@@ -113,17 +66,43 @@ const getFilesByName = async (filename, partial = undefined) => {
       fields: `nextPageToken, ${FILE_META_FOR_NAME_SEARCH}`,
     })
     .catch(error => {
-      throw (`\r\nFor ${filename} - The Google Drive API returned:${error}`);
-    });
-  const {files} = response.data;
-  return files;
-};
+      const {errors} = error.response.data.error
+      const errMsg = JSON.stringify(errors[0], null, 2)
+      logger.error(errMsg)
+      throw (`For ${withName} - The Google Drive API returned:${errMsg}`)
+    })
+  const {files} = response.data
+  return files
+}
+
+/**
+ * Get a single file for the passed name. If a single file isn't found an error is thrown.  
+ * @example getFile({withName:"someName"})
+ * @returns {Promise<{FILE_META_FOR_NAME_SEARCH}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
+ */
+const getFile = async ({withName}) => {
+  const files = await getFiles({withName, exactMatch: true})
+  if (files.length !== 1) {
+    throw (`Found ${files.length} files.`)
+  }
+  return files[0]
+}
 
 
 /**
+ * Convenience function that returns the id for a file  
+ * @example getFileId({withName:"SomeName"})
+ * @returns {Promise<string>} google id for the file
+ */
+const getFileId = async (withNameObj) => {
+  const file = await getFile(withNameObj)
+  return file.id
+}
+
+/**
  * Just get the files for the user. Will only return the google API max
- * of 1000 files.
- * @returns {Promise<Array.<{name, id, mimeType}>>} array of objects, where each object
+ * of 1000 files.  
+ * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of objects, where each object
  * has the properties specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
 const listFiles = async () => {
@@ -131,10 +110,10 @@ const listFiles = async () => {
     fields: `${FILE_META_FOR_FOLDER_SEARCH}`,
     pageSize: MAX_FILES_PER_PAGE,
   })
-    .catch(error => {throw (error);});
+    .catch(error => {throw (error)})
 
-  return response.data.files;
-};
+  return response.data.files
+}
 
 
 /**
@@ -142,8 +121,8 @@ const listFiles = async () => {
  * in a folder when there are more than 1000
  */
 const countAllFiles = async () => {
-  let nextPage = null; // start on first page
-  let totalCount = 0;
+  let nextPage = null // start on first page
+  let totalCount = 0
   do {
     const response = await _driveService.files.list({
       pageToken: nextPage,
@@ -151,120 +130,118 @@ const countAllFiles = async () => {
       pageSize: MAX_FILES_PER_PAGE,
     })
       .catch(error => {
-        logger.error(JSON.stringify(error));
-      });
-    nextPage = response.data.nextPageToken;
+        logger.error(JSON.stringify(error))
+      })
+    nextPage = response.data.nextPageToken
     if (response.data.files !== undefined) {
-      totalCount += response.data.files.length;
+      totalCount += response.data.files.length
     }
 
-    logger.debug(nextPage);
-  } while (nextPage !== undefined && totalCount < 20000);
-  logger.info(`Total file count: ${totalCount}`);
-};
+    logger.debug(nextPage)
+  } while (nextPage !== undefined && totalCount < 20000)
+  logger.info(`Total file count: ${totalCount}`)
+}
 
 
 /**
- * Get all the Files in the passed folderId - the query syntax reads oddly
- * The api is querying wether the parents collection contains the passed id. 
- * the field is `parents` and the operator is `in`.  
- * [Google docs on search parameters](https://developers.google.com/drive/api/v3/search-parameters)  
- * @param {string} folderId 
- * @param {mimeType=} desiredType enum Type defined here to specify type of file to get 
+ * Get all the Files in the passed folderId   (ofType is optional)  
+ * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
  * @returns {Promise<Array<{name, id, mimeType}>>} array of file objects where each object has the properties
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
-const getFilesInFolder = async (folderId, desiredType = undefined) => {
-  const mimeClause = getMimeTypeClause(desiredType);
+const getFilesInFolder = async (folderOptions) => {
+  const {withFolderId} = folderOptions
+  const {ofType} = folderOptions
+  const mimeClause = getMimeTypeClause(ofType)
   const response = await _driveService.files.list(
     {
-      q: `parents in '${folderId}' ${mimeClause}`,
+      q: `parents in '${withFolderId}' ${mimeClause}`,
       pageSize: MAX_FILES_PER_PAGE,
       fields: `nextPageToken, ${FILE_META_FOR_FOLDER_SEARCH}`,
     })
     .catch(error => {
-      throw (`\r\nFor parent folder ${folderId} - files.list() returned:${error}`);
-    });
-  const nextToken = response.data.nextPageToken;
+      throw (`\r\nFor parent folder ${withFolderId} - files.list() returned:${error}`)
+    })
+  const nextToken = response.data.nextPageToken
   if (nextToken !== undefined) {
-    logger.debug(`NEXT PAGE TOKEN ${response.data.nextPageToken}`);
+    logger.debug(`NEXT PAGE TOKEN ${response.data.nextPageToken}`)
   }
 
-  const {files} = response.data;
-  return files;
-};
+  const {files} = response.data
+  return files
+}
 
 
 /**
- * Get just the names of the files in the specified `folderId`
- * @param {string} folderId 
- * @param {mimeType=} desiredType 
+ * Get just the names of the files in the folder (ofType is optional)  
+ * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
  * @returns {Promise<Array.<string>>} array of strings containing filenames
  */
-const getFileNamesInFolder = async (folderId, desiredType = undefined) => {
-  const files = await getFilesInFolder(folderId, desiredType);
-  return files.map(e => e.name);
-};
+const getFileNamesInFolder = async (folderOptions) => {
+  const files = await getFilesInFolder(folderOptions)
+  return files.map(e => e.name)
+}
 
 
 /**
- * Get the files in the parent folder and all the children folders
- * @param {string} folderId - parent folder
- * @param {mimeType=} desiredType - type of files desired
- * @returns {Promise<Array.<{name,id,mimeType}>>} array of file objects where each object has the properties 
- * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
+ * Get the files in the parent folder and all the children folders (ofType is optional)  
+ * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
+ * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of file objects where each object has the properties 
+ * specified by the constant `FILE_META_FOR_FOLDER_SEARCH` 
  */
-const getFilesRecursively = async (folderId, desiredType = undefined) => {
-  let result = [];
-  const folderType = mimeType.getType(mimeType.FOLDER);
-  const files = await getFilesInFolder(folderId, undefined);
+const getFilesRecursively = async (folderOptions) => {
+  let result = []
+  const {ofType} = folderOptions
+  const {withFolderId} = folderOptions
+  const folderType = mimeType.getType(mimeType.FOLDER)
+  const allTypes = {withFolderId, undefined}
+  const files = await getFilesInFolder(allTypes)
   for (const entry of files) {
     if (entry.mimeType === folderType) {
-      const subFolderFiles = await getFilesRecursively(entry.id, desiredType);
-      result = result.concat(subFolderFiles);
+      const subFolderFiles = await getFilesRecursively({withFolderId: entry.id, ofType})
+      result = result.concat(subFolderFiles)
     } else {
-      if ((desiredType === undefined) || (entry.mimeType === mimeType.getType(desiredType))) {
-        result.push(entry);
+      if ((ofType === undefined) || (entry.mimeType === mimeType.getType(ofType))) {
+        result.push(entry)
       }
     }
   }
-  return result;
-};
+  return result
+}
 
 
 /**
  * Private helper function to look up the mimetype string for the passed enum and construct and "and" clause that
  * can be used in the API search query. The FILE enum isn't a type the API understands
- * but we use it to mean any type of file but NOT a folder. 
- * @protected
- * @param {mimeType=} type - enum for type of file 
- * @returns {string} the additional clause to limit the search for the specified type. For example if mimeType.SPREADSHEET 
- * was passed in  
+ * but we use it to mean any type of file but NOT a folder.   
+ * @example getMimeTypeClause(mimeType.SPREADSHEET)  parameter can be undefined
+ * @returns {string} the additional clause to limit the search for the specified type. 
+ * For example if mimeType.SPREADSHEET was passed in, then the clause  
  * ->  `and mimeType = application/vnd.google-apps.spreadsheet`  
  * will be returned.
  */
 const getMimeTypeClause = (type) => {
   if (type === undefined) {
-    return "";
+    return ""
   }
 
   if (type === mimeType.FILE) {
-    return `and mimeType != '${mimeType.getType(mimeType.FOLDER)}'`;
+    return `and mimeType != '${mimeType.getType(mimeType.FOLDER)}'`
   }
-  return `and mimeType = '${mimeType.getType(type)}'`;
-};
+  return `and mimeType = '${mimeType.getType(type)}'`
+}
 
 
 module.exports = {
   autoInit,
   init,
-  getFileByName,
-  getFilesByName,
-  getFileIdFromName,
+  getFile,
+  getFiles,
+  getFileId,
   listFiles,
   countAllFiles,
   getFilesInFolder,
   getFileNamesInFolder,
   getFilesRecursively,
   mimeType,
-};
+}
