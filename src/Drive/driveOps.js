@@ -52,7 +52,7 @@ const autoInit = () => {
 /**
  * Get a list of files/folders that match  
  * @example getFiles({withName:"someName", exactMatch:true})
- * @param   {Object.<{withName:string,exactMatch:bool}>} fileOptions
+ * @param   {Object.<{withName,exactMatch}>} fileOptions
   * @returns {Promise<Array.<{id,name}>>}  
  */
 const getFiles = async (fileOptions) => {
@@ -79,8 +79,8 @@ const getFiles = async (fileOptions) => {
 /**
  * Get a single file for the passed name. If a single file isn't found an error is thrown.  
  * @example getFile({withName:"someName"})
- * @param {Object.<{withName:string}>} withName
- * @returns {Promise<{FILE_META_FOR_NAME_SEARCH}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
+ * @param {Object.<{withName}>} withName
+ * @returns {Promise<{id,name}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
  */
 const getFile = async ({withName}) => {
   const files = await getFiles({withName, exactMatch: true})
@@ -94,7 +94,7 @@ const getFile = async ({withName}) => {
 /**
  * Convenience function that returns the id for a file  
  * @example getFileId({withName:"SomeName"})
- * @param {Object.<{withName:string,exactMatch:bool}>}
+ * @param {Object.<{withName,exactMatch}>} withNameObj
  * @returns {Promise<string>} google id for the file
  */
 const getFileId = async (withNameObj) => {
@@ -105,6 +105,7 @@ const getFileId = async (withNameObj) => {
 /**
  * Just get the files for the user. Will only return the google API max
  * of 1000 files.  
+ * @example listFiles()
  * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of objects, where each object
  * has the properties specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  */
@@ -245,7 +246,6 @@ module.exports = {
   getFiles,
   getFileId,
   listFiles,
-  countAllFiles,
   getFilesInFolder,
   getFileNamesInFolder,
   getFilesRecursively,
