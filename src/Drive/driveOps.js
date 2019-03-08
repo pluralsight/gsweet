@@ -179,7 +179,7 @@ const getFilesInFolder = async (folderOptions) => {
 /**
  * Get just the names of the files in the folder (ofType is optional)  
  * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
- * @param {Object.<{withFolderId,ofType}>} folderOptions
+ * @param {{withFolderId,ofType}} folderOptions
  * @returns {Promise<Array.<string>>} array of strings containing filenames
  */
 const getFileNamesInFolder = async (folderOptions) => {
