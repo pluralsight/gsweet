@@ -101,7 +101,7 @@ The [Drive API](https://developers.google.com/drive/api/v3/folder)
 
 ## Additional Documentation
 
-This project uses JSDoc comments. When using this package in VSCode you'll get type ahead on the methods as usual, but also hovering over the function name will show the JSDoc details including the example call syntax. This is especially helpful as most of the calls take objects with specific property names and the docs show you exactly how to name the properties. If you want to generate the HTML documentation in an `/out` folder at the root of the project use:  
+This project uses JSDoc comments. If you want to generate the HTML documentation in an `/out` folder at the root of the project use:  
 `npm run doc`
 
 ## Reference

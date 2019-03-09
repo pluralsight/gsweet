@@ -53,9 +53,9 @@ const autoInit = () => {
 
 /**
  * Get a list of files/folders that match  
- * @example getFiles({withName:"someName", exactMatch:true})
- * @param   {MyFileOptions} fileOptions
+ * @param   {{withName:String,exactMatch:Boolean}} fileOptions
   * @returns {Promise<Array.<{id,name}>>}  
+  * @example getFiles({withName:"someName", exactMatch:true})
  */
 const getFiles = async (fileOptions) => {
   const {withName} = fileOptions
@@ -80,9 +80,10 @@ const getFiles = async (fileOptions) => {
 
 /**
  * Get a single file for the passed name. If a single file isn't found an error is thrown.  
- * @example getFile({withName:"someName"})
- * @param {FileOptions} withName
+// @ts-ignore
+ * @param {Object<{withName}>} withName
  * @returns {Promise<{id,name}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
+ * @example getFile({withName:"someName"})
  */
 const getFile = async ({withName}) => {
   const files = await getFiles({withName, exactMatch: true})
@@ -96,7 +97,8 @@ const getFile = async ({withName}) => {
 /**
  * Convenience function that returns the id for a file  
  * @example getFileId({withName:"SomeName"})
- * @param {FileOptions} withNameObj
+ // @ts-ignore 
+ * @param {Object.<{withName,exactMatch}>} withNameObj
  * @returns {Promise<string>} google id for the file
  */
 const getFileId = async (withNameObj) => {
