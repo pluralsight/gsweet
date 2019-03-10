@@ -1,10 +1,10 @@
 /**
  * @module 
  */
-const {google} = require("googleapis");
-const authHelper = require("../googleAuthHelper");
+const {google} = require("googleapis")
+const authHelper = require("../googleAuthHelper")
 
-let _driveService = undefined;
+let _driveService = undefined
 
 /**
  * Set up the service used for the Google Drive API. If no parameter passed in
@@ -13,21 +13,21 @@ let _driveService = undefined;
  */
 const init = (svc = undefined) => {
   if (svc !== undefined) {
-    _driveService = svc;
+    _driveService = svc
   } else {
     if (_driveService === undefined) {
-      _driveService = getDriveServiceDefault();
+      _driveService = getDriveServiceDefault()
     }
   }
-  return _driveService;
-};
+  return _driveService
+}
 
 const getDriveServiceDefault = () => google.drive({
   version: "v3",
   auth: authHelper.getGoogleDriveAuth(),
-});
+})
 
 module.exports = {
   init,
   getDriveServiceDefault,
-};
+}

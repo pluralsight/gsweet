@@ -35,6 +35,7 @@ const mimeType = {
     4: {type: "application/vnd.google-apps.document"},
   },
   /**  Convenience function to return the google mime-types- called with our ENUM value */
+  // getType(value) {return this.properties[value].type},
   getType: (value) => mimeType.properties[value].type,
 }
 
@@ -68,8 +69,8 @@ const getFiles = async (fileOptions) => {
       pageSize: MAX_FILES_PER_PAGE,
       fields: `nextPageToken, ${FILE_META_FOR_NAME_SEARCH}`,
     })
-    .catch(error => {
-      const {errors} = error.response.data.error
+    .catch(googleError => {
+      const {errors} = googleError.response.data.error
       const errMsg = JSON.stringify(errors[0], null, 2)
       logger.error(errMsg)
       throw (`For ${withName} - The Google Drive API returned:${errMsg}`)
@@ -127,27 +128,27 @@ const listFiles = async () => {
  * Example of how to use the nextPageToken to get all the files
  * in a folder when there are more than 1000
  */
-const countAllFiles = async () => {
-  let nextPage = null // start on first page
-  let totalCount = 0
-  do {
-    const response = await _driveService.files.list({
-      pageToken: nextPage,
-      fields: `nextPageToken, ${FILE_META_FOR_FOLDER_SEARCH}`,
-      pageSize: MAX_FILES_PER_PAGE,
-    })
-      .catch(error => {
-        logger.error(JSON.stringify(error))
-      })
-    nextPage = response.data.nextPageToken
-    if (response.data.files !== undefined) {
-      totalCount += response.data.files.length
-    }
+// const countAllFiles = async () => {
+//   let nextPage = null // start on first page
+//   let totalCount = 0
+//   do {
+//     const response = await _driveService.files.list({
+//       pageToken: nextPage,
+//       fields: `nextPageToken, ${FILE_META_FOR_FOLDER_SEARCH}`,
+//       pageSize: MAX_FILES_PER_PAGE,
+//     })
+//       .catch(error => {
+//         logger.error(JSON.stringify(error))
+//       })
+//     nextPage = response.data.nextPageToken
+//     if (response.data.files !== undefined) {
+//       totalCount += response.data.files.length
+//     }
 
-    logger.debug(nextPage)
-  } while (nextPage !== undefined && totalCount < 20000)
-  logger.info(`Total file count: ${totalCount}`)
-}
+//     logger.debug(nextPage)
+//   } while (nextPage !== undefined && totalCount < 20000)
+//   logger.info(`Total file count: ${totalCount}`)
+// }
 
 
 /**
@@ -168,7 +169,8 @@ const getFilesInFolder = async (folderOptions) => {
       fields: `nextPageToken, ${FILE_META_FOR_FOLDER_SEARCH}`,
     })
     .catch(error => {
-      throw (`\r\nFor parent folder ${withFolderId} - files.list() returned:${error}`)
+      const errMsg = JSON.stringify(error, null, 2)
+      throw (`\r\nFor parent folder ${withFolderId} - files.list() returned:${errMsg}`)
     })
   const nextToken = response.data.nextPageToken
   if (nextToken !== undefined) {

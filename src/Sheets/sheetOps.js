@@ -74,7 +74,8 @@ const setRangeData = async (sheetRangeData) => {
     // logger.info(JSON.stringify(result, null, 2));
     return result // only needed for testing
   } catch (err) {
-    logger.error(err)
+    logger.error(JSON.stringify(err, null, 2))
+    throw err
   }
 }
 

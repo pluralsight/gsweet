@@ -12,7 +12,7 @@
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --use_strict --reporter list \"src/**/*.testi.js\" ",
-    "test:all": "run-p test   test:int",
+    "test:all": "nyc run-p test   test:int",
     "start": "node --use_strict ./src/main.js",
     "lint": "eslint src --color",
     "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md"

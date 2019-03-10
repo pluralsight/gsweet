@@ -6,13 +6,13 @@
  * @module
  */
 
-const {google} = require("googleapis");
-const authHelper = require("../googleAuthHelper");
+const {google} = require("googleapis")
+const authHelper = require("../googleAuthHelper")
 
 /** holds the sheetService created by init()  
  *  @type {Object} 
  */
-let _sheetService = undefined;
+let _sheetService = undefined
 
 /**
  *  This needs to be called just once.
@@ -24,27 +24,27 @@ let _sheetService = undefined;
  */
 const init = (sheetService = undefined) => {
   if (sheetService !== undefined) {
-    _sheetService = sheetService;
+    _sheetService = sheetService
   }
   else {
     // if we don't have one, get the default
     if (_sheetService === undefined) {
-      _sheetService = getSheetServiceDefault();
+      _sheetService = getSheetServiceDefault()
     }
   }
-  return _sheetService;
-};
+  return _sheetService
+}
 
 /**
  * Get the default Google Sheet API service.
  * @returns {Object} the actual Google Sheet Service
  */
 const getSheetServiceDefault = () => {
-  const auth = authHelper.getGoogleSheetAuth();
-  return google.sheets({version: "v4", auth});
-};
+  const auth = authHelper.getGoogleSheetAuth()
+  return google.sheets({version: "v4", auth})
+}
 
 module.exports = {
   init,
   getSheetServiceDefault,
-};
+}

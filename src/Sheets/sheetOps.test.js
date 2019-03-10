@@ -1,8 +1,6 @@
 /** @module ./sheetOps.test*/
 const chai = require("chai")
 chai.should()
-const sandbox = require("sinon").createSandbox()
-const ss = require("./sheetService")
 const sheetOps = require("./sheetOps")
 const logger = require("../utils/logger")
 
