@@ -15,7 +15,9 @@
     "test:all": "nyc run-p test   test:int",
     "start": "node --use_strict ./src/main.js",
     "lint": "eslint src --color",
-    "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md"
+    "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md",
+    "audit": "npm audit",
+    "one": "run-p doc lint test audit"
   },
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",

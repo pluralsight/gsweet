@@ -3,7 +3,7 @@ const chai = require("chai")
 chai.should()
 const sandbox = require("sinon").createSandbox()
 const {google} = require("googleapis")
-const authHelper = require("../googleAuthHelper");
+const authHelper = require("../googleAuthHelper")
 const ss = require("./sheetService")
 
 // eslint-disable-next-line no-unused-vars
@@ -35,5 +35,4 @@ describe("sheetService module ", () => {
       result.should.equal(fakeService)
     })
   })
-
 })

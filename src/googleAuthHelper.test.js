@@ -12,13 +12,13 @@ describe("googleAuthHelper", () => {
         client_secret: "secret",
         client_id: "fake_id",
         redirect_urls: ["local.host"],
-      }
+      },
     },
     sheet_credentials: "",
     drive_credentials: "",
   }
   // const gsweetEnv = `{"client_secrets":"${mt}","sheet_credentials":"","drive_credentials":""}`
-  const gsweetEnv = JSON.stringify(fakeCreds);
+  const gsweetEnv = JSON.stringify(fakeCreds)
   const mockedResponse = {credentials: "authorized"}
 
   beforeEach(() => {

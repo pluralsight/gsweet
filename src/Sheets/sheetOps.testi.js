@@ -73,7 +73,7 @@ describe("INTEGRATION TESTS sheetOps module", function () {
       sheetRange.data = data
       await sheetOps.setRangeData(sheetRange)
       return [].concat(...data).length
-    };
+    }
 
     it("return a single value for a range that is one cell", async () => {
       sheetRange.value = "oneValue"
@@ -81,7 +81,7 @@ describe("INTEGRATION TESTS sheetOps module", function () {
       await sheetOps.setSheetCell(sheetRange)
       const result = await sheetOps.getSheetValues(sheetRange)
       console.log(result[0][0])
-      console.log(sheetRange.value);
+      console.log(sheetRange.value)
       result[0][0].should.equal(sheetRange.value)
     })
 

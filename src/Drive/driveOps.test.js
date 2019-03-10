@@ -121,7 +121,7 @@ describe("driveOps module", () => {
       driveOps.init(throwDriveService)
       await driveOps.getFiles({withName: "anything", exactMatch: undefined})
         .catch(err => {
-          caught = true;
+          caught = true
           err.should.match(/For anything.*the fake error/)
         })
       caught.should.be.true

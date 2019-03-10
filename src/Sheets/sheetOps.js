@@ -21,7 +21,7 @@ let _sheetService
  */
 const init = (sheetService) => {
   _sheetService = sheetService
-};
+}
 
 /** just get the default service and use it */
 const autoInit = () => {
@@ -32,7 +32,7 @@ const autoInit = () => {
  * By default each inner array is a row in the sheet with an element for each column
  * if a sparse array is sent the missing cells in the range are skipped 
  * (i.e. they aren't overwritten)
- * @param {{id:string,range:string,value?:any,data:Array.<Array>}} sheetRangeData 
+ * @param {{id:string,range:string,value:any,data:Array.<Array>}} sheetRangeData 
  * @returns {Promise<{config:{data:{values:Array.<Array>}},
  * data:{spreadsheetId:string,updatedRange:string,updatedRows:number,updatedColumns:number, updatedCells:number}}>} 
  * object with many props including config.data and data
@@ -90,7 +90,7 @@ const setSheetCell = async (sheetRangeValue) => {
   sheetRangeValue["data"] = [[sheetRangeValue.value]]
   // @ts-ignore
   return await setRangeData(sheetRangeValue)
-};
+}
 
 /**
  * Get all the cells in the specified range. If a given row has no data in the 
