@@ -4,7 +4,7 @@
   "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
-    "url": "git://github.com/ps-dev/gsuite-helper.git"
+    "url": "git://github.com/pluralsight/gsweet.git"
   },
   "main": "./src/main.js",
   "types": "./src/gsweetTypes.d.ts",
