@@ -1,7 +1,7 @@
 {
   "name": "gsweet",
   "version": "1.0.7",
-  "description": "A project designed to help with writing scripts to run against gSuite ",
+  "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
     "url": "git://github.com/ps-dev/gsuite-helper.git"
