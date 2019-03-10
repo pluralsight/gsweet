@@ -10,16 +10,18 @@ A project for gathering the core methods and tools for making it easier to write
 
 ## Basic Use
 
-Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require this package like this:
+Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require the package and call the auth() function
 
 ```javascript
-const {driveOps, sheetOps} = require("gsweet")()
+const {driveOps, sheetOps, auth} = require("gsweet")
+auth()
 ```
 
-**Note** the parentheses after the package name. In this example the lack of a parameter is telling the package to look for `.env.json` at the root of the project. If your credential files live somewhere else you can just pass in a relative or absolute path like this
+In this example the lack of a parameter is telling the package to look for `.env.json` at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this
 
 ```javascript
-const {driveOps, sheetOps} = require("gsweet")("/Users/user-name/ENV_VARS/envJsonFilename)
+const {driveOps, sheetOps, auth} = require("gsweet")
+auth("/Users/user-name/ENV_VARS/envJsonFilename")
 ```
 
 The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.  
@@ -27,7 +29,8 @@ The code that runs loads the JSON file and parses the top level objects into env
 A full example usage of the package might look like this
 
 ```javascript
-const {driveOps, sheetOps} = require("gsweet")()
+const {driveOps, sheetOps} = require("gsweet")
+auth()
 
 const main = async () => { 
   // Drive Examples

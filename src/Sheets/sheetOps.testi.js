@@ -80,6 +80,8 @@ describe("INTEGRATION TESTS sheetOps module", function () {
       sheetRange.range = SINGLE_CELL
       await sheetOps.setSheetCell(sheetRange)
       const result = await sheetOps.getSheetValues(sheetRange)
+      console.log(result[0][0])
+      console.log(sheetRange.value);
       result[0][0].should.equal(sheetRange.value)
     })
 

@@ -54,7 +54,7 @@ const autoInit = () => {
 /**
  * Get a list of files/folders that match  
  * @param   {{withName:String,exactMatch:Boolean}} fileOptions
-  * @returns {Promise<Array.<{id,name}>>}  
+  * @returns {Promise<Array.<{id:String,name:String}>>}  
   * @example getFiles({withName:"someName", exactMatch:true})
  */
 const getFiles = async (fileOptions) => {
@@ -81,8 +81,8 @@ const getFiles = async (fileOptions) => {
 /**
  * Get a single file for the passed name. If a single file isn't found an error is thrown.  
 // @ts-ignore
- * @param {Object<{withName}>} withName
- * @returns {Promise<{id,name}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
+ * @param {{withName:String}} withName
+ * @returns {Promise<{id:String,name:String}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
  * @example getFile({withName:"someName"})
  */
 const getFile = async ({withName}) => {
@@ -96,11 +96,10 @@ const getFile = async ({withName}) => {
 
 /**
  * Convenience function that returns the id for a file  
- * @example getFileId({withName:"SomeName"})
- // @ts-ignore 
- * @param {Object.<{withName,exactMatch}>} withNameObj
+ * @param {{withName:String,exactMatch:Boolean}} withNameObj
  * @returns {Promise<string>} google id for the file
- */
+ * @example getFileId({withName:"SomeName"})
+ *  */
 const getFileId = async (withNameObj) => {
   const file = await getFile(withNameObj)
   return file.id
@@ -109,10 +108,10 @@ const getFileId = async (withNameObj) => {
 /**
  * Just get the files for the user. Will only return the google API max
  * of 1000 files.  
- * @example listFiles()
  * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of objects, where each object
  * has the properties specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
- */
+  * @example listFiles()
+  * */
 const listFiles = async () => {
   const response = await _driveService.files.list({
     fields: `${FILE_META_FOR_FOLDER_SEARCH}`,
@@ -153,10 +152,10 @@ const countAllFiles = async () => {
 
 /**
  * Get all the Files in the passed folderId   (ofType is optional)  
- * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
- * @param {Object.<{withFolderId,ofType}>} folderOptions
+ * @param {{withFolderId:String,ofType:any}} folderOptions
  * @returns {Promise<Array<{name, id, mimeType}>>} array of file objects where each object has the properties
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
+ * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
  */
 const getFilesInFolder = async (folderOptions) => {
   const {withFolderId} = folderOptions
@@ -183,9 +182,9 @@ const getFilesInFolder = async (folderOptions) => {
 
 /**
  * Get just the names of the files in the folder (ofType is optional)  
- * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
- * @param {{withFolderId,ofType}} folderOptions
+ * @param {{withFolderId:String,ofType:number}} folderOptions
  * @returns {Promise<Array.<string>>} array of strings containing filenames
+ * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
  */
 const getFileNamesInFolder = async (folderOptions) => {
   const files = await getFilesInFolder(folderOptions)
@@ -195,17 +194,17 @@ const getFileNamesInFolder = async (folderOptions) => {
 
 /**
  * Get the files in the parent folder and all the children folders (ofType is optional)  
- * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
- * @param {Object.<{withFolderId,ofType}>} folderOptions
+ * @param {{withFolderId:String,ofType:number}} folderOptions
  * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of file objects where each object has the properties 
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH` 
+ * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
  */
 const getFilesRecursively = async (folderOptions) => {
   let result = []
   const {ofType} = folderOptions
   const {withFolderId} = folderOptions
   const folderType = mimeType.getType(mimeType.FOLDER)
-  const allTypes = {withFolderId, undefined}
+  const allTypes = {withFolderId, ofType: undefined}
   const files = await getFilesInFolder(allTypes)
   for (const entry of files) {
     if (entry.mimeType === folderType) {
@@ -225,11 +224,11 @@ const getFilesRecursively = async (folderOptions) => {
  * Private helper function to look up the mimetype string for the passed enum and construct and "and" clause that
  * can be used in the API search query. The FILE enum isn't a type the API understands
  * but we use it to mean any type of file but NOT a folder.   
- * @example getMimeTypeClause(mimeType.SPREADSHEET)  parameter can be undefined
+* @param {number} type
  * @returns {string} the additional clause to limit the search for the specified type. 
  * For example if mimeType.SPREADSHEET was passed in, then the clause  
- * ->  `and mimeType = application/vnd.google-apps.spreadsheet`  
  * will be returned.
+ * @example getMimeTypeClause(mimeType.SPREADSHEET) will return `and mimeType = application/vnd.google-apps.spreadsheet`
  */
 const getMimeTypeClause = (type) => {
   if (type === undefined) {

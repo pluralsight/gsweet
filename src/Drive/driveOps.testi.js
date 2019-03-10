@@ -24,7 +24,7 @@ const MAX_FILES_PER_QUERY = 1000
 before(() => {logger.level = "info"})
 after(() => {logger.level = "debug"})
 
-describe.only("INTEGRATION TEST driveOps module", function () {
+describe("INTEGRATION TEST driveOps module", function () {
   this.timeout(10000)
   const {mimeType} = driveOps
   const FOLDER_TYPE = mimeType.getType(mimeType.FOLDER)

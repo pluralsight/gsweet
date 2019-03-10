@@ -11,21 +11,6 @@ const logger = require("../utils/logger")
  * the code normally returns an array of objects that have a lot of properties
  * but we mostly care about id, name and mimeType
  */
-// const fakeDriveservice = {
-//   files: {
-//     list: async ({q, pageSize, fields}) => ({
-//       testEcho: {
-//         q,
-//         pageSize,
-//         fields,
-//       },
-//       data: {
-//         files: [{id: "fakeId", name: "fakeName", mimeType: "fakeMimeType"}],
-//       },
-//     }),
-//   }
-// };
-
 const fakeDriveService = {
   files: {
     list: async ({q, pageSize, fields}) => {
@@ -35,13 +20,12 @@ const fakeDriveService = {
       fakeDriveService.fields = fields
       // todo based on q
       return ({
-        testEcho: {
-          q,
-          pageSize,
-          fields,
-        },
         data: {
-          files: [{id: "fakeId", name: "fakeName", mimeType: "fakeMimeType"}],
+          files: [{
+            id: "fakeId",
+            name: "fakeName",
+            mimeType: mimeType.getType(mimeType.SPREADSHEET),
+          }],
         },
       })
     },
@@ -67,14 +51,17 @@ describe("driveOps module", () => {
     result.name.should.contain("fakeName")
   })
 
-  describe("getFilesInFolder() should ", () => {
-    it.only("return filename and specified mimeType clause when not FOLDER", async () => {
+  it("getFiles() with exactMatch:true should not have contains clause", async () => {
+    await driveOps.getFiles({withName: "myName", exactMatch: true})
+    fakeDriveService.q.should.not.contain("contains")
+  });
+
+  describe("getFilesInFolder() should", () => {
+    it("return filename and specified mimeType clause when not FOLDER", async () => {
       const result = await driveOps.getFilesInFolder({
         withFolderId: "anyFolderId",
         ofType: mimeType.SPREADSHEET,
       })
-      logger.debug(result)
-      logger.debug(fakeDriveService.q)
       const query = fakeDriveService.q
       const clause = new RegExp(`anyFolderId.+ mimeType = \\'${mimeType.getType(mimeType.SPREADSHEET)}`)
       fakeDriveService.fields.should.contain("mimeType")
@@ -91,5 +78,21 @@ describe("driveOps module", () => {
     const query = fakeDriveService.q
     const clause = new RegExp(`anyFolderId.+ mimeType != \\'${mimeType.getType(mimeType.FOLDER)}`)
     query.should.match(clause)
+  })
+
+  describe("getFilesRecursively() should", () => {
+    it("return the one file of:Type:mimeType.SPREADSHEET", async () => {
+      const result = await driveOps.getFilesRecursively({
+        withFolderId: "anyFolderId", ofType: mimeType.SPREADSHEET,
+      })
+      result.length.should.equal(1)
+    })
+
+    it("return no files when no types match ofType:", async () => {
+      const result = await driveOps.getFilesRecursively({
+        withFolderId: "anyFolderId", ofType: mimeType.DOC,
+      })
+      result.length.should.equal(0)
+    })
   })
 })

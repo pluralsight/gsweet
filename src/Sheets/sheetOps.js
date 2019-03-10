@@ -29,32 +29,36 @@ const autoInit = () => {
 }
 /**
  * Set a range of data in a target sheet with an array of arrays of data  
- * `[[r1c1,r1c2],[r2c1,r2c2]]`
+ * By default each inner array is a row in the sheet with an element for each column
  * if a sparse array is sent the missing cells in the range are skipped 
  * (i.e. they aren't overwritten)
- * @param {Object.<id,range,data>} sheetRangeData 
- * @param {Array.<Array>} data 
- * 
- * @returns {Promise<{config,data}>} object with many props including config.data and data
+ * @param {{id:string,range:string,value?:any,data:Array.<Array>}} sheetRangeData 
+ * @returns {Promise<{config:{data:{values:Array.<Array>}},
+ * data:{spreadsheetId:string,updatedRange:string,updatedRows:number,updatedColumns:number, updatedCells:number}}>} 
+ * object with many props including config.data and data
  * ```
  * {  
  *   config: {
- *     ...
+ * ...
  *     data: {
  *       values: [[2D array of data sent]]
  *           }
- *     }...
+ * ...
+ *     },
  *   data: {
- *     ...
+ *     spreadsheetId,
  *     updatedRange,   
  *     updatedRows,   
  *     updatedColumns,  
  *     updatedCells ,
- *     ...
  *   }
+ * headers:{...}
+ * status:number
+ * statusText:string
  * }
- * ```   
+ *```
  * these properties can be useful for testing 
+ * @example setRangeData({id:"longgoogleid",range:"Sheet1!A1",value?:string, data?:[["R1C1","R1C2"],["R2C1","R2C2"]]})
  */
 const setRangeData = async (sheetRangeData) => {
   const resource = {
@@ -78,13 +82,12 @@ const setRangeData = async (sheetRangeData) => {
 /**
  * Convenience function that will take a string or number primitive and wrap
  * it into a 2D array to write to the spreadsheet.
- * @param {Object.<id,range,value>} sheetRangeValue - where the range property should specify a single cell
- * @param {string|number} newValue  primitive value that gets put inside 2D array
- * 
+ * @param {{id:string,range:string,value:any}} sheetRangeValue - where the range property should specify a single cell
  * @returns {Promise<Object>} see setRangeData for details on returned Object
  */
 const setSheetCell = async (sheetRangeValue) => {
-  sheetRangeValue.data = [[sheetRangeValue.value]]
+  sheetRangeValue["data"] = [[sheetRangeValue.value]]
+  // @ts-ignore
   return await setRangeData(sheetRangeValue)
 };
 
@@ -92,8 +95,7 @@ const setSheetCell = async (sheetRangeValue) => {
  * Get all the cells in the specified range. If a given row has no data in the 
  * final cells for a row, the array for that row is shortened. If a row has no
  * data no array for that row is returned.
- * @param {Object.<id, range>} sheetRange  range property should include name of tab `Tab1!A2:C6`
- * 
+ * @param {{id:string, range:string}} sheetRange  range property should include name of tab `Tab1!A2:C6`
  * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column). 
  */
 const getSheetValues = async (sheetRange) => {
@@ -106,7 +108,9 @@ const getSheetValues = async (sheetRange) => {
     )
     return result.data.values
   } catch (err) {
-    logger.error("Error trying to get range values\n", JSON.stringify(err))
+    const msg = `"Error trying to get range values\n ${JSON.stringify(err, null, 2)})`
+    logger.error(msg)
+    throw (msg)
   }
 }
 
