@@ -7,6 +7,12 @@ let driveCreds
 
 let initialized = false
 
+/** Only needed for testing */
+const forceInitialization = () => {
+  initialized = false
+}
+
+/** One time initialization to load credentials */
 const init = () => {
   if (process.env.gsweet === undefined) {
     throw ("environment variables with credentials are missing")
@@ -18,18 +24,23 @@ const init = () => {
   initialized = true
 }
 
+/** Get the Google Sheet authorization */
 const getGoogleSheetAuth = () => {
   const oauth2Client = getOAuth2Client()
   oauth2Client.credentials = sheetsCreds
   return oauth2Client
 }
 
+/** Get the Google Drive authorization */
 const getGoogleDriveAuth = () => {
   const oauth2Client = getOAuth2Client()
   oauth2Client.credentials = driveCreds
   return oauth2Client
 }
 
+/** @protected
+ * Called for any auth - goes to Google with the needed credentials
+ */
 const getOAuth2Client = () => {
   if (!initialized) {init()}
 
@@ -43,4 +54,5 @@ const getOAuth2Client = () => {
 module.exports = {
   getGoogleSheetAuth,
   getGoogleDriveAuth,
+  forceInitialization,
 }

@@ -41,7 +41,7 @@ describe("INTEGRATION TEST driveOps module", function () {
   describe("getFiles() should", () => {
     it("return multiple UNTITLED_SPREADSHEET files", async () => {
       const files = await driveOps.getFiles({withName: UNTITLED_SPREADSHEET})
-      files.length.should.be.above(1)
+      files.length.should.be.gt(1)
     })
 
     it("return the MAX_FILES_PER_QUERY for PLURALSIGHT_FILES", async () => {
@@ -53,14 +53,14 @@ describe("INTEGRATION TEST driveOps module", function () {
   describe("getFileId({withName}) should", () => {
     it("get the TEST_FILE id", async () => {
       const id = await driveOps.getFileId({withName: testDrive.sheetFile})
-      id.length.should.be.above(MIN_GOOGLE_ID_LENGTH)
+      id.length.should.be.gt(MIN_GOOGLE_ID_LENGTH)
     })
   })
 
   describe("getFile({withName}) should", () => {
     it("should return the TEST_FILE id and name", async () => {
       const file = await driveOps.getFile({withName: testDrive.sheetFile})
-      file.id.length.should.be.above(MIN_GOOGLE_ID_LENGTH)
+      file.id.length.should.be.gt(MIN_GOOGLE_ID_LENGTH)
       file.name.length.should.equal(testDrive.sheetFile.length)
     })
 
