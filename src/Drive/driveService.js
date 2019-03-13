@@ -1,8 +1,8 @@
 /**
  * @module 
  */
-const {google} = require("googleapis")
-const authHelper = require("../googleAuthHelper")
+const {google} = require('googleapis')
+const authHelper = require('../googleAuthHelper')
 
 let _driveService = undefined
 
@@ -23,7 +23,7 @@ const init = (svc = undefined) => {
 }
 
 const getDriveServiceDefault = () => google.drive({
-  version: "v3",
+  version: 'v3',
   auth: authHelper.getGoogleDriveAuth(),
 })
 

@@ -1,4 +1,4 @@
-const googleAuth = require("google-auth-library")
+const googleAuth = require('google-auth-library')
 
 let gsweet
 let clientSecrets
@@ -15,7 +15,7 @@ const forceInitialization = () => {
 /** One time initialization to load credentials */
 const init = () => {
   if (process.env.gsweet === undefined) {
-    throw ("environment variables with credentials are missing")
+    throw ('environment variables with credentials are missing')
   }
   gsweet = JSON.parse(process.env.gsweet)
   clientSecrets = gsweet.client_secrets

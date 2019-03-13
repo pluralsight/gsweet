@@ -12,10 +12,10 @@
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  */
-const ds = require("./driveService")
+const ds = require('./driveService')
 
 
-const logger = require("../utils/logger")
+const logger = require('../utils/logger')
 
 const MAX_FILES_PER_PAGE = 1000
 let _driveService
@@ -29,18 +29,18 @@ const mimeType = {
   DOC: 4,
   /** place to store the actual strings that google uses for mime-types */
   properties: {
-    1: {type: "application/vnd.google-apps.folder"},
-    2: {type: "N/A"},
-    3: {type: "application/vnd.google-apps.spreadsheet"},
-    4: {type: "application/vnd.google-apps.document"},
+    1: {type: 'application/vnd.google-apps.folder'},
+    2: {type: 'N/A'},
+    3: {type: 'application/vnd.google-apps.spreadsheet'},
+    4: {type: 'application/vnd.google-apps.document'},
   },
   /**  Convenience function to return the google mime-types- called with our ENUM value */
   // getType(value) {return this.properties[value].type},
   getType: (value) => mimeType.properties[value].type,
 }
 
-const FILE_META_FOR_NAME_SEARCH = "files(id, name)"
-const FILE_META_FOR_FOLDER_SEARCH = "files(id, name, mimeType)"
+const FILE_META_FOR_NAME_SEARCH = 'files(id, name)'
+const FILE_META_FOR_FOLDER_SEARCH = 'files(id, name, mimeType)'
 
 /** Allow access to google drive APIs via the driveService (this version for testing) */
 const init = (driveService) => {
@@ -62,7 +62,7 @@ const getFiles = async (fileOptions) => {
   const {withName} = fileOptions
   const {exactMatch} = fileOptions
   // NOTE: The filename has to be quoted  
-  const query = `name ${exactMatch ? " = " : "contains"} '${withName}'`
+  const query = `name ${exactMatch ? ' = ' : 'contains'} '${withName}'`
   const response = await _driveService.files.list(
     {
       q: query,
@@ -234,7 +234,7 @@ const getFilesRecursively = async (folderOptions) => {
  */
 const getMimeTypeClause = (type) => {
   if (type === undefined) {
-    return ""
+    return ''
   }
 
   if (type === mimeType.FILE) {

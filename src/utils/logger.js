@@ -1,7 +1,7 @@
-const {createLogger, format, transports} = require("winston")
+const {createLogger, format, transports} = require('winston')
 
 const logger = createLogger({
-  level: "debug",
+  level: 'debug',
   format: format.combine(
     format.colorize(),
     format.simple()

@@ -7,8 +7,8 @@
  * @license GPL-3.0-or-later
  * @module
  */
-const ss = require("./sheetService")
-const logger = require("../utils/logger")
+const ss = require('./sheetService')
+const logger = require('../utils/logger')
 
 let _sheetService
 
@@ -68,7 +68,7 @@ const setRangeData = async (sheetRangeData) => {
     const result = await _sheetService.spreadsheets.values.update({
       spreadsheetId: sheetRangeData.id,
       range: sheetRangeData.range,
-      valueInputOption: "USER_ENTERED",
+      valueInputOption: 'USER_ENTERED',
       resource,
     })
     // logger.info(JSON.stringify(result, null, 2));
@@ -87,7 +87,7 @@ const setRangeData = async (sheetRangeData) => {
  * @returns {Promise<Object>} see setRangeData for details on returned Object
  */
 const setSheetCell = async (sheetRangeValue) => {
-  sheetRangeValue["data"] = [[sheetRangeValue.value]]
+  sheetRangeValue['data'] = [[sheetRangeValue.value]]
   // @ts-ignore
   return await setRangeData(sheetRangeValue)
 }

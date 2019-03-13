@@ -6,8 +6,8 @@
  * @module
  */
 
-const {google} = require("googleapis")
-const authHelper = require("../googleAuthHelper")
+const {google} = require('googleapis')
+const authHelper = require('../googleAuthHelper')
 
 /** holds the sheetService created by init()  
  *  @type {Object} 
@@ -41,7 +41,7 @@ const init = (sheetService = undefined) => {
  */
 const getSheetServiceDefault = () => {
   const auth = authHelper.getGoogleSheetAuth()
-  return google.sheets({version: "v4", auth})
+  return google.sheets({version: 'v4', auth})
 }
 
 module.exports = {

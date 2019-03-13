@@ -11,10 +11,11 @@
   "scripts": {
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
-    "test:int": "mocha --use_strict --reporter list \"src/**/*.testi.js\" ",
+    "test:int": "mocha --use_strict --reporter list \"src/**/*.test.int.js\" ",
     "test:all": "nyc run-p test   test:int",
     "start": "node --use_strict ./src/main.js",
-    "lint": "eslint src --color",
+    "lint": "esw src --color",
+    "lint:watch": "npm run lint -- --watch",
     "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md",
     "audit": "npm audit",
     "one": "run-p doc lint test audit"
@@ -47,6 +48,7 @@
     "@types/node": "^11.11.0",
     "chai": "x.2.0",
     "eslint": "x.15.1",
+    "eslint-watch": "^5.0.1",
     "jsdoc": "x.5.5",
     "mocha": "x.0.2",
     "npm-run-all": "x.1.5",
