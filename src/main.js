@@ -4,7 +4,7 @@ const sheetOps = require("./sheets/sheetOps")
 
 const auth = (path) => {
   console.log("running auth", path)
-  envCreate.load({path})
+  envCreate.load({path}) // make path into an object 
 }
 module.exports = {
   auth,
