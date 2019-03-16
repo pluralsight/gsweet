@@ -12,13 +12,16 @@
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --use_strict --reporter list \"src/**/*.test.int.js\" ",
-    "test:all": "nyc run-p test   test:int",
+    "test:all": "nyc run-p 'test -- --forbid-only'   'test:int -- --forbid-only'",
     "start": "node --use_strict ./src/main.js",
     "lint": "esw src --color",
     "lint:watch": "npm run lint -- --watch",
     "doc": "./node_modules/.bin/jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md",
     "audit": "npm audit",
-    "one": "run-p doc lint test audit"
+    "build:commit": "git commit --all -m 'build commit'",
+    "build:ver": "npm version patch",
+    "build:pub": "npm publish --dry-run",
+    "build": "npm-run-all --parallel doc lint test audit --serial build:commit build:ver build:pub"
   },
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",
