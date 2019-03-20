@@ -13,15 +13,17 @@ A project for gathering the core methods and tools for making it easier to write
 Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require the package and call the auth() function
 
 ```javascript
-const {driveOps, sheetOps, auth} = require("gsweet")
-auth()
+  const gsweet = new Gsweet()
+  const {driveOps} = gsweet
+  const {sheetOps} = gsweet
 ```
 
-In this example the lack of a parameter is telling the package to look for `.env.json` at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this
+In the above example the lack of a parameter to the new GSweet constructor is telling the package to look for `.env.json` at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this
 
 ```javascript
-const {driveOps, sheetOps, auth} = require("gsweet")
-auth("/Users/user-name/ENV_VARS/envJsonFilename")
+  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
+  const {driveOps} = gsweet
+  const {sheetOps} = gsweet
 ```
 
 The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.  
@@ -29,17 +31,15 @@ The code that runs loads the JSON file and parses the top level objects into env
 A full example usage of the package might look like this
 
 ```javascript
-const {driveOps, sheetOps} = require("gsweet")
-auth()
+  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
+  const {driveOps} = gsweet
+  const {sheetOps} = gsweet
 
 const main = async () => { 
   // Drive Examples
-  driveOps.autoInit()
   const TEST_FILE = "<name of sheet in your drive>"
-  let result = await driveOps.getFiles({withName: TEST_FILE})
+  const result = await driveOps.getFiles({withName: TEST_FILE, exactMatch: true})
   console.log(result)
-
-  console.log(full)
 
   // Sheet Examples
   const sheetRange = {
@@ -47,10 +47,9 @@ const main = async () => {
     range: "Sheet1!A1",
     data: [["Test1"], ["Test2"]],
   }
-  sheetOps.autoInit()
-  result = await sheetOps.setRangeData(sheetRange)
-  console.log(result.config.data.values) // just showing the values passed in
-  console.log("Num Cells Updated:", result.data.updatedCells)
+  const result2 = await sheetOps.setRangeData(sheetRange)
+  console.log(result2.config.data.values) // just showing the values passed in
+  console.log("Num Cells Updated:", result2.data.updatedCells)
 
 }
 main()
@@ -58,7 +57,7 @@ main()
 
 ## Authentication
 
-If you clone this repo it will not contain the needed authorization pieces. You will need to create a `.env.json` file at the root level of your project. The json object should have the following structure:
+If you clone this repo it will not contain the needed authorization pieces. You will need to create a JSON file with the following structure:
 
 ```JSON
 "gsweet":{

@@ -13,12 +13,11 @@
  * @license GPL-3.0-or-later [Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  */
 const ds = require('./driveService')
-
-
 const logger = require('../utils/logger')
-
 const MAX_FILES_PER_PAGE = 1000
+
 let _driveService
+
 
 /** Enum for the currently supported google mime-types */
 const mimeType = {
@@ -36,7 +35,8 @@ const mimeType = {
   },
   /**  Convenience function to return the google mime-types- called with our ENUM value */
   // getType(value) {return this.properties[value].type},
-  getType: (value) => mimeType.properties[value].type,
+  getType(value) {return mimeType.properties[value].type},
+
 }
 
 const FILE_META_FOR_NAME_SEARCH = 'files(id, name)'
@@ -51,6 +51,7 @@ const init = (driveService) => {
 const autoInit = () => {
   _driveService = ds.init()
 }
+
 
 /**
  * Get a list of files/folders that match  
