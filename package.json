@@ -21,7 +21,7 @@
     "build:commit": "git commit --all -m 'build commit'",
     "build:ver": "npm version patch",
     "build:pub": "npm publish",
-    "build": "npm-run-all --parallel doc lint test audit --serial build:commit build:ver build:pub"
+    "build": "npm-run-all --parallel doc lint test audit --serial  build:ver build:pub"
   },
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",
