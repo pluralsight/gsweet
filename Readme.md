@@ -143,3 +143,7 @@ This project uses JSDoc comments. If you want to generate the HTML documentation
   }
 }
 ```
+
+## Documentation on GitHub
+
+See the [GitHub documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/Rolias/gsweet/master/documentation/index.html) for the list of available modules, functions, function signatures, and usage examples.

@@ -55,7 +55,7 @@ const autoInit = () => {
 
 /**
  * Get a list of files/folders that match  
- * @param   {{withName:String,exactMatch:Boolean}} fileOptions
+ * @param   {{withName:string,exactMatch:boolean}} fileOptions
   * @returns {Promise<Array.<{id:String,name:String}>>}  
   * @example getFiles({withName:"someName", exactMatch:true})
  */
@@ -85,7 +85,7 @@ const getFiles = async (fileOptions) => {
 // @ts-ignore
  * @param {{withName:String}} withName
  * @returns {Promise<{id:String,name:String}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
- * @example getFile({withName:"someName"})
+ * @example getFile({withName:"someName"})  //forces  exactMatch:true
  */
 const getFile = async ({withName}) => {
   const files = await getFiles({withName, exactMatch: true})
