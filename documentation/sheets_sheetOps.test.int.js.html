@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: sheets/sheetOps.test.int.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: sheets/sheetOps.test.int.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module Sheet/sheetOps Integration Tests
+ * @author Tod Gentille &lt;tod-gentille@pluralsight.com>
+ */
+const chai = require('chai')
+const should = chai.should()
+const Gsweet = require('../main')
+// const ss = require('./sheetService')
+// const sheetOps = require('./sheetOps')
+const logger = require('../utils/logger')
+// require('env-create').load({path: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json'})
+const testData = require('../test-data/integration.json')
+const testSheet = testData.sheet
+
+const gsweet = new Gsweet('/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json')
+const {sheetOps} = gsweet
+
+before(() => {logger.level = 'info'})
+after(() => {logger.level = 'debug'})
+
+/** @see sheetOps module */
+describe('INTEGRATION TESTS sheetOps module', function () {
+  this.timeout(10000)
+  // const sheetService = ss.init()
+  // sheetOps.init(sheetService)
+
+  const SINGLE_CELL = `${testSheet.tabName}!C1`
+  const sheetRange = {}
+
+  beforeEach(() => {
+    sheetRange.id = testSheet.id
+    sheetRange.range = `${testSheet.tabName}!A1`
+    sheetRange.value = ''
+    sheetRange.data = [['Row1Test'], ['Row2Test']]
+  })
+
+  describe('setRangeData() should', () => {
+    it('set a single value when passed a [[oneItem]] 2D array', async () => {
+      sheetRange.data = [['Row1TestMe']]
+      const result = await sheetOps.setRangeData(sheetRange)
+      result.data.updatedCells.should.equal(1)
+    })
+
+    it('set multiple rows in a single column', async () => {
+      const result = await sheetOps.setRangeData(sheetRange)
+      result.data.updatedCells.should.equal(2)
+    })
+
+    it('set multiple columns and rows ', async () => {
+      sheetRange.data = [['Row1Col1Test', 'Row1Col2Test'], ['Row2Col1Test', 'Row2Col2Test']]
+      const result = await sheetOps.setRangeData(sheetRange)
+      const expected = [].concat(...sheetRange.data).length
+      result.data.updatedCells.should.equal(expected)
+    })
+
+    it('not overwrite cells that align to empty cells in a sparse array', async () => {
+      sheetRange.data = [[], ['Row2Col1Test', 'Row2Col2Test']]
+      const result = await sheetOps.setRangeData(sheetRange)
+      result.data.updatedCells.should.equal(2)
+    })
+  })
+
+  describe('setSheetCell() should', () => {
+    it('set a single value by just passing in the value in sheetRange.value property', async () => {
+      sheetRange.range = SINGLE_CELL
+      const result = await sheetOps.setSheetCell(sheetRange)
+      result.data.updatedCells.should.equal(1)
+    })
+  })
+
+  describe('getSheetValues() should', () => {
+    beforeEach(() => {
+      sheetRange.range = `${testSheet.tabName}!A1:C2`
+    })
+    const setTestData = async (data) => {
+      sheetRange.data = data
+      await sheetOps.setRangeData(sheetRange)
+      return [].concat(...data).length
+    }
+
+    it('return a single value for a range that is one cell', async () => {
+      sheetRange.value = 'oneValue'
+      sheetRange.range = SINGLE_CELL
+      await sheetOps.setSheetCell(sheetRange)
+      const result = await sheetOps.getSheetValues(sheetRange)
+      console.log(result[0][0])
+      console.log(sheetRange.value)
+      result[0][0].should.equal(sheetRange.value)
+    })
+
+    it('return multiple values, one for each cell with data in range', async () => {
+      const data = [[1, 2, 3], [4, 5, 6]]
+      const expectedNumCells = await setTestData(data)
+      const result = await sheetOps.getSheetValues(sheetRange)
+      const numCells = [].concat(...result).length
+      numCells.should.equal(expectedNumCells)
+    })
+
+    it('return a shortened array when a row ends with a blank cell', async () => {
+      const data = [[1, 2, ''], [4, 5, 6]]
+      const expectedNumCells = await setTestData(data)
+      const result = await sheetOps.getSheetValues(sheetRange)
+      const numCells = [].concat(...result).length
+      numCells.should.equal(expectedNumCells - 1)
+    })
+
+    it('return a full array when a row has a blank cell in the middle', async () => {
+      const data = [[1, '', 3], [4, 5, 6]]
+      const expectedNumCells = await setTestData(data)
+      const result = await sheetOps.getSheetValues(sheetRange)
+      const numCells = [].concat(...result).length
+      numCells.should.equal(expectedNumCells)
+    })
+
+    it('return a shortened array when the final row has no data ', async () => {
+      const data = [[1, '', 3], ['', '', '']]
+      await setTestData(data)
+      const result = await sheetOps.getSheetValues(sheetRange)
+      should.not.exist(result[1])
+    })
+  })
+})</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="Drive_driveOps.module_test.html">test</a></li><li><a href="module-drive_driveOps.html">drive/driveOps</a></li><li><a href="module-Drive_driveOps%2520Integration%2520Tests.html">Drive/driveOps Integration Tests</a></li><li><a href="module-drive_driveService.html">drive/driveService</a></li><li><a href="module-Sheet_sheetOps%2520Integration%2520Tests.html">Sheet/sheetOps Integration Tests</a></li><li><a href="sheets_sheetOps.module_js.html">sheets/sheetOps.js</a></li><li><a href="sheets_sheetService.module_js.html">sheets/sheetService.js</a></li><li><a href="-_sheetOps.module_test.html">test</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 21 2019 14:42:45 GMT-0700 (Pacific Daylight Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
