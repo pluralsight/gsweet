@@ -13,6 +13,7 @@ A project for gathering the core methods and tools for making it easier to write
 Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require the package and call the auth() function
 
 ```javascript
+  const GSweet = require('gsweet')
   const gsweet = new Gsweet()
   const {driveOps} = gsweet
   const {sheetOps} = gsweet
