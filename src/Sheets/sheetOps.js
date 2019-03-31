@@ -58,7 +58,7 @@ const autoInit = () => {
  * }
  *```
  * these properties can be useful for testing 
- * @example setRangeData({id:"longgoogleid",range:"Sheet1!A1",value?:string, data?:[["R1C1","R1C2"],["R2C1","R2C2"]]})
+ * @example setRangeData({id:"longgoogleid",range:"Sheet1!A1", data:[["R1C1","R1C2"],["R2C1","R2C2"]]})
  */
 const setRangeData = async (sheetRangeData) => {
   const resource = {
@@ -85,6 +85,7 @@ const setRangeData = async (sheetRangeData) => {
  * it into a 2D array to write to the spreadsheet.
  * @param {{id:string,range:string,value:any}} sheetRangeValue - where the range property should specify a single cell
  * @returns {Promise<Object>} see setRangeData for details on returned Object
+ * @example setSheetCell({id:SHEET_ID, range:Tab!A1, value:"SomeValue"})
  */
 const setSheetCell = async (sheetRangeValue) => {
   sheetRangeValue['data'] = [[sheetRangeValue.value]]
@@ -98,6 +99,7 @@ const setSheetCell = async (sheetRangeValue) => {
  * data no array for that row is returned.
  * @param {{id:string, range:string}} sheetRange  range property should include name of tab `Tab1!A2:C6`
  * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column). 
+ * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
  */
 const getSheetValues = async (sheetRange) => {
   try {

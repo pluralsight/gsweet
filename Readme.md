@@ -33,8 +33,7 @@ A full example usage of the package might look like this
 
 ```javascript
   const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet
+  const {driveOps, sheetOps} = gsweet
 
 const main = async () => { 
   // Drive Examples
