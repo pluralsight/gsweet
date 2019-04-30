@@ -34,7 +34,6 @@ const mimeType = {
     4: {type: 'application/vnd.google-apps.document'},
   },
   /**  Convenience function to return the google mime-types- called with our ENUM value */
-  // getType(value) {return this.properties[value].type},
   getType(value) {return mimeType.properties[value].type},
 
 }
