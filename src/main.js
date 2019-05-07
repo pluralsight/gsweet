@@ -4,8 +4,17 @@ const sheetOps = require('./sheets/sheetOps')
 
 
 class GSweet {
-  constructor(pathString) {
-    envCreate.load({path: pathString})
+  /**
+   * @param {{pathOrVarName:string, useExistingEnvVar:boolean}} param 
+   */
+  constructor(param) {
+    const {pathOrVarName, useExistingEnvVar} = param
+    if (useExistingEnvVar) {
+      process.env.gsweet = process.env[pathOrVarName]
+    } else {
+      envCreate.load({path:pathOrVarName})
+    }
+    
     this.sheetOps = sheetOps
     this.driveOps = driveOps
     this.sheetOps.autoInit()
