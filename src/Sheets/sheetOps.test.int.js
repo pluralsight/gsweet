@@ -130,7 +130,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe.only('Meta Data functions', () => {
+  describe('Meta Data functions', () => {
     beforeEach(() => {})
     it('getSheetProperties() should return some meta data.', async () => {
       const result = await sheetOps.getSheetProperties(sheetRange.id)

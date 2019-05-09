@@ -7,7 +7,10 @@ class GSweet {
   /**
    * @param {{pathOrVarName:string, useExistingEnvVar:boolean}} param 
    */
-  constructor(param) {
+  constructor(param = {pathOrVarName:'', useExistingEnvVar:false}) {
+    if (param.useExistingEnvVar == undefined) {
+      param.useExistingEnvVar = false
+    }
     const {pathOrVarName, useExistingEnvVar} = param
     if (useExistingEnvVar) {
       console.log('LOADING from pre-existing env var', pathOrVarName)
