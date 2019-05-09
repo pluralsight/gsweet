@@ -22,9 +22,15 @@ const { sheetOps } = gsweet;
 In the above example the lack of a parameter to the new GSweet constructor is telling the package to look for `.env.json` at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this
 
 ```javascript
-const gsweet = new Gsweet("/Users/your-user-name/dev/ENV_VARS/gsweet.env.json");
+const gsweet = new Gsweet({pathOrVarName:"/Users/your-user-name/dev/ENV_VARS/gsweet.env.json", useExistingEnvVar:false);
 const { driveOps } = gsweet;
 const { sheetOps } = gsweet;
+```
+
+The second parameter supports using an environment variable that already contains the proper credential string. For example, if you're using Heroku and you have a config var named "GSWEET" the call would be
+
+```javascript
+const gsweet = new GSweet({ pathOrVarName: "GSWEET", useExistingEnvVar: true });
 ```
 
 The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.
@@ -32,7 +38,7 @@ The code that runs loads the JSON file and parses the top level objects into env
 A full example usage of the package might look like this
 
 ```javascript
-const gsweet = new Gsweet("/Users/your-user-name/dev/ENV_VARS/gsweet.env.json");
+cconst gsweet = new Gsweet({pathOrVarName:"/Users/your-user-name/dev/ENV_VARS/gsweet.env.json", useExistingEnvVar:false);
 const { driveOps, sheetOps } = gsweet;
 
 const main = async () => {
@@ -71,6 +77,12 @@ If you clone this repo it will not contain the needed authorization pieces. You 
     }
   }
 }
+```
+
+If you want to store all of this in an `.env` file you will need to turn it into a properly escaped string. A partial example looks like this. Note that all but the starting and ending quote marks need to be escaped. JSON wants double quotes so you can't substitute single quotes.
+
+```JSON
+"gsweet":"{\"client_secrets\":{\"installed\":{\"client_id\"..."
 ```
 
 You will need to fill in those objects with the expected json that Google requires. Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. You can see a [full example](#Full-.json.env-example) of the JSOn file in the Reference section of this Readme.
