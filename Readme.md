@@ -2,57 +2,59 @@
 
 ## Summary
 
-A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite.  
+A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite.
 
-## Installation 
+## Installation
 
-`npm i gsweet --save`  
+`npm i gsweet --save`
 
 ## Basic Use
 
-Once you have your [authentication JSON  file](#Authentication)  set up in a file named `.env.json`  you require the package and call the auth() function
+Once you have your [authentication JSON file](#Authentication) set up in a file named `.env.json` you require the package and call the auth() function
 
 ```javascript
-  const GSweet = require('gsweet')
-  const gsweet = new Gsweet()
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet
+const GSweet = require("gsweet");
+const gsweet = new Gsweet();
+const { driveOps } = gsweet;
+const { sheetOps } = gsweet;
 ```
 
 In the above example the lack of a parameter to the new GSweet constructor is telling the package to look for `.env.json` at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this
 
 ```javascript
-  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet
+const gsweet = new Gsweet("/Users/your-user-name/dev/ENV_VARS/gsweet.env.json");
+const { driveOps } = gsweet;
+const { sheetOps } = gsweet;
 ```
 
-The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.  
+The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.
 
 A full example usage of the package might look like this
 
 ```javascript
-  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
-  const {driveOps, sheetOps} = gsweet
+const gsweet = new Gsweet("/Users/your-user-name/dev/ENV_VARS/gsweet.env.json");
+const { driveOps, sheetOps } = gsweet;
 
-const main = async () => { 
+const main = async () => {
   // Drive Examples
-  const TEST_FILE = "<name of sheet in your drive>"
-  const result = await driveOps.getFiles({withName: TEST_FILE, exactMatch: true})
-  console.log(result)
+  const TEST_FILE = "<name of sheet in your drive>";
+  const result = await driveOps.getFiles({
+    withName: TEST_FILE,
+    exactMatch: true
+  });
+  console.log(result);
 
   // Sheet Examples
   const sheetRange = {
     id: "<google id of a sheet in your drive>",
     range: "Sheet1!A1",
-    data: [["Test1"], ["Test2"]],
-  }
-  const result2 = await sheetOps.setRangeData(sheetRange)
-  console.log(result2.config.data.values) // just showing the values passed in
-  console.log("Num Cells Updated:", result2.data.updatedCells)
-
-}
-main()
+    data: [["Test1"], ["Test2"]]
+  };
+  const result2 = await sheetOps.setRangeData(sheetRange);
+  console.log(result2.config.data.values); // just showing the values passed in
+  console.log("Num Cells Updated:", result2.data.updatedCells);
+};
+main();
 ```
 
 ## Authentication
@@ -71,7 +73,7 @@ If you clone this repo it will not contain the needed authorization pieces. You 
 }
 ```
 
-You will need to fill in those objects with the expected json that Google requires.  Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. You can see a [full example](#Full-.json.env-example) of the JSOn file in the Reference section of this Readme.
+You will need to fill in those objects with the expected json that Google requires. Google has a [quick-start](https://developers.google.com/sheets/api/quickstart/nodejs) on how to create all of these credentials. You can see a [full example](#Full-.json.env-example) of the JSOn file in the Reference section of this Readme.
 
 ## Testing
 
@@ -88,7 +90,7 @@ test-folder
 
 The top of the integration test files also uses `create-env` to load credentials. You will need to change that path to point to your credentials json file.
 
-This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with 
+This project is set up such that unit tests will be written with a `test.js` suffix and integration tests will end with `testi.js`. You can run unit tests with
 `npm test` -- the unit tests  
 `npm run test:int` -- the integration tests  
 `npm run test:all` -- both unit and integration tests
@@ -97,9 +99,11 @@ This project is set up such that unit tests will be written with a `test.js` suf
 
 This is information for anyone contributing to (rather than using) this project.
 
-Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive).  
+[GoogleApis npm package](https://www.npmjs.com/package/googleapis)
 
-The [Drive API](https://developers.google.com/drive/api/v3/folder)  
+Check out some [Drive Samples](https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive).
+
+The [Drive API](https://developers.google.com/drive/api/v3/folder)
 
 ## Additional Documentation
 
@@ -108,7 +112,7 @@ This project uses JSDoc comments. If you want to generate the HTML documentation
 
 ## Reference
 
-### Full .json.env example 
+### Full .json.env example
 
 ```JSON
 {

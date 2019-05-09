@@ -15,7 +15,7 @@ const COMMON_PART_NAME = testDrive.nameContainedMaxFilesTimes
 const MIN_GOOGLE_ID_LENGTH = 10
 const MAX_FILES_PER_QUERY = 1000
 
-const gsweet = new Gsweet('/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json')
+const gsweet = new Gsweet({pathOrVarName:'/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json', useExistingEnvVar:false})
 const {driveOps} = gsweet
 
 before(() => {logger.level = 'info'})

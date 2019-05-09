@@ -10,6 +10,7 @@ class GSweet {
   constructor(param) {
     const {pathOrVarName, useExistingEnvVar} = param
     if (useExistingEnvVar) {
+      console.log('LOADING from pre-existing env var', pathOrVarName)
       process.env.gsweet = process.env[pathOrVarName]
     } else {
       envCreate.load({path:pathOrVarName})

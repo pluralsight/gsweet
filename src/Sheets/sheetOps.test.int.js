@@ -12,14 +12,21 @@ const logger = require('../utils/logger')
 const testData = require('../test-data/integration.json')
 const testSheet = testData.sheet
 
-const gsweet = new Gsweet('/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json')
+const gsweet = new Gsweet({
+  pathOrVarName: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json',
+  useExistingEnvVar: false,
+})
 const {sheetOps} = gsweet
 
-before(() => {logger.level = 'info'})
-after(() => {logger.level = 'debug'})
+before(() => {
+  logger.level = 'info'
+})
+after(() => {
+  logger.level = 'debug'
+})
 
 /** @see sheetOps module */
-describe('INTEGRATION TESTS sheetOps module', function () {
+describe('INTEGRATION TESTS sheetOps module', function() {
   this.timeout(10000)
   // const sheetService = ss.init()
   // sheetOps.init(sheetService)
@@ -47,7 +54,10 @@ describe('INTEGRATION TESTS sheetOps module', function () {
     })
 
     it('set multiple columns and rows ', async () => {
-      sheetRange.data = [['Row1Col1Test', 'Row1Col2Test'], ['Row2Col1Test', 'Row2Col2Test']]
+      sheetRange.data = [
+        ['Row1Col1Test', 'Row1Col2Test'],
+        ['Row2Col1Test', 'Row2Col2Test']
+      ]
       const result = await sheetOps.setRangeData(sheetRange)
       const expected = [].concat(...sheetRange.data).length
       result.data.updatedCells.should.equal(expected)
@@ -72,7 +82,7 @@ describe('INTEGRATION TESTS sheetOps module', function () {
     beforeEach(() => {
       sheetRange.range = `${testSheet.tabName}!A1:C2`
     })
-    const setTestData = async (data) => {
+    const setTestData = async data => {
       sheetRange.data = data
       await sheetOps.setRangeData(sheetRange)
       return [].concat(...data).length
@@ -117,6 +127,30 @@ describe('INTEGRATION TESTS sheetOps module', function () {
       await setTestData(data)
       const result = await sheetOps.getSheetValues(sheetRange)
       should.not.exist(result[1])
+    })
+  })
+
+  describe.only('Meta Data functions', () => {
+    beforeEach(() => {})
+    it('getSheetProperties() should return some meta data.', async () => {
+      const result = await sheetOps.getSheetProperties(sheetRange.id)
+       // console.log('>>>', JSON.stringify(result.data, null, 2))
+      result.data.sheets.should.exist
+      // console.log(result.data.sheets[0].properties.gridProperties.rowCount)
+    })
+
+    it('getSheetGridProperties() with index should return grid data', async () => {
+      const sheetInfo = {sheetId:sheetRange.id, sheetIndex:0}
+      const result = await sheetOps.getSheetGridProperties(sheetInfo)
+      result.rowCount.should.exist
+      result.columnCount.should.exist
+    })
+
+    it('getSheetGridProperties() with sheet name should return grid data', async () => {
+      const sheetInfo = {sheetId:sheetRange.id, sheetName:testSheet.tabName}
+      const result = await sheetOps.getSheetGridProperties(sheetInfo)
+      result.rowCount.should.exist
+      result.columnCount.should.exist
     })
   })
 })
