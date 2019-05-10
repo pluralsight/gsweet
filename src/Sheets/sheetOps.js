@@ -134,13 +134,17 @@ const getSheetProperties = async sheetId => {
 }
 
 /**
- *
+ * Get the grid properties which is an object with a rowCount and columnCount
+ * property. 
  * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
+ * @returns {Promise<{rowCount, columnCount}|string>}
  */
 const getSheetGridProperties = async sheetInfo => {
   const {sheetId} = sheetInfo
   const result = await getSheetProperties(sheetId)
 
+  // The full properties includes properties for title, gridProperties, and tabColor
+  // The tabCOlor has properties for red, green, and blue (0->1)
   if (sheetInfo.sheetIndex !== undefined) {
    const {sheetIndex} = sheetInfo
     if (result.data.sheets.length > sheetIndex) {
