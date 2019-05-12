@@ -134,31 +134,75 @@ const getSheetProperties = async sheetId => {
 }
 
 /**
+ * @typedef {object} gridProperties
+ * @property {boolean} isValid
+ * @property {number} rowCount
+ * @property {number} columnCount
+ * @property {string} message  
+ */
+/**
  * Get the grid properties which is an object with a rowCount and columnCount
  * property. 
  * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
- * @returns {Promise<{rowCount, columnCount}|string>}
+ * @returns {Promise<gridProperties>}
  */
 const getSheetGridProperties = async sheetInfo => {
   const {sheetId} = sheetInfo
   const result = await getSheetProperties(sheetId)
-
+  const {sheets} = result.data
+  const {sheetIndex, sheetName} = sheetInfo
   // The full properties includes properties for title, gridProperties, and tabColor
-  // The tabCOlor has properties for red, green, and blue (0->1)
+  // The tabColor has properties for red, green, and blue (0->1)
+  // we're only after the rowCount and ColumnCount properties on gridProperties
   if (sheetInfo.sheetIndex !== undefined) {
-   const {sheetIndex} = sheetInfo
-    if (result.data.sheets.length > sheetIndex) {
-      return result.data.sheets[sheetIndex].properties.gridProperties
-    }
-    return 'Error: request for sheetIndex that does not exist'
+    return getGridPropertiesByIndex({sheetIndex, sheets})
   }
-  const {sheetName} = sheetInfo
-  for (const sheet of result.data.sheets) {
+  return getGridPropertiesByName({sheetName, sheets})
+}
+/**
+ * @private
+ * @param {{sheetName:string, sheets:object}} param0 
+ * @returns {gridProperties}
+ */
+const getGridPropertiesByName = ({sheetName, sheets}) => {
+  const result = {isValid:true,
+    message:'',
+    rowCount:0,
+    columnCount:0,
+  } 
+  for (const sheet of sheets) {
     if (sheet.properties.title === sheetName) {
-      return sheet.properties.gridProperties
+      const gp = sheet.properties.gridProperties
+      result.rowCount = gp.rowCount
+      result.columnCount = gp.columnCount
+      return result
     }
   }
-  return 'Error: request for sheet name that does not exist'
+  result.isValid = false
+  result.message = 'Error: request for sheet name that does not exist'
+  return result
+}
+
+/**
+ * @private
+ * @param {{sheetIndex:number, sheets:object}} param0 
+ * @returns {gridProperties}
+ */
+const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
+  const result = {isValid:false,
+    message:'',
+    rowCount:0,
+    columnCount:0,
+  }   
+  if (sheets.length > sheetIndex) {
+    const gp = sheets[sheetIndex].properties.gridProperties
+    result.isValid = true
+    result.rowCount = gp.rowCount
+    result.columnCount = gp.columnCount
+    return result
+  }
+  result.message = 'Error: request for sheetIndex that does not exist'
+  return  result
 }
 
 module.exports = {

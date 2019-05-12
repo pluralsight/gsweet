@@ -130,27 +130,40 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe('Meta Data functions', () => {
+  describe.only('Meta Data functions', () => {
     beforeEach(() => {})
     it('getSheetProperties() should return some meta data.', async () => {
       const result = await sheetOps.getSheetProperties(sheetRange.id)
-       // console.log('>>>', JSON.stringify(result.data, null, 2))
+      // console.log('>>>', JSON.stringify(result.data, null, 2))
       result.data.sheets.should.exist
       // console.log(result.data.sheets[0].properties.gridProperties.rowCount)
     })
 
-    it('getSheetGridProperties() with index should return grid data', async () => {
+    it('getSheetGridProperties() with good index should return grid data', async () => {
       const sheetInfo = {sheetId:sheetRange.id, sheetIndex:0}
       const result = await sheetOps.getSheetGridProperties(sheetInfo)
-      result.rowCount.should.exist
-      result.columnCount.should.exist
+      result.isValid.should.be.true
+      result.message.should.equal('')
+    })
+    it('getSheetGridProperties() with bad index should return error', async () => {
+      const sheetInfo = {sheetId:sheetRange.id, sheetIndex:1}
+      const result = await sheetOps.getSheetGridProperties(sheetInfo)
+      result.isValid.should.be.false
+      result.message.should.contain('Error')
     })
 
-    it('getSheetGridProperties() with sheet name should return grid data', async () => {
+    it('getSheetGridProperties() with good sheet name should return grid data', async () => {
       const sheetInfo = {sheetId:sheetRange.id, sheetName:testSheet.tabName}
       const result = await sheetOps.getSheetGridProperties(sheetInfo)
-      result.rowCount.should.exist
-      result.columnCount.should.exist
+      result.message.should.equal('')
+      result.isValid.should.be.true
+    })
+
+    it('getSheetGridProperties() with bad sheet name should return grid data', async () => {
+      const sheetInfo = {sheetId:sheetRange.id, sheetName:'NonexistentSheetName'}
+      const result = await sheetOps.getSheetGridProperties(sheetInfo)
+      result.message.should.contain('Error')
+      result.isValid.should.be.false
     })
   })
 })
