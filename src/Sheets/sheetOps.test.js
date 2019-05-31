@@ -38,7 +38,14 @@ const throwSheetService = {
   spreadsheets: {
     values: {
       get: async () => {
-        throw ('test throw')
+        throw ({response:{
+          data:{
+            error:{
+              message:'test throw',
+            },
+          },
+        },
+        })
       },
       update: async () => {
         throw ('test throw')
@@ -95,9 +102,8 @@ describe('sheetOps module', () => {
       sheetOps.init(throwSheetService)
       await sheetOps.getSheetValues(sheetRange)
         .catch(err => {
+          console.log(err)
           err.should.contain('test throw')
-          // the /s flag for regex will let . match a new line character
-          err.should.match(/Error trying to get range values.*test throw/s)
         })
     })
   })

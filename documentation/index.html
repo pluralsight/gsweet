@@ -43,39 +43,41 @@
 
 
     <section>
-        <article><h1>gsweet</h1><h2>Summary</h2><p>A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite.  </p>
-<h2>Installation</h2><p><code>npm i gsweet --save</code>  </p>
-<h2>Basic Use</h2><p>Once you have your <a href="#Authentication">authentication JSON  file</a>  set up in a file named <code>.env.json</code>  you require the package and call the auth() function</p>
-<pre class="prettyprint source lang-javascript"><code>  const GSweet = require('gsweet')
-  const gsweet = new Gsweet()
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet</code></pre><p>In the above example the lack of a parameter to the new GSweet constructor is telling the package to look for <code>.env.json</code> at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this</p>
-<pre class="prettyprint source lang-javascript"><code>  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet</code></pre><p>The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.  </p>
+        <article><h1>gsweet</h1><h2>Summary</h2><p>A project for gathering the core methods and tools for making it easier to write scripts across all the products in the gSuite.</p>
+<h2>Installation</h2><p><code>npm i gsweet --save</code></p>
+<h2>Basic Use</h2><p>Once you have your <a href="#Authentication">authentication JSON file</a> set up in a file named <code>.env.json</code> you require the package and call the auth() function</p>
+<pre class="prettyprint source lang-javascript"><code>const GSweet = require(&quot;gsweet&quot;);
+const gsweet = new Gsweet();
+const { driveOps } = gsweet;
+const { sheetOps } = gsweet;</code></pre><p>In the above example the lack of a parameter to the new GSweet constructor is telling the package to look for <code>.env.json</code> at the root of the project. If your credentials file lives somewhere else you can just pass in a relative or absolute path like this</p>
+<pre class="prettyprint source lang-javascript"><code>const gsweet = new Gsweet({pathOrVarName:&quot;/Users/your-user-name/dev/ENV_VARS/gsweet.env.json&quot;, useExistingEnvVar:false);
+const { driveOps } = gsweet;
+const { sheetOps } = gsweet;</code></pre><p>The second parameter supports using an environment variable that already contains the proper credential string. For example, if you're using Heroku and you have a config var named &quot;GSWEET&quot; the call would be</p>
+<pre class="prettyprint source lang-javascript"><code>const gsweet = new GSweet({ pathOrVarName: &quot;GSWEET&quot;, useExistingEnvVar: true });</code></pre><p>The code that runs loads the JSON file and parses the top level objects into environment variables needed by this package.</p>
 <p>A full example usage of the package might look like this</p>
-<pre class="prettyprint source lang-javascript"><code>  const gsweet = new Gsweet('/Users/your-user-name/dev/ENV_VARS/gsweet.env.json')
-  const {driveOps} = gsweet
-  const {sheetOps} = gsweet
+<pre class="prettyprint source lang-javascript"><code>cconst gsweet = new Gsweet({pathOrVarName:&quot;/Users/your-user-name/dev/ENV_VARS/gsweet.env.json&quot;, useExistingEnvVar:false);
+const { driveOps, sheetOps } = gsweet;
 
-const main = async () => { 
+const main = async () => {
   // Drive Examples
-  const TEST_FILE = &quot;&lt;name of sheet in your drive>&quot;
-  const result = await driveOps.getFiles({withName: TEST_FILE, exactMatch: true})
-  console.log(result)
+  const TEST_FILE = &quot;&lt;name of sheet in your drive>&quot;;
+  const result = await driveOps.getFiles({
+    withName: TEST_FILE,
+    exactMatch: true
+  });
+  console.log(result);
 
   // Sheet Examples
   const sheetRange = {
     id: &quot;&lt;google id of a sheet in your drive>&quot;,
     range: &quot;Sheet1!A1&quot;,
-    data: [[&quot;Test1&quot;], [&quot;Test2&quot;]],
-  }
-  const result2 = await sheetOps.setRangeData(sheetRange)
-  console.log(result2.config.data.values) // just showing the values passed in
-  console.log(&quot;Num Cells Updated:&quot;, result2.data.updatedCells)
-
-}
-main()</code></pre><h2>Authentication</h2><p>If you clone this repo it will not contain the needed authorization pieces. You will need to create a JSON file with the following structure:</p>
+    data: [[&quot;Test1&quot;], [&quot;Test2&quot;]]
+  };
+  const result2 = await sheetOps.setRangeData(sheetRange);
+  console.log(result2.config.data.values); // just showing the values passed in
+  console.log(&quot;Num Cells Updated:&quot;, result2.data.updatedCells);
+};
+main();</code></pre><h2>Authentication</h2><p>If you clone this repo it will not contain the needed authorization pieces. You will need to create a JSON file with the following structure:</p>
 <pre class="prettyprint source lang-JSON"><code>&quot;gsweet&quot;:{
    &quot;client_secrets&quot;: {
     },
@@ -84,7 +86,8 @@ main()</code></pre><h2>Authentication</h2><p>If you clone this repo it will not 
     &quot;sheet_credentials&quot;: {
     }
   }
-}</code></pre><p>You will need to fill in those objects with the expected json that Google requires.  Google has a <a href="https://developers.google.com/sheets/api/quickstart/nodejs">quick-start</a> on how to create all of these credentials. You can see a <a href="#Full-.json.env-example">full example</a> of the JSOn file in the Reference section of this Readme.</p>
+}</code></pre><p>If you want to store all of this in an <code>.env</code> file you will need to turn it into a properly escaped string. A partial example looks like this. Note that all but the starting and ending quote marks need to be escaped. JSON wants double quotes so you can't substitute single quotes.</p>
+<pre class="prettyprint source lang-JSON"><code>&quot;gsweet&quot;:&quot;{\&quot;client_secrets\&quot;:{\&quot;installed\&quot;:{\&quot;client_id\&quot;...&quot;</code></pre><p>You will need to fill in those objects with the expected json that Google requires. Google has a <a href="https://developers.google.com/sheets/api/quickstart/nodejs">quick-start</a> on how to create all of these credentials. You can see a <a href="#Full-.json.env-example">full example</a> of the JSOn file in the Reference section of this Readme.</p>
 <h2>Testing</h2><p>This package contains both unit tests and integration tests. The integration tests are fragile since they require access to specific files and folders in google drive. The constants for these files are stored in the <code>test-data/integration.json</code>. Modify that document to contain the names and ids for your files. The expected structure of the test data is
 test-folder</p>
 <pre class="prettyprint source"><code>---node-test-subfolder
@@ -92,11 +95,12 @@ test-folder</p>
   |---sheet-in-subfolder
   node-test-sheet
   node-test-doc</code></pre><p>The top of the integration test files also uses <code>create-env</code> to load credentials. You will need to change that path to point to your credentials json file.</p>
-<p>This project is set up such that unit tests will be written with a <code>test.js</code> suffix and integration tests will end with <code>testi.js</code>. You can run unit tests with 
+<p>This project is set up such that unit tests will be written with a <code>test.js</code> suffix and integration tests will end with <code>testi.js</code>. You can run unit tests with
 <code>npm test</code> -- the unit tests<br><code>npm run test:int</code> -- the integration tests<br><code>npm run test:all</code> -- both unit and integration tests</p>
 <h2>Reference on Using the Google Apis</h2><p>This is information for anyone contributing to (rather than using) this project.</p>
-<p>Check out some <a href="https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive">Drive Samples</a>.  </p>
-<p>The <a href="https://developers.google.com/drive/api/v3/folder">Drive API</a>  </p>
+<p><a href="https://www.npmjs.com/package/googleapis">GoogleApis npm package</a></p>
+<p>Check out some <a href="https://github.com/googleapis/google-api-nodejs-client/tree/master/samples/drive">Drive Samples</a>.</p>
+<p>The <a href="https://developers.google.com/drive/api/v3/folder">Drive API</a></p>
 <h2>Additional Documentation</h2><p>This project uses JSDoc comments. If you want to generate the HTML documentation in an <code>/out</code> folder at the root of the project use:<br><code>npm run doc</code></p>
 <h2>Reference</h2><h3>Full .json.env example</h3><pre class="prettyprint source lang-JSON"><code>{
   &quot;gsweet&quot;:{
@@ -251,7 +255,7 @@ test-folder</p>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Mon Mar 25 2019 14:38:23 GMT-0700 (Pacific Daylight Time)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat May 11 2019 23:52:27 GMT-0700 (Pacific Daylight Time)
 </footer>
 
 <script> prettyPrint(); </script>

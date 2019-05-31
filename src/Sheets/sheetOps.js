@@ -107,11 +107,7 @@ const getSheetValues = async sheetRange => {
     })
     return result.data.values
   } catch (err) {
-    const msg = `"Error trying to get range values\n ${JSON.stringify(
-      err,
-      null,
-      2
-    )})`
+    const msg = `${err.response.data.error.message}`
     logger.error(msg)
     throw msg
   }
@@ -143,7 +139,7 @@ const getSheetProperties = async sheetId => {
 /**
  * Get the grid properties which is an object with a rowCount and columnCount
  * property. 
- * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
+ * @param {{sheetId:string, sheetIndex=:number, sheetName=:string}} sheetInfo
  * @returns {Promise<gridProperties>}
  */
 const getSheetGridProperties = async sheetInfo => {
