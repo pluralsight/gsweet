@@ -1,6 +1,7 @@
 /** @module
  */
-declare module "drive/driveOps" {
+declare module gsweet {
+  declare module "drive/driveOps" {
     /** Enum for the currently supported google mime-types
      */
     var mimeType: any;
@@ -16,7 +17,9 @@ declare module "drive/driveOps" {
      * @returns {Promise<Array.<{id:String,name:String}>>}
      * @example getFiles({withName:"someName", exactMatch:true})
      */
-    function getFiles(fileOptions: any): Promise<{ id: String; name: String; }[]>;
+    function getFiles(
+      fileOptions: any
+    ): Promise<{ id: String; name: String }[]>;
     /**
      * Get a single file for the passed name. If a single file isn't found an error is thrown.
     // @ts-ignore
@@ -24,7 +27,7 @@ declare module "drive/driveOps" {
      * @returns {Promise<{id:String,name:String}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
      * @example getFile({withName:"someName"})  //forces  exactMatch:true
      */
-    function getFile(withName: any): Promise<{ id: String; name: String; }>;
+    function getFile(withName: any): Promise<{ id: String; name: String }>;
     /**
      * Convenience function that returns the id for a file
      * @param {{withName:String,exactMatch:Boolean}} withNameObj
@@ -41,7 +44,7 @@ declare module "drive/driveOps" {
      * @example listFiles()
      *
      */
-    function listFiles(): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any; }[]>;
+    function listFiles(): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any }[]>;
     /**
      * Get all the Files in the passed folderId   (ofType is optional)
      * @param {{withFolderId:String,ofType:any}} folderOptions
@@ -49,7 +52,9 @@ declare module "drive/driveOps" {
      * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
      * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
      */
-    function getFilesInFolder(folderOptions: any): Promise<{ name: id; mimeType: any; }[]>;
+    function getFilesInFolder(
+      folderOptions: any
+    ): Promise<{ name: id; mimeType: any }[]>;
     /**
      * Get just the names of the files in the folder (ofType is optional)
      * @param {{withFolderId:String,ofType:number}} folderOptions
@@ -64,46 +69,48 @@ declare module "drive/driveOps" {
      * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
      * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
      */
-    function getFilesRecursively(folderOptions: any): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any; }[]>;
+    function getFilesRecursively(
+      folderOptions: any
+    ): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any }[]>;
     /**
      * Private helper function to look up the mimetype string for the passed enum and construct and "and" clause that
      * can be used in the API search query. The FILE enum isn't a type the API understands
      * but we use it to mean any type of file but NOT a folder.
-    * @param {number} type
+     * @param {number} type
      * @returns {string} the additional clause to limit the search for the specified type.
      * For example if mimeType.SPREADSHEET was passed in, then the clause
      * will be returned.
      * @example getMimeTypeClause(mimeType.SPREADSHEET) will return `and mimeType = application/vnd.google-apps.spreadsheet`
      */
     function getMimeTypeClause(type: number): string;
-}
+  }
 
-/**
- * @module Drive/driveOps Integration Tests
- */
-declare module "Drive/driveOps Integration Tests" { }
+  /**
+   * @module Drive/driveOps Integration Tests
+   */
+  declare module "Drive/driveOps Integration Tests" {}
 
-/**
- * @module
- */
-declare module "drive/driveService" {
+  /**
+   * @module
+   */
+  declare module "drive/driveService" {
     /**
      * Set up the service used for the Google Drive API. If no parameter passed in
      * uses the real google API, a fake or mock can be passed in for testing.
      * @param {Object} svc (optional)  if not passed uses the google.drive service
      */
     function init(svc: any): void;
-}
+  }
 
-/**
- * @file Handles talking to the Google Drive API
- * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
- *
- * @author Tod Gentille <tod-gentille@pluralsight.com>
- * @license GPL-3.0-or-later
- * @module
- */
-declare module "sheets/sheetOps.js" {
+  /**
+   * @file Handles talking to the Google Drive API
+   * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
+   *
+   * @author Tod Gentille <tod-gentille@pluralsight.com>
+   * @license GPL-3.0-or-later
+   * @module
+   */
+  declare module "sheets/sheetOps.js" {
     /**
      * Set up this module with the object that allows access to the google sheet
      * calls. Typically from the value returned by sheetService.init(). When testing
@@ -147,7 +154,18 @@ declare module "sheets/sheetOps.js" {
      * these properties can be useful for testing
      * @example setRangeData({id:"longgoogleid",range:"Sheet1!A1", data:[["R1C1","R1C2"],["R2C1","R2C2"]]})
      */
-    function setRangeData(sheetRangeData: any): Promise<{ config: { data: { values: Array[]; }; }; data: { spreadsheetId: string; updatedRange: string; updatedRows: number; updatedColumns: number; updatedCells: number; }; }>;
+    function setRangeData(
+      sheetRangeData: any
+    ): Promise<{
+      config: { data: { values: Array[] } };
+      data: {
+        spreadsheetId: string;
+        updatedRange: string;
+        updatedRows: number;
+        updatedColumns: number;
+        updatedCells: number;
+      };
+    }>;
     /**
      * Convenience function that will take a string or number primitive and wrap
      * it into a 2D array to write to the spreadsheet.
@@ -178,10 +196,10 @@ declare module "sheets/sheetOps.js" {
      * @property {string} message
      */
     type gridProperties = {
-        isValid: boolean;
-        rowCount: number;
-        columnCount: number;
-        message: string;
+      isValid: boolean;
+      rowCount: number;
+      columnCount: number;
+      message: string;
     };
     /**
      * Get the grid properties which is an object with a rowCount and columnCount
@@ -190,22 +208,22 @@ declare module "sheets/sheetOps.js" {
      * @returns {Promise<gridProperties>}
      */
     function getSheetGridProperties(sheetInfo: any): Promise<gridProperties>;
-}
+  }
 
-/**
- * @module Sheet/sheetOps Integration Tests
- * @author Tod Gentille <tod-gentille@pluralsight.com>
- */
-declare module "Sheet/sheetOps Integration Tests" { }
+  /**
+   * @module Sheet/sheetOps Integration Tests
+   * @author Tod Gentille <tod-gentille@pluralsight.com>
+   */
+  declare module "Sheet/sheetOps Integration Tests" {}
 
-/**
- * @file Creat the Google drive service needed to hit the Drive API
- * @author Tod Gentille
- * @requires NPM:googleapis
- * @requires ../googleAuthHelper
- * @module
- */
-declare module "sheets/sheetService.js" {
+  /**
+   * @file Creat the Google drive service needed to hit the Drive API
+   * @author Tod Gentille
+   * @requires NPM:googleapis
+   * @requires ../googleAuthHelper
+   * @module
+   */
+  declare module "sheets/sheetService.js" {
     /** holds the sheetService created by init()
      *  @type {Object}
      */
@@ -224,5 +242,5 @@ declare module "sheets/sheetService.js" {
      * @returns {Object} the actual Google Sheet Service
      */
     function getSheetServiceDefault(): any;
+  }
 }
-
