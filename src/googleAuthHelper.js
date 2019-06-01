@@ -17,11 +17,16 @@ const init = () => {
   if (process.env.gsweet === undefined) {
     throw ('environment variables with credentials are missing')
   }
-  gsweet = JSON.parse(process.env.gsweet)
-  clientSecrets = gsweet.client_secrets
-  sheetsCreds = gsweet.sheet_credentials
-  driveCreds = gsweet.drive_credentials
-  initialized = true
+  try {
+    gsweet = JSON.parse(process.env.gsweet)
+    clientSecrets = gsweet.client_secrets
+    sheetsCreds = gsweet.sheet_credentials
+    driveCreds = gsweet.drive_credentials
+    initialized = true
+  } catch (error) {
+    console.log('problem parsing environment variable gsweet')
+    console.log(process.env.gsweet)
+  }
 }
 
 /** Get the Google Sheet authorization */
