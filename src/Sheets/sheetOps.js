@@ -31,8 +31,8 @@ const autoInit = () => {
  * By default each inner array is a row in the sheet with an element for each column
  * if a sparse array is sent the missing cells in the range are skipped
  * (i.e. they aren't overwritten)
- * @param {{id:string,range:string,value:any,data:Array.<Array>}} sheetRangeData
- * @returns {Promise<{config:{data:{values:Array.<Array>}},
+ * @param {{id:string,range:string,value:any,data:[][]}} sheetRangeData
+ * @returns {Promise<{config:{data:{values:[][]}},
  * data:{spreadsheetId:string,updatedRange:string,updatedRows:number,updatedColumns:number, updatedCells:number}}>}
  * object with many props including config.data and data
  * ```

@@ -154,7 +154,7 @@ const listFiles = async () => {
 /**
  * Get all the Files in the passed folderId   (ofType is optional)  
  * @param {{withFolderId:String,ofType:any}} folderOptions
- * @returns {Promise<Array<{name, id, mimeType}>>} array of file objects where each object has the properties
+ * @returns {Promise<Array<{name:string, id:string, mimeType:string}>>} array of file objects where each object has the properties
  * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
  * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
  */

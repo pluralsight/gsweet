@@ -51,7 +51,7 @@ declare module "drive/driveOps" {
    */
   function getFilesInFolder(
     folderOptions: any
-  ): Promise<{ name: id; mimeType: any }[]>;
+  ): Promise<{ name:string, id:string, mimeType: any }[]>;
   /**
    * Get just the names of the files in the folder (ofType is optional)
    * @param {{withFolderId:String,ofType:number}} folderOptions
@@ -154,7 +154,7 @@ declare module "sheets/sheetOps.js" {
   function setRangeData(
     sheetRangeData: any
   ): Promise<{
-    config: { data: { values: Array[] } };
+    config: { data: { values: [][] } };
     data: {
       spreadsheetId: string;
       updatedRange: string;
@@ -179,7 +179,7 @@ declare module "sheets/sheetOps.js" {
    * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column).
    * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
    */
-  function getSheetValues(sheetRange: any): Promise<Array[]>;
+  function getSheetValues(sheetRange: any): Promise<[][]>;
   /**
    *
    * @param {string} sheetId
