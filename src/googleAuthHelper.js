@@ -14,11 +14,11 @@ const forceInitialization = () => {
 
 /** One time initialization to load credentials */
 const init = () => {
-  if (process.env.gsweet === undefined) {
+  if (process.env.GSWEET === undefined) {
     throw ('environment variables with credentials are missing')
   }
   try {
-    gsweet = JSON.parse(process.env.gsweet)
+    gsweet = JSON.parse(process.env.GSWEET)
     clientSecrets = gsweet.client_secrets
     sheetsCreds = gsweet.sheet_credentials
     driveCreds = gsweet.drive_credentials
