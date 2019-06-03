@@ -11,7 +11,7 @@
   "scripts": {
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
-    "test:int": "mocha --use_strict --reporter list \"src/**/*.test.int.js\" ",
+    "test:int": "mocha --reporter list \"src/**/*.test.int.js\" ",
     "test:all": "nyc run-p 'test -- --forbid-only'   'test:int -- --forbid-only'",
     "start": "node --use_strict ./src/main.js",
     "lint": "esw src --color",

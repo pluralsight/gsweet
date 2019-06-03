@@ -14,7 +14,7 @@ const forceInitialization = () => {
 
 /** One time initialization to load credentials */
 const init = () => {
-  if (process.env.GSWEET === undefined) {
+  if (process.env.GSWEET == undefined) {
     throw ('environment variables with credentials are missing')
   }
   try {
@@ -25,7 +25,7 @@ const init = () => {
     initialized = true
   } catch (error) {
     console.log('problem parsing environment variable gsweet')
-    console.log(process.env.gsweet)
+    console.log(process.env.GSWEET)
   }
 }
 

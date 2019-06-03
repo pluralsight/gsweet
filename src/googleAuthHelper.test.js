@@ -23,12 +23,12 @@ describe('googleAuthHelper', () => {
 
   beforeEach(() => {
     sandbox.stub(googleAuth, 'OAuth2Client').returns(mockedResponse)
-    process.env['gsweet'] = gsweetEnv
+    process.env['GSWEET'] = gsweetEnv
   })
 
   afterEach(() => {
     sandbox.restore()
-    delete process.env.gsweet
+    delete process.env.GSWEET
   })
 
   it('getGoogleSheetAuth should return object with credentials', () => {
@@ -40,8 +40,9 @@ describe('googleAuthHelper', () => {
     result.should.haveOwnProperty('credentials')
   })
 
-  it('getGooleDriveAuth should throw if no process.env.gsweet', () => {
-    process.env.gsweet = undefined
+  it('getGooleDriveAuth should throw if no process.env.GSWEET', () => {
+    delete process.env.GSWEET
+    console.log('the GSWEET:', process.env.GSWEET)
     authHelper.forceInitialization()
     authHelper.getGoogleDriveAuth.bind().should.throw()
   })

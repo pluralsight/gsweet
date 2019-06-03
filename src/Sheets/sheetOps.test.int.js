@@ -5,10 +5,7 @@
 const chai = require('chai')
 const should = chai.should()
 const Gsweet = require('../main')
-// const ss = require('./sheetService')
-// const sheetOps = require('./sheetOps')
 const logger = require('../utils/logger')
-// require('env-create').load({path: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json'})
 const testData = require('../test-data/integration.json')
 const testSheet = testData.sheet
 
@@ -28,9 +25,6 @@ after(() => {
 /** @see sheetOps module */
 describe('INTEGRATION TESTS sheetOps module', function() {
   this.timeout(10000)
-  // const sheetService = ss.init()
-  // sheetOps.init(sheetService)
-
   const SINGLE_CELL = `${testSheet.tabName}!C1`
   const sheetRange = {}
 
@@ -130,7 +124,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe.only('Meta Data functions', () => {
+  describe('Meta Data functions', () => {
     beforeEach(() => {})
     it('getSheetProperties() should return some meta data.', async () => {
       const result = await sheetOps.getSheetProperties(sheetRange.id)
@@ -164,6 +158,38 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       const result = await sheetOps.getSheetGridProperties(sheetInfo)
       result.message.should.contain('Error')
       result.isValid.should.be.false
+    })
+  })
+
+  describe.only('formatCellsBgColor',   () => {
+    beforeEach(() => {
+  
+    })
+    it.only('should set the desired cells to the specified color', async () => {
+      const formatOptions = {
+        id:sheetRange.id,
+        sheetId:0,
+        row:2,
+        numRows:1,
+        col:0,
+        numCols:2,
+        color:{r:1.0, g:0.67, b:1.0},
+      }
+      const result = await sheetOps.formatCellsBgColor({id:sheetRange.id, formatOptions})
+      result.statusText.should.equal('OK')
+    })
+
+    it('should ...', async () => {
+      const param = {
+        id:sheetRange.id,
+        sheetId:0,
+        row:0,
+        col:0,
+        note:'Adding a note through the API',
+      }
+      const result = await sheetOps.addNoteToCell(param)
+      console.log(result)
+      result.statusText.should.equal('OK')
     })
   })
 })

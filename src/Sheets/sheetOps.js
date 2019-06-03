@@ -9,6 +9,7 @@
  */
 const ss = require('./sheetService')
 const logger = require('../utils/logger')
+const formatOps = require('./sheetFormatOps')
 
 let _sheetService
 
@@ -26,12 +27,34 @@ const init = sheetService => {
 const autoInit = () => {
   _sheetService = ss.init()
 }
+
+/**
+ * @typedef IdRangeType
+ * @property id:string
+ * @property range:string
+ */
+
+/**
+ * @typedef IdRangeDataType
+ * @property id:string
+ * @property range:string
+ * @property data:[][]
+ */
+
+/**
+ * @typedef IdRangeValueType
+ * @property id:string
+ * @property range:string
+ * @property value:any
+ */
+
+
 /**
  * Set a range of data in a target sheet with an array of arrays of data
  * By default each inner array is a row in the sheet with an element for each column
  * if a sparse array is sent the missing cells in the range are skipped
  * (i.e. they aren't overwritten)
- * @param {{id:string,range:string,value:any,data:[][]}} sheetRangeData
+ * @param {IdRangeDataType} sheetRangeData
  * @returns {Promise<{config:{data:{values:[][]}},
  * data:{spreadsheetId:string,updatedRange:string,updatedRows:number,updatedColumns:number, updatedCells:number}}>}
  * object with many props including config.data and data
@@ -81,7 +104,7 @@ const setRangeData = async sheetRangeData => {
 /**
  * Convenience function that will take a string or number primitive and wrap
  * it into a 2D array to write to the spreadsheet.
- * @param {{id:string,range:string,value:any}} sheetRangeValue - where the range property should specify a single cell
+ * @param {IdRangeValueType} sheetRangeValue - where the range property should specify a single cell
  * @returns {Promise<Object>} see setRangeData for details on returned Object
  * @example setSheetCell({id:SHEET_ID, range:Tab!A1, value:"SomeValue"})
  */
@@ -95,7 +118,7 @@ const setSheetCell = async sheetRangeValue => {
  * Get all the cells in the specified range. If a given row has no data in the
  * final cells for a row, the array for that row is shortened. If a row has no
  * data no array for that row is returned.
- * @param {{id:string, range:string}} sheetRange  range property should include name of tab `Tab1!A2:C6`
+ * @param {IdRangeType} sheetRange  range property should include name of tab `Tab1!A2:C6`
  * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column).
  * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
  */
@@ -201,6 +224,54 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
   return  result
 }
 
+
+/**
+ * 
+ * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
+ */
+const formatCellsBgColor = async ({id, formatOptions}) => {
+  const request = formatOps.getFormatCellBgColorRequest(formatOptions)
+  return batchUpdate({id, request})
+}
+
+/**
+ * Example of how to set FG,BG, Bold, fontsize etc
+ * The fields property restricts things from getting changes so if
+ * I just wanted the text foreground to change I could replace
+ * textFormat with textFormat/foregroundColor
+ * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
+ */
+const formatCells = async ({id, formatOptions}) => {
+  const request = formatOps.getFormatCellsRequest(formatOptions)
+  return batchUpdate({id, request})
+}
+
+/**
+ * 
+ * @param {{id:string, formatOptions:formatOps.FormatCellsNoteType}} param 
+ */
+const addNoteToCell = async ({id, formatOptions}) => {
+  const request = formatOps.getAddNoteToCellRequest(formatOptions)
+  return batchUpdate({id, request})
+}
+
+/**
+ * 
+ * @param {{id:string, request:object} param0 
+ */
+const batchUpdate = async ({id, request}) => {
+  const result = await _sheetService.spreadsheets.batchUpdate({
+    spreadsheetId:id,
+    resource:request,
+  })
+    .catch((err) => {
+      console.log('Error trying to do batch update', JSON.stringify(err, null, 2))
+      return 'batch request failed'
+    })
+  return result
+}
+
+
 module.exports = {
   init,
   autoInit,
@@ -209,4 +280,7 @@ module.exports = {
   setSheetCell,
   getSheetProperties,
   getSheetGridProperties,
+  formatCellsBgColor,
+  formatCells,
+  addNoteToCell,
 }
