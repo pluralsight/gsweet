@@ -24,6 +24,7 @@
  * @typedef   NoteType
  * @property note:string
  */
+
 /**
  * @typedef   {FormatCellsBaseType & NoteType} FormatCellsNoteType
  */
@@ -112,10 +113,10 @@ const getFormatCellsRequest =  (param) => {
 
 /**
  * 
- * @param {FormatCellsNoteType} param 
+ * @noteOptions {FormatCellsNoteType} noteOptions 
  */
-const getAddNoteToCellRequest =  (param) => {
-  const {sheetId, row, col, note} = param
+const getAddNoteToCellRequest =  (noteOptions) => {
+  const {sheetId, row, col, note} = noteOptions
   const request = {
     requests: [
       {
@@ -140,7 +141,6 @@ const getAddNoteToCellRequest =  (param) => {
   }
   return request
 }
-
 
 module.exports = {
   getFormatCellBgColorRequest,

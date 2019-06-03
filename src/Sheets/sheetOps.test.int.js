@@ -165,9 +165,8 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     beforeEach(() => {
   
     })
-    it.only('should set the desired cells to the specified color', async () => {
+    it('should set the desired cells to the specified color', async () => {
       const formatOptions = {
-        id:sheetRange.id,
         sheetId:0,
         row:2,
         numRows:1,
@@ -180,14 +179,13 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
 
     it('should ...', async () => {
-      const param = {
-        id:sheetRange.id,
+      const noteOptions = {
         sheetId:0,
         row:0,
         col:0,
         note:'Adding a note through the API',
       }
-      const result = await sheetOps.addNoteToCell(param)
+      const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
       console.log(result)
       result.statusText.should.equal('OK')
     })

@@ -248,10 +248,10 @@ const formatCells = async ({id, formatOptions}) => {
 
 /**
  * 
- * @param {{id:string, formatOptions:formatOps.FormatCellsNoteType}} param 
+ * @param {{id:string, noteOptions:formatOps.FormatCellsNoteType}} param 
  */
-const addNoteToCell = async ({id, formatOptions}) => {
-  const request = formatOps.getAddNoteToCellRequest(formatOptions)
+const addNoteToCell = async ({id, noteOptions}) => {
+  const request = formatOps.getAddNoteToCellRequest(noteOptions)
   return batchUpdate({id, request})
 }
 
