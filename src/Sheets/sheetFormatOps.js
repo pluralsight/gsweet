@@ -25,6 +25,10 @@
  */
 
 /**
+ * @typedef   {FormatCellsBaseType  & ColorType} FormatSingleColorType
+ */
+
+/**
  * @typedef   {FormatCellsBaseType & MultipleCellsType & ColorType} FormatCellsColorType
  */
 

@@ -161,7 +161,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe('formatCellsBgColor',   () => {
+  describe.only('formatCellsBgColor',   () => {
     let baseOptions
     beforeEach(() => {
       baseOptions = {
@@ -170,10 +170,17 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         col:0,
       }
     })
+    
     it('should set the desired cells to the specified color', async () => {
       const formatOptions = {...baseOptions, numRows:1, numCols:2, color:{r:1.0, g:0.67, b:1.0},
       }
       const result = await sheetOps.formatCellsBgColor({id:sheetRange.id, formatOptions})
+      result.statusText.should.equal('OK')
+    })
+
+    it('should set a single cell to the specified color', async () => {
+      const formatOptions = {...baseOptions, color:{r:1.0, g:0.67, b:1.0}}
+      const result = await sheetOps.formatSingleBgColor({id:sheetRange.id, singleCellOptions:formatOptions})
       result.statusText.should.equal('OK')
     })
 

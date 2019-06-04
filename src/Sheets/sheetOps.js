@@ -266,12 +266,24 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
 
 
 /**
- * 
- * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
+ * @param {id:string, formatOptions:formatOps.FormatCellsColorType} param0
  */
 const formatCellsBgColor = async ({id, formatOptions}) => {
   const requestObj = formatOps.getBgColorRequest(formatOptions)
   return  makeSingleObjBatchRequest({id, requestObj})
+}
+
+/**
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {formatOps.FormatSingleColorType} obj.singleCellOptions
+ */
+const formatSingleBgColor = async({id, singleCellOptions}) => {
+  const formatOptions = {...singleCellOptions}
+  formatOptions.numRows = 1
+  formatOptions.numCols = 1
+  const result = formatCellsBgColor({id, formatOptions})
+  return result
 }
 
 /**
@@ -361,6 +373,7 @@ module.exports = {
   getSheetProperties,
   getSheetGridProperties,
   formatCellsBgColor,
+  formatSingleBgColor,
   formatCells,
   addNoteToCell,
   getSheetIdByName,
