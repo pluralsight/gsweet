@@ -1,4 +1,12 @@
-
+// @ts-check
+/**
+ * @file Handles talking to the Google Drive API
+ * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
+ *
+ * @author Tod Gentille <tod-gentille@pluralsight.com>
+ * @license GPL-3.0-or-later
+ * @module
+ */
 /**
  * @typedef FormatCellsBaseType
  * @property sheetId:string  // This is the tab id number - starting with 0

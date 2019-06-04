@@ -96,62 +96,66 @@ declare module "drive/driveService" {
 }
 
 /**
- * @typedef FormatCellsBaseType
- * @property sheetId:string  // This is the tab id number - starting with 0
- * @property row:number
- * @property col:number
- */
-declare type FormatCellsBaseType = {
-    sheetId:string: any;
-    row:number: any;
-    col:number: any;
-};
-
-/**
- * @typedef MultipleCellsType
- * @property numRows:number
- * @property numCols: number
- */
-declare type MultipleCellsType = {
-    numRows:number: any;
-    numCols:: any;
-};
-
-/**
- * @typedef   ColorType
- * @property color:{r:number, g:number, b:number}  // numbers for rgb 0.0->1.0
- */
-declare type ColorType = {};
-
-/**
- * @typedef   NoteType
- * @property note:string
- */
-declare type NoteType = {
-    note:string: any;
-};
-
-/**
+ * @file Handles talking to the Google Drive API
+ * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  *
- * @param {FormatCellsColorType} param
+ * @author Tod Gentille <tod-gentille@pluralsight.com>
+ * @license GPL-3.0-or-later
+ * @module
  */
-declare function getBgColorRequest(param: FormatCellsColorType): void;
-
-/**
- * Example of how to set FG,BG, Bold, fontsize etc
- * The fields property restricts things from getting changes so if
- * I just wanted the text foreground to change I could replace
- * textFormat with textFormat/foregroundColor. As is any textFormat not specified
- * will get reset to the google sheet default value for that formatting property
- * @param {FormatCellsColorType} param
- */
-declare function getFormatCellsRequest(param: FormatCellsColorType): void;
-
-/**
- *
- * @noteOptions {FormatCellsNoteType} noteOptions
- */
-declare function getAddNoteRequest(): void;
+declare module "sheets/sheetFormatOps.js" {
+    /**
+     * @typedef FormatCellsBaseType
+     * @property sheetId:string  // This is the tab id number - starting with 0
+     * @property row:number
+     * @property col:number
+     */
+    type FormatCellsBaseType = {
+        sheetId:string: any;
+        row:number: any;
+        col:number: any;
+    };
+    /**
+     * @typedef MultipleCellsType
+     * @property numRows:number
+     * @property numCols: number
+     */
+    type MultipleCellsType = {
+        numRows:number: any;
+        numCols:: any;
+    };
+    /**
+     * @typedef   ColorType
+     * @property color:{r:number, g:number, b:number}  // numbers for rgb 0.0->1.0
+     */
+    type ColorType = {};
+    /**
+     * @typedef   NoteType
+     * @property note:string
+     */
+    type NoteType = {
+        note:string: any;
+    };
+    /**
+     *
+     * @param {FormatCellsColorType} param
+     */
+    function getBgColorRequest(param: FormatCellsColorType): void;
+    /**
+     * Example of how to set FG,BG, Bold, fontsize etc
+     * The fields property restricts things from getting changes so if
+     * I just wanted the text foreground to change I could replace
+     * textFormat with textFormat/foregroundColor. As is any textFormat not specified
+     * will get reset to the google sheet default value for that formatting property
+     * @param {FormatCellsColorType} param
+     */
+    function getFormatCellsRequest(param: FormatCellsColorType): void;
+    /**
+     *
+     * @noteOptions {FormatCellsNoteType} noteOptions
+     */
+    function getAddNoteRequest(): void;
+}
 
 /**
  * @file Handles talking to the Google Drive API
@@ -296,9 +300,11 @@ declare module "sheets/sheetOps.js" {
      * The fields property restricts things from getting changes so if
      * I just wanted the text foreground to change I could replace
      * textFormat with textFormat/foregroundColor
-     * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions}
+     * @param  {object}
+     * @param {string} obj.id  spreadsheet id
+     * @param {formatOps.FormatCellsColorType} obj.formatOptions
      */
-    function formatCells({{id:string,: any): void;
+    function formatCells(): void;
     /**
      * @param {object} obj
      * @param {string} obj.id  id of the google spreadsheet
