@@ -161,32 +161,37 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe.only('formatCellsBgColor',   () => {
+  describe('formatCellsBgColor',   () => {
+    let baseOptions
     beforeEach(() => {
-  
-    })
-    it('should set the desired cells to the specified color', async () => {
-      const formatOptions = {
+      baseOptions = {
         sheetId:0,
         row:2,
-        numRows:1,
         col:0,
-        numCols:2,
-        color:{r:1.0, g:0.67, b:1.0},
+      }
+    })
+    it('should set the desired cells to the specified color', async () => {
+      const formatOptions = {...baseOptions, numRows:1, numCols:2, color:{r:1.0, g:0.67, b:1.0},
       }
       const result = await sheetOps.formatCellsBgColor({id:sheetRange.id, formatOptions})
       result.statusText.should.equal('OK')
     })
 
-    it('should ...', async () => {
-      const noteOptions = {
-        sheetId:0,
-        row:0,
-        col:0,
-        note:'Adding a note through the API',
-      }
+    it('should add a note to the specified cell', async () => {
+      const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
       const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
-      console.log(result)
+      result.statusText.should.equal('OK')
+    })
+
+    it('should add a note to the specified cell when using the Sheet Name to get Index', async () => {
+      const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
+      const sheetName = 'Sheet2'
+      const findSheet = await sheetOps.getSheetIdByName({id:sheetRange.id, sheetName})
+      if (!findSheet.isValid) {
+        should.fail(`Could not find a sheet with the name ${sheetName}`)
+      }
+      noteOptions.sheetId = findSheet.sheetId
+      const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
       result.statusText.should.equal('OK')
     })
   })

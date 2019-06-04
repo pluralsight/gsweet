@@ -189,22 +189,62 @@ const getGridPropertiesByName = ({sheetName, sheets}) => {
     rowCount:0,
     columnCount:0,
   } 
-  for (const sheet of sheets) {
-    if (sheet.properties.title === sheetName) {
-      const gp = sheet.properties.gridProperties
-      result.rowCount = gp.rowCount
-      result.columnCount = gp.columnCount
-      return result
-    }
+
+  const {isValid, sheet} = getSheetByName({sheetName, sheets})
+  if (isValid) {
+    const gp = sheet.properties.gridProperties
+    result.rowCount = gp.rowCount
+    result.columnCount = gp.columnCount 
+    return result
   }
   result.isValid = false
   result.message = 'Error: request for sheet name that does not exist'
   return result
 }
 
+const getSheetByName = ({sheetName, sheets}) => {
+  for (const sheet of sheets) {
+    const {properties} = sheet
+    if (properties.title === sheetName) {
+      return {isValid:true, sheet}
+    }
+  }
+  return {isValid:false, sheet:null}
+}
+
+/** 
+ * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
+ * Note that this returns the ID not the index, although often the id of the first sheet is often 0 
+ * the other sheets have longer ids
+ * @param {{id:string, sheetName:string}} sheetInfo 
+*/
+const getSheetIdByName = async sheetInfo => {
+  const {id, sheetName} = sheetInfo
+  const result = await getSheetProperties(id)
+  const {sheets} = result.data
+  return  extractSheetIndex({sheetName, sheets})
+}
+
+const extractSheetIndex = ({sheetName, sheets}) => {
+  const result = {isValid:false,
+    sheetId:-1,
+  } 
+  for (const sheet of sheets) {
+    const {properties} = sheet
+    if (properties.title === sheetName) {
+      result.isValid = true
+      result.sheetId = properties.sheetId
+      return result
+    }
+  }
+  return result
+}
+
 /**
  * @private
- * @param {{sheetIndex:number, sheets:object}} param0 
+ * @param {object} obj
+ * @param {number} obj.sheetIndex
+ * @param {object} obj.sheets
  * @returns {gridProperties}
  */
 const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
@@ -257,7 +297,9 @@ const addNoteToCell = async ({id, noteOptions}) => {
 
 /**
  * 
- * @param {{id:string, request:object} param0 
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {object} obj.request
  */
 const batchUpdate = async ({id, request}) => {
   const result = await _sheetService.spreadsheets.batchUpdate({
@@ -283,4 +325,5 @@ module.exports = {
   formatCellsBgColor,
   formatCells,
   addNoteToCell,
+  getSheetIdByName,
 }
