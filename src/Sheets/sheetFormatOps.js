@@ -34,10 +34,9 @@
  * 
  * @param {FormatCellsColorType} param 
  */
-const getFormatCellBgColorRequest =  (param) => {
+const getBgColorRequest =  (param) => {
   const {sheetId, row, col, numRows, numCols, color} = param
-  const request = {
-    requests: [
+  const  singleRequest =
       {
         repeatCell: {
           range: {
@@ -59,9 +58,8 @@ const getFormatCellBgColorRequest =  (param) => {
           fields: 'userEnteredFormat(backgroundColor)', 
         },
       }
-    ],
-  }
-  return request
+
+  return singleRequest
 }
 
 /**
@@ -73,8 +71,7 @@ const getFormatCellBgColorRequest =  (param) => {
  */
 const getFormatCellsRequest =  (param) => {
   const {sheetId, row, col, numRows, numCols, color} = param
-  const request = {
-    requests: [
+  const request = 
       {
         repeatCell: {
           range: {
@@ -106,8 +103,7 @@ const getFormatCellsRequest =  (param) => {
           fields: 'userEnteredFormat(backgroundColor ,textFormat ,horizontalAlignment)',
         },
       }
-    ],
-  }
+
   return request
 }
 
@@ -115,10 +111,9 @@ const getFormatCellsRequest =  (param) => {
  * 
  * @noteOptions {FormatCellsNoteType} noteOptions 
  */
-const getAddNoteToCellRequest =  (noteOptions) => {
+const getAddNoteRequest =  (noteOptions) => {
   const {sheetId, row, col, note} = noteOptions
-  const request = {
-    requests: [
+  const request = 
       {
         updateCells: {
           range: {
@@ -137,13 +132,12 @@ const getAddNoteToCellRequest =  (noteOptions) => {
           fields: 'note', 
         },
       }
-    ],
-  }
+
   return request
 }
 
 module.exports = {
-  getFormatCellBgColorRequest,
+  getBgColorRequest,
   getFormatCellsRequest,
-  getAddNoteToCellRequest,
+  getAddNoteRequest,
 }

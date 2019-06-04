@@ -270,8 +270,8 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
  * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
  */
 const formatCellsBgColor = async ({id, formatOptions}) => {
-  const request = formatOps.getFormatCellBgColorRequest(formatOptions)
-  return batchUpdate({id, request})
+  const requestObj = formatOps.getBgColorRequest(formatOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
 }
 
 /**
@@ -282,8 +282,8 @@ const formatCellsBgColor = async ({id, formatOptions}) => {
  * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
  */
 const formatCells = async ({id, formatOptions}) => {
-  const request = formatOps.getFormatCellsRequest(formatOptions)
-  return batchUpdate({id, request})
+  const requestObj = formatOps.getFormatCellsRequest(formatOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
 }
 
 /**
@@ -291,20 +291,45 @@ const formatCells = async ({id, formatOptions}) => {
  * @param {{id:string, noteOptions:formatOps.FormatCellsNoteType}} param 
  */
 const addNoteToCell = async ({id, noteOptions}) => {
-  const request = formatOps.getAddNoteToCellRequest(noteOptions)
-  return batchUpdate({id, request})
+  const requestObj = formatOps.getAddNoteRequest(noteOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
+}
+
+/**
+ * Turn the passed object into an array and then put that array in the 
+ * object that the batchUpdate Google API wants
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {object} obj.requestObj
+ */
+const makeSingleObjBatchRequest = async ({id, requestObj}) => {
+  const singleRequest = [requestObj]
+  const requests = prepareBatchRequest(singleRequest)
+  return batchUpdate({id, requests})
+}
+
+/**
+ * Put the array of requests into an object that has a `requests` property
+ * @param {[object]} requests
+ */
+const prepareBatchRequest = (requests) => {
+  const batchReq = {
+    requests: [...requests],
+  }
+  return batchReq
 }
 
 /**
  * 
  * @param {object} obj
  * @param {string} obj.id
- * @param {object} obj.request
+ * @param {object} obj.requests
+ * @returns {Promise<object>}
  */
-const batchUpdate = async ({id, request}) => {
-  const result = await _sheetService.spreadsheets.batchUpdate({
+const batchUpdate = async ({id, requests}) => {
+  const result =  _sheetService.spreadsheets.batchUpdate({
     spreadsheetId:id,
-    resource:request,
+    resource:requests,
   })
     .catch((err) => {
       console.log('Error trying to do batch update', JSON.stringify(err, null, 2))

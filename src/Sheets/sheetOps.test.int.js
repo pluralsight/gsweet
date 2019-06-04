@@ -161,7 +161,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe('formatCellsBgColor',   () => {
+  describe.only('formatCellsBgColor',   () => {
     let baseOptions
     beforeEach(() => {
       baseOptions = {
@@ -183,7 +183,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       result.statusText.should.equal('OK')
     })
 
-    it('should add a note to the specified cell when using the Sheet Name to get Index', async () => {
+    it('should use sheet name to get index and add a note to the cell ', async () => {
       const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
       const sheetName = 'Sheet2'
       const findSheet = await sheetOps.getSheetIdByName({id:sheetRange.id, sheetName})
