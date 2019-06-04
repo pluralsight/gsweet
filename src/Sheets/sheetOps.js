@@ -279,7 +279,9 @@ const formatCellsBgColor = async ({id, formatOptions}) => {
  * The fields property restricts things from getting changes so if
  * I just wanted the text foreground to change I could replace
  * textFormat with textFormat/foregroundColor
- * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions} 
+ * @param  {object}
+ * @param {string} obj.id  spreadsheet id
+ * @param {formatOps.FormatCellsColorType} obj.formatOptions 
  */
 const formatCells = async ({id, formatOptions}) => {
   const requestObj = formatOps.getFormatCellsRequest(formatOptions)

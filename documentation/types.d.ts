@@ -96,6 +96,64 @@ declare module "drive/driveService" {
 }
 
 /**
+ * @typedef FormatCellsBaseType
+ * @property sheetId:string  // This is the tab id number - starting with 0
+ * @property row:number
+ * @property col:number
+ */
+declare type FormatCellsBaseType = {
+    sheetId:string: any;
+    row:number: any;
+    col:number: any;
+};
+
+/**
+ * @typedef MultipleCellsType
+ * @property numRows:number
+ * @property numCols: number
+ */
+declare type MultipleCellsType = {
+    numRows:number: any;
+    numCols:: any;
+};
+
+/**
+ * @typedef   ColorType
+ * @property color:{r:number, g:number, b:number}  // numbers for rgb 0.0->1.0
+ */
+declare type ColorType = {};
+
+/**
+ * @typedef   NoteType
+ * @property note:string
+ */
+declare type NoteType = {
+    note:string: any;
+};
+
+/**
+ *
+ * @param {FormatCellsColorType} param
+ */
+declare function getBgColorRequest(param: FormatCellsColorType): void;
+
+/**
+ * Example of how to set FG,BG, Bold, fontsize etc
+ * The fields property restricts things from getting changes so if
+ * I just wanted the text foreground to change I could replace
+ * textFormat with textFormat/foregroundColor. As is any textFormat not specified
+ * will get reset to the google sheet default value for that formatting property
+ * @param {FormatCellsColorType} param
+ */
+declare function getFormatCellsRequest(param: FormatCellsColorType): void;
+
+/**
+ *
+ * @noteOptions {FormatCellsNoteType} noteOptions
+ */
+declare function getAddNoteRequest(): void;
+
+/**
  * @file Handles talking to the Google Drive API
  * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
  *
@@ -115,11 +173,42 @@ declare module "sheets/sheetOps.js" {
      */
     function autoInit(): void;
     /**
+     * @typedef IdRangeType
+     * @property id:string
+     * @property range:string
+     */
+    type IdRangeType = {
+        id:string: any;
+        range:string: any;
+    };
+    /**
+     * @typedef IdRangeDataType
+     * @property id:string
+     * @property range:string
+     * @property data:[][]
+     */
+    type IdRangeDataType = {
+        id:string: any;
+        range:string: any;
+        data:[][: any;
+    };
+    /**
+     * @typedef IdRangeValueType
+     * @property id:string
+     * @property range:string
+     * @property value:any
+     */
+    type IdRangeValueType = {
+        id:string: any;
+        range:string: any;
+        value:any: any;
+    };
+    /**
      * Set a range of data in a target sheet with an array of arrays of data
      * By default each inner array is a row in the sheet with an element for each column
      * if a sparse array is sent the missing cells in the range are skipped
      * (i.e. they aren't overwritten)
-     * @param {{id:string,range:string,value:any,data:[][]}} sheetRangeData
+     * @param {IdRangeDataType} sheetRangeData
      * @returns {Promise<{config:{data:{values:[][]}},
      * data:{spreadsheetId:string,updatedRange:string,updatedRows:number,updatedColumns:number, updatedCells:number}}>}
      * object with many props including config.data and data
@@ -147,24 +236,24 @@ declare module "sheets/sheetOps.js" {
      * these properties can be useful for testing
      * @example setRangeData({id:"longgoogleid",range:"Sheet1!A1", data:[["R1C1","R1C2"],["R2C1","R2C2"]]})
      */
-    function setRangeData(): any;
+    function setRangeData(sheetRangeData: IdRangeDataType): any;
     /**
      * Convenience function that will take a string or number primitive and wrap
      * it into a 2D array to write to the spreadsheet.
-     * @param {{id:string,range:string,value:any}} sheetRangeValue - where the range property should specify a single cell
+     * @param {IdRangeValueType} sheetRangeValue - where the range property should specify a single cell
      * @returns {Promise<Object>} see setRangeData for details on returned Object
      * @example setSheetCell({id:SHEET_ID, range:Tab!A1, value:"SomeValue"})
      */
-    function setSheetCell(sheetRangeValue: any): Promise<object>;
+    function setSheetCell(sheetRangeValue: IdRangeValueType): Promise<object>;
     /**
      * Get all the cells in the specified range. If a given row has no data in the
      * final cells for a row, the array for that row is shortened. If a row has no
      * data no array for that row is returned.
-     * @param {{id:string, range:string}} sheetRange  range property should include name of tab `Tab1!A2:C6`
+     * @param {IdRangeType} sheetRange  range property should include name of tab `Tab1!A2:C6`
      * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column).
      * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
      */
-    function getSheetValues(sheetRange: any): Promise<Array[]>;
+    function getSheetValues(sheetRange: IdRangeType): Promise<Array[]>;
     /**
      *
      * @param {string} sheetId
@@ -190,6 +279,71 @@ declare module "sheets/sheetOps.js" {
      * @returns {Promise<gridProperties>}
      */
     function getSheetGridProperties(sheetInfo: any): Promise<gridProperties>;
+    /**
+     * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
+     * Note that this returns the ID not the index, although often the id of the first sheet is often 0
+     * the other sheets have longer ids
+     * @param {{id:string, sheetName:string}} sheetInfo
+     */
+    function getSheetIdByName(sheetInfo: any): void;
+    /**
+     *
+     * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions}
+     */
+    function formatCellsBgColor({{id:string,: any): void;
+    /**
+     * Example of how to set FG,BG, Bold, fontsize etc
+     * The fields property restricts things from getting changes so if
+     * I just wanted the text foreground to change I could replace
+     * textFormat with textFormat/foregroundColor
+     * @param {{id:string, formatOptions:formatOps.FormatCellsColorType} {id,formatOptions}
+     */
+    function formatCells({{id:string,: any): void;
+    /**
+     * @param {object} obj
+     * @param {string} obj.id  id of the google spreadsheet
+     * @param {formatOps.FormatCellsNoteType} obj.formatOps  google API request with `notes` field
+     */
+    function addNoteToCell(obj: {
+        id: string;
+        formatOps: formatOps.FormatCellsNoteType;
+    }): void;
+    /**
+     * Turn the passed object into an array and then put that array in the
+     * object that the batchUpdate Google API wants
+     * @param {object} obj
+     * @param {string} obj.id the id of the spreadsheet
+     * @param {object} obj.requestObj a single object that represents a google API request
+     */
+    function makeSingleObjBatchRequest(obj: {
+        id: string;
+        requestObj: any;
+    }): void;
+    /**
+     * @param {object} obj
+     * @param {string} obj.id
+     * @param {[object]} obj.requestArray
+     */
+    function makeBatchRequest(obj: {
+        id: string;
+    }): void;
+    /**
+     * Put the array of requests into an object that has a `requests` property
+     * @param {[object]} requests
+     */
+    function prepareBatchRequest(): void;
+    /**
+     * Call the Google API that processes batchUpdate requests. This is how sheet
+     * formatting and adding of notes is done.
+     * @param {object} obj
+     * @param {string} obj.id
+     * @param {object} obj.requests
+     * @returns {Promise<object>}
+     */
+    function batchUpdate(obj: {
+        id: string;
+        requests: any;
+    }): Promise<object>;
 }
 
 /**
