@@ -140,7 +140,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       result.message.should.equal('')
     })
     it('getSheetGridProperties() with bad index should return error', async () => {
-      const sheetInfo = {sheetId:sheetRange.id, sheetIndex:1}
+      const sheetInfo = {sheetId:sheetRange.id, sheetIndex:10}
       const result = await sheetOps.getSheetGridProperties(sheetInfo)
       result.isValid.should.be.false
       result.message.should.contain('Error')
@@ -161,11 +161,11 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe.only('formatCellsBgColor',   () => {
+  describe('formatCellsBgColor',   () => {
     let baseOptions
     beforeEach(() => {
       baseOptions = {
-        sheetId:0,
+        sheetId:0,   // the default sheet always has an id of 0 - other sheets have real ids
         row:2,
         col:0,
       }

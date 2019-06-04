@@ -66,7 +66,8 @@ const getBgColorRequest =  (param) => {
  * Example of how to set FG,BG, Bold, fontsize etc
  * The fields property restricts things from getting changes so if
  * I just wanted the text foreground to change I could replace
- * textFormat with textFormat/foregroundColor
+ * textFormat with textFormat/foregroundColor. As is any textFormat not specified
+ * will get reset to the google sheet default value for that formatting property
  * @param {FormatCellsColorType} param 
  */
 const getFormatCellsRequest =  (param) => {

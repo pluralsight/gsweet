@@ -222,10 +222,10 @@ const getSheetIdByName = async sheetInfo => {
   const {id, sheetName} = sheetInfo
   const result = await getSheetProperties(id)
   const {sheets} = result.data
-  return  extractSheetIndex({sheetName, sheets})
+  return  extractSheetId({sheetName, sheets})
 }
 
-const extractSheetIndex = ({sheetName, sheets}) => {
+const extractSheetId = ({sheetName, sheets}) => {
   const result = {isValid:false,
     sheetId:-1,
   } 
@@ -287,8 +287,9 @@ const formatCells = async ({id, formatOptions}) => {
 }
 
 /**
- * 
- * @param {{id:string, noteOptions:formatOps.FormatCellsNoteType}} param 
+ * @param {object} obj
+ * @param {string} obj.id  id of the google spreadsheet
+ * @param {formatOps.FormatCellsNoteType} obj.formatOps  google API request with `notes` field
  */
 const addNoteToCell = async ({id, noteOptions}) => {
   const requestObj = formatOps.getAddNoteRequest(noteOptions)
@@ -299,8 +300,8 @@ const addNoteToCell = async ({id, noteOptions}) => {
  * Turn the passed object into an array and then put that array in the 
  * object that the batchUpdate Google API wants
  * @param {object} obj
- * @param {string} obj.id
- * @param {object} obj.requestObj
+ * @param {string} obj.id the id of the spreadsheet
+ * @param {object} obj.requestObj a single object that represents a google API request
  */
 const makeSingleObjBatchRequest = async ({id, requestObj}) => {
   const singleRequest = [requestObj]
@@ -308,6 +309,15 @@ const makeSingleObjBatchRequest = async ({id, requestObj}) => {
   return batchUpdate({id, requests})
 }
 
+/**
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {[object]} obj.requestArray
+ */
+const makeBatchRequest = async ({id, requestArray}) => {
+  const requests = prepareBatchRequest(requestArray)
+  return batchUpdate({id, requests})
+}
 /**
  * Put the array of requests into an object that has a `requests` property
  * @param {[object]} requests
@@ -320,7 +330,8 @@ const prepareBatchRequest = (requests) => {
 }
 
 /**
- * 
+ * Call the Google API that processes batchUpdate requests. This is how sheet
+ * formatting and adding of notes is done.
  * @param {object} obj
  * @param {string} obj.id
  * @param {object} obj.requests
@@ -351,4 +362,5 @@ module.exports = {
   formatCells,
   addNoteToCell,
   getSheetIdByName,
+  makeBatchRequest,
 }

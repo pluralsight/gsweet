@@ -1,6 +1,6 @@
 {
   "name": "gsweet",
-  "version": "v2.0.0-beta.12",
+  "version": "v2.0.0-beta.13",
   "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
