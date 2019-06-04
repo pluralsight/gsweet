@@ -187,9 +187,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
       const sheetName = 'Sheet2'
       const findSheet = await sheetOps.getSheetIdByName({id:sheetRange.id, sheetName})
-      if (!findSheet.isValid) {
-        should.fail(`Could not find a sheet with the name ${sheetName}`)
-      }
+      findSheet.isValid.should.be.true
       noteOptions.sheetId = findSheet.sheetId
       const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
       result.statusText.should.equal('OK')
