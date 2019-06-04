@@ -237,6 +237,7 @@ const extractSheetId = ({sheetName, sheets}) => {
       return result
     }
   }
+  console.error(`Something went wrong. There was no sheet named: ${sheetName}.`)
   return result
 }
 

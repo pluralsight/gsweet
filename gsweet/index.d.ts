@@ -211,20 +211,20 @@ declare module "sheets/sheetOps.js" {
    * @param {string} obj.id
    * @param {[object]} obj.requestArray
    */
-  function makeBatchRequest  ({id, requestArray}): Promise<number>;
+  function makeBatchRequest  (options:{id:string, requestArray:[object]}): Promise<number>;
   function getSheetIdByName (sheetInfo:{id:string, sheetName:string}): Promise<{isValid:boolean, sheetId:number}>
   /**
    * @param  {object}
    * @param {string} obj.id  spreadsheet id
    * @param {formatOps.FormatCellsColorType} obj.formatOptions 
    */
-  function formatCellsBgColor ({id:string, formatOptions:object}) :Promise<any>
+  function formatCellsBgColor (options:{id:string, formatOptions:object}) :Promise<any>
   /**
    * @param {object} obj
    * @param {string} obj.id  id of the google spreadsheet
    * @param {formatOps.FormatCellsNoteType} obj.formatOps  google API request with `notes` field
    */
-  function addNoteToCell({id:string, noteOptions:object}): Promise<object>
+  function addNoteToCell(options:{id:string, noteOptions:object}): Promise<object>
 }
 
 /**
