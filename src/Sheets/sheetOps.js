@@ -159,10 +159,12 @@ const getSheetProperties = async sheetId => {
  * @property {number} columnCount
  * @property {string} message  
  */
+
+
 /**
  * Get the grid properties which is an object with a rowCount and columnCount
  * property. 
- * @param {{sheetId:string, sheetIndex=:number, sheetName=:string}} sheetInfo
+ * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
  * @returns {Promise<gridProperties>}
  */
 const getSheetGridProperties = async sheetInfo => {
@@ -217,6 +219,7 @@ const getSheetByName = ({sheetName, sheets}) => {
  * Note that this returns the ID not the index, although often the id of the first sheet is often 0 
  * the other sheets have longer ids
  * @param {{id:string, sheetName:string}} sheetInfo 
+ * @returns {Promise<{isValid:boolean, sheetId:number}>}
 */
 const getSheetIdByName = async sheetInfo => {
   const {id, sheetName} = sheetInfo
@@ -267,7 +270,7 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
 
 
 /**
- * @param {id:string, formatOptions:formatOps.FormatCellsColorType} param0
+ * @param {{id:string, formatOptions:formatOps.FormatCellsColorType}} param0
  */
 const formatCellsBgColor = async ({id, formatOptions}) => {
   const requestObj = formatOps.getBgColorRequest(formatOptions)
@@ -281,8 +284,11 @@ const formatCellsBgColor = async ({id, formatOptions}) => {
  */
 const formatSingleBgColor = async({id, singleCellOptions}) => {
   const formatOptions = {...singleCellOptions}
+  // @ts-ignore
   formatOptions.numRows = 1
+  // @ts-ignore
   formatOptions.numCols = 1
+  // @ts-ignore
   const result = formatCellsBgColor({id, formatOptions})
   return result
 }
@@ -292,7 +298,7 @@ const formatSingleBgColor = async({id, singleCellOptions}) => {
  * The fields property restricts things from getting changes so if
  * I just wanted the text foreground to change I could replace
  * textFormat with textFormat/foregroundColor
- * @param  {object}
+ * @param  {object} obj
  * @param {string} obj.id  spreadsheet id
  * @param {formatOps.FormatCellsColorType} obj.formatOptions 
  */
@@ -304,7 +310,7 @@ const formatCells = async ({id, formatOptions}) => {
 /**
  * @param {object} obj
  * @param {string} obj.id  id of the google spreadsheet
- * @param {formatOps.FormatCellsNoteType} obj.formatOps  google API request with `notes` field
+ * @param {formatOps.FormatCellsNoteType} obj.noteOptions  google API request with `notes` field
  */
 const addNoteToCell = async ({id, noteOptions}) => {
   const requestObj = formatOps.getAddNoteRequest(noteOptions)
@@ -325,9 +331,10 @@ const makeSingleObjBatchRequest = async ({id, requestObj}) => {
 }
 
 /**
+ * Take the passed array of requests and format them and send them off to the spreadsheet
  * @param {object} obj
- * @param {string} obj.id
- * @param {[object]} obj.requestArray
+ * @param {string} obj.id the spreadsheet ID
+ * @param {[object]} obj.requestArray 
  */
 const makeBatchRequest = async ({id, requestArray}) => {
   const requests = prepareBatchRequest(requestArray)
@@ -335,7 +342,7 @@ const makeBatchRequest = async ({id, requestArray}) => {
 }
 /**
  * Put the array of requests into an object that has a `requests` property
- * @param {[object]} requests
+ * @param {Array<object>} requests
  */
 const prepareBatchRequest = (requests) => {
   const batchReq = {
@@ -353,15 +360,21 @@ const prepareBatchRequest = (requests) => {
  * @returns {Promise<object>}
  */
 const batchUpdate = async ({id, requests}) => {
-  const result =  _sheetService.spreadsheets.batchUpdate({
+  const returnObj = {
+    isValid:true,
+    message:'OK',
+  }
+  _sheetService.spreadsheets.batchUpdate({
     spreadsheetId:id,
     resource:requests,
   })
     .catch((err) => {
       console.log('Error trying to do batch update', JSON.stringify(err, null, 2))
-      return 'batch request failed'
+      returnObj.isValid = false
+      returnObj.message = 'batchUpdate() request failed'
     })
-  return result
+    
+  return returnObj
 }
 
 

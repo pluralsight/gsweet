@@ -1,6 +1,7 @@
 const envCreate = require('env-create')
 const driveOps = require('./drive/driveOps')
 const sheetOps = require('./sheets/sheetOps')
+const sheetFormatOps = require('./sheets/sheetFormatOps')
 
 
 class GSweet {
@@ -20,6 +21,7 @@ class GSweet {
     }
     
     this.sheetOps = sheetOps
+    this.sheetFormatOps = sheetFormatOps 
     this.driveOps = driveOps
     this.sheetOps.autoInit()
     this.driveOps.autoInit()

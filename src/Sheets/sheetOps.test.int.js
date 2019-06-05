@@ -14,6 +14,7 @@ const gsweet = new Gsweet({
   useExistingEnvVar: false,
 })
 const {sheetOps} = gsweet
+const {sheetFormatOps} = gsweet
 
 before(() => {
   logger.level = 'info'
@@ -161,7 +162,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     })
   })
 
-  describe.only('formatCellsBgColor',   () => {
+  describe.only('formatting command',   () => {
     let baseOptions
     beforeEach(() => {
       baseOptions = {
@@ -171,33 +172,40 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       }
     })
     
-    it('should set the desired cells to the specified color', async () => {
+    it('formatCellsBgColor() should set the desired cells to the specified color', async () => {
       const formatOptions = {...baseOptions, numRows:1, numCols:2, color:{r:1.0, g:0.67, b:1.0},
       }
       const result = await sheetOps.formatCellsBgColor({id:sheetRange.id, formatOptions})
-      result.statusText.should.equal('OK')
+      result.isValid.should.be.true
     })
 
-    it('should set a single cell to the specified color', async () => {
+    it('formatSingleBgColor() should set a single cell to the specified color', async () => {
       const formatOptions = {...baseOptions, color:{r:1.0, g:0.67, b:1.0}}
       const result = await sheetOps.formatSingleBgColor({id:sheetRange.id, singleCellOptions:formatOptions})
-      result.statusText.should.equal('OK')
+      result.isValid.should.be.true
     })
 
-    it('should add a note to the specified cell', async () => {
+    it('addNoteToCell() should add a note to the specified cell', async () => {
       const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
       const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
-      result.statusText.should.equal('OK')
+      result.isValid.should.be.true
     })
 
-    it('should use sheet name to get index and add a note to the cell ', async () => {
-      const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
+    it('getSheetIdByName() should use sheet name to get index', async () => {
       const sheetName = 'Sheet2'
       const findSheet = await sheetOps.getSheetIdByName({id:sheetRange.id, sheetName})
       findSheet.isValid.should.be.true
-      noteOptions.sheetId = findSheet.sheetId
-      const result = await sheetOps.addNoteToCell({id:sheetRange.id, noteOptions})
-      result.statusText.should.equal('OK')
+      findSheet.sheetId.should.equal(898926069)
+    })
+
+    it('makeBatchRequest() should format and submit multiple requests ', async () => {
+      const noteOptions = {...baseOptions,  note:'Adding a note through the API'}
+      const requests = []
+      requests.push(sheetFormatOps.getAddNoteRequest(noteOptions))
+      const bgColorOptions = {...baseOptions, color:{r:1.0, g:0.67, b:1.0}}
+      requests.push(sheetFormatOps.getBgColorRequest(bgColorOptions))
+      const result = await sheetOps.makeBatchRequest({id:sheetRange.id, requestArray:requests})
+      console.log(result)
     })
   })
 })
