@@ -1,4 +1,6 @@
 // @ts-check
+const ss = require('./sheetService')
+let _sheetService
 /**
  * @file Handles talking to the Google Drive API
  * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
@@ -8,40 +10,63 @@
  * @module
  */
 /**
- * @typedef FormatCellsBaseType
- * @property sheetId:string  // This is the tab id number - starting with 0
- * @property row:number
- * @property col:number
+ * @typedef {Object} FormatCellsBaseType
+ * @property {string} sheetId  // This is the tab id number - starting with 0
+ * @property {number} row
+ * @property {number} col
  */
 
 /**
- * @typedef MultipleCellsType
- * @property numRows:number
- * @property numCols: number
+ * @typedef {Object} MultipleCellsType 
+ * @property {number} numRows
+ * @property {number} numCols
   */
 /**
- * @typedef   ColorType
- * @property color:{r:number, g:number, b:number}  // numbers for rgb 0.0->1.0
+ * @typedef  {Object} ColorType 
+ * @property {number} r
+ * @property {number} g
+ * @property {number} b  // numbers for rgb 0.0->1.0
  */
 
 /**
- * @typedef   {FormatCellsBaseType  & ColorType} FormatSingleColorType
+ * @typedef   {Object} FormatSingleColorType
+ * @property {string} sheetId  // This is the tab id number - starting with 0
+ * @property {number} row
+ * @property {number} col
+ * @property {number} r
+ * @property {number} g
+ * @property {number} b  // numbers for rgb 0.0->1.0
  */
 
 /**
- * @typedef   {FormatCellsBaseType & MultipleCellsType & ColorType} FormatCellsColorType
+ * @typedef   {Object} FormatCellsColorType
+ *  * @property {string} sheetId  // This is the tab id number - starting with 0
+ * @property {number} row
+ * @property {number} col
+ * @property {ColorType} color
+ * @property {number} numRows
+ * @property {number} numCols
  */
+
 
 /**
  * @typedef   NoteType
- * @property note:string
+ * @property {string} note
  */
 
 /**
- * @typedef   {FormatCellsBaseType & NoteType} FormatCellsNoteType
+ * @typedef {Object} FormatCellsNoteType
+ * @property {string} sheetId  // This is the tab id number - starting with 0
+ * @property {number} row
+ * @property {number} col
+ * @property {string} note
  */
 
 
+/** just get the default service and use it */
+const autoInit = () => {
+  _sheetService = ss.init()
+}
 /**
  * 
  * @param {FormatCellsColorType} param 
@@ -149,8 +174,122 @@ const getAddNoteRequest =  (noteOptions) => {
   return request
 }
 
+/**
+ * @param {{id:string, formatOptions:FormatCellsColorType}} param0
+ */
+const formatCellsBgColor = async ({id, formatOptions}) => {
+  const requestObj = getBgColorRequest(formatOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
+}
+
+/**
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {FormatSingleColorType} obj.singleCellOptions
+ */
+const formatSingleBgColor = async({id, singleCellOptions}) => {
+  const formatOptions = {...singleCellOptions}
+  // @ts-ignore
+  formatOptions.numRows = 1
+  // @ts-ignore
+  formatOptions.numCols = 1
+  // @ts-ignore
+  const result = formatCellsBgColor({id, formatOptions})
+  return result
+}
+
+/**
+ * Example of how to set FG,BG, Bold, fontsize etc
+ * The fields property restricts things from getting changes so if
+ * I just wanted the text foreground to change I could replace
+ * textFormat with textFormat/foregroundColor
+ * @param  {object} obj
+ * @param {string} obj.id  spreadsheet id
+ * @param {FormatCellsColorType} obj.formatOptions 
+ */
+const formatCells = async ({id, formatOptions}) => {
+  const requestObj = getFormatCellsRequest(formatOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
+}
+
+/**
+ * @param {object} obj
+ * @param {string} obj.id  id of the google spreadsheet
+ * @param {FormatCellsNoteType} obj.noteOptions  google API request with `notes` field
+ */
+const addNoteToCell = async ({id, noteOptions}) => {
+  const requestObj = getAddNoteRequest(noteOptions)
+  return  makeSingleObjBatchRequest({id, requestObj})
+}
+
+/**
+ * Turn the passed object into an array and then put that array in the 
+ * object that the batchUpdate Google API wants
+ * @param {object} obj
+ * @param {string} obj.id the id of the spreadsheet
+ * @param {object} obj.requestObj a single object that represents a google API request
+ */
+const makeSingleObjBatchRequest = async ({id, requestObj}) => {
+  const singleRequest = [requestObj]
+  const requests = prepareBatchRequest(singleRequest)
+  return batchUpdate({id, requests})
+}
+
+/**
+ * Take the passed array of requests and format them and send them off to the spreadsheet
+ * @param {object} obj
+ * @param {string} obj.id the spreadsheet ID
+ * @param {[object]} obj.requestArray 
+ */
+const makeBatchRequest = async ({id, requestArray}) => {
+  const requests = prepareBatchRequest(requestArray)
+  return batchUpdate({id, requests})
+}
+/**
+ * Put the array of requests into an object that has a `requests` property
+ * @param {Array<object>} requests
+ */
+const prepareBatchRequest = (requests) => {
+  const batchReq = {
+    requests: [...requests],
+  }
+  return batchReq
+}
+
+/**
+ * Call the Google API that processes batchUpdate requests. This is how sheet
+ * formatting and adding of notes is done.
+ * @param {object} obj
+ * @param {string} obj.id
+ * @param {object} obj.requests
+ * @returns {Promise<object>}
+ */
+const batchUpdate = async ({id, requests}) => {
+  const returnObj = {
+    isValid:true,
+    message:'OK',
+  }
+  _sheetService.spreadsheets.batchUpdate({
+    spreadsheetId:id,
+    resource:requests,
+  })
+    .catch((err) => {
+      console.log('Error trying to do batch update', JSON.stringify(err, null, 2))
+      returnObj.isValid = false
+      returnObj.message = 'batchUpdate() request failed'
+    })
+    
+  return returnObj
+}
+
 module.exports = {
+  autoInit,
   getBgColorRequest,
   getFormatCellsRequest,
   getAddNoteRequest,
+  formatCellsBgColor,
+  formatSingleBgColor,
+  formatCells,
+  addNoteToCell,
+  makeBatchRequest,
 }

@@ -25,6 +25,7 @@ class GSweet {
     this.driveOps = driveOps
     this.sheetOps.autoInit()
     this.driveOps.autoInit()
+    this.sheetFormatOps.autoInit()
   }
 }
 
