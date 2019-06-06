@@ -1,7 +1,7 @@
 {
   "plugins": ["plugins/markdown"],
   "opts": {
-    "destination": "./documentation",
+    "destination": "./gsweet",
     "recurse": true,
     "verbose": true,
     "template": "./node_modules/tsd-jsdoc/dist"

@@ -11,28 +11,44 @@ declare module "drive/driveOps" {
      */
     function autoInit(): void;
     /**
+    * @typedef {object} WithNameExactMatch
+    * @property {string} withName
+    * @property {boolean} exactMatch
+     */
+    type WithNameExactMatch = {
+        withName: string;
+        exactMatch: boolean;
+    };
+    /**
      * Get a list of files/folders that match
-     * @param   {{withName:string,exactMatch:boolean}} fileOptions
+     * @param   {WithNameExactMatch} fileOptions
      * @returns {Promise<Array.<{id:String,name:String}>>}
      * @example getFiles({withName:"someName", exactMatch:true})
      */
-    function getFiles(fileOptions: any): Promise<{ id: String; name: String; }[]>;
+    function getFiles(fileOptions: WithNameExactMatch): Promise<{ id: String; name: String; }[]>;
+    /**
+     * @typedef {object} WithNameOnly
+     * @property {string} withName
+     */
+    type WithNameOnly = {
+        withName: string;
+    };
     /**
      * Get a single file for the passed name. If a single file isn't found an error is thrown.
     // @ts-ignore
-     * @param {{withName:String}} withName
+     * @param {WithNameOnly} withName
      * @returns {Promise<{id:String,name:String}>}  a single object that has the FILE_META_FOR_NAME_SEARCH properties
      * @example getFile({withName:"someName"})  //forces  exactMatch:true
      */
-    function getFile(withName: any): Promise<{ id: String; name: String; }>;
+    function getFile(withName: WithNameOnly): Promise<{ id: String; name: String; }>;
     /**
      * Convenience function that returns the id for a file
-     * @param {{withName:String,exactMatch:Boolean}} withNameObj
+     * @param {WithNameExactMatch} withNameObj
      * @returns {Promise<string>} google id for the file
      * @example getFileId({withName:"SomeName"})
      *
      */
-    function getFileId(withNameObj: any): Promise<string>;
+    function getFileId(withNameObj: WithNameExactMatch): Promise<string>;
     /**
      * Just get the files for the user. Will only return the google API max
      * of 1000 files.
@@ -43,28 +59,37 @@ declare module "drive/driveOps" {
      */
     function listFiles(): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any; }[]>;
     /**
+     * @typedef {object} FolderOptions
+     * @property {string} withFolderId
+     * @property {any}   ofType
+     */
+    type FolderOptions = {
+        withFolderId: string;
+        ofType: any;
+    };
+    /**
      * Get all the Files in the passed folderId   (ofType is optional)
-     * @param {{withFolderId:String,ofType:any}} folderOptions
+     * @param {FolderOptions} folderOptions
      * @returns {Promise<Array<{name:string, id:string, mimeType:string}>>} array of file objects where each object has the properties
      * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
      * @example getFilesInFolder({withFolderId:"someId", ofType:mimeType:SPREADSHEET})
      */
-    function getFilesInFolder(folderOptions: any): Promise<{ name: string; id: string; mimeType: string; }[]>;
+    function getFilesInFolder(folderOptions: FolderOptions): Promise<{ name: string; id: string; mimeType: string; }[]>;
     /**
      * Get just the names of the files in the folder (ofType is optional)
-     * @param {{withFolderId:String,ofType:number}} folderOptions
+     * @param {FolderOptions} folderOptions
      * @returns {Promise<Array.<string>>} array of strings containing filenames
      * @example getFileNamesInFolder({withFolderId:"someId", ofType:mimeType.SPREADSHEET)
      */
-    function getFileNamesInFolder(folderOptions: any): Promise<string[]>;
+    function getFileNamesInFolder(folderOptions: FolderOptions): Promise<string[]>;
     /**
      * Get the files in the parent folder and all the children folders (ofType is optional)
-     * @param {{withFolderId:String,ofType:number}} folderOptions
+     * @param {FolderOptions} folderOptions
      * @returns {Promise<Array.<{FILE_META_FOR_FOLDER_SEARCH}>>} array of file objects where each object has the properties
      * specified by the constant `FILE_META_FOR_FOLDER_SEARCH`
      * @example getFilesRecursively({withFolderId:"someId", ofType:mimeType.SPREADSHEET})
      */
-    function getFilesRecursively(folderOptions: any): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any; }[]>;
+    function getFilesRecursively(folderOptions: FolderOptions): Promise<{ FILE_META_FOR_FOLDER_SEARCH: any; }[]>;
     /**
      * Private helper function to look up the mimetype string for the passed enum and construct and "and" clause that
      * can be used in the API search query. The FILE enum isn't a type the API understands
@@ -305,34 +330,33 @@ declare module "sheets/sheetOps.js" {
     function autoInit(): void;
     /**
      * @typedef IdRangeType
-     * @property id:string
-     * @property range:string
+     * @property {string} id
+     * @property {string} range
      */
     type IdRangeType = {
-        id:string: any;
-        range:string: any;
+        id: string;
+        range: string;
     };
     /**
      * @typedef IdRangeDataType
-     * @property id:string
-     * @property range:string
-     * @property data:[][]
+     * @property {string} id
+     * @property {string} range
+     * @property {[][]} data
      */
     type IdRangeDataType = {
-        id:string: any;
-        range:string: any;
-        data:[][: any;
+        id: string;
+        range: string;
     };
     /**
      * @typedef IdRangeValueType
-     * @property id:string
-     * @property range:string
-     * @property value:any
+     * @property {string} id
+     * @property {string} range
+     * @property {any} value
      */
     type IdRangeValueType = {
-        id:string: any;
-        range:string: any;
-        value:any: any;
+        id: string;
+        range: string;
+        value: any;
     };
     /**
      * Set a range of data in a target sheet with an array of arrays of data
@@ -381,15 +405,26 @@ declare module "sheets/sheetOps.js" {
      * final cells for a row, the array for that row is shortened. If a row has no
      * data no array for that row is returned.
      * @param {IdRangeType} sheetRange  range property should include name of tab `Tab1!A2:C6`
-     * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column).
+     * @returns {Promise<Array.<Array<number|string>>>} an array of rows containing an array for each column of data (even if only one column).
      * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
      */
-    function getSheetValues(sheetRange: IdRangeType): Promise<Array[]>;
+    function getSheetValues(sheetRange: IdRangeType): Promise<(number | string)[][]>;
     /**
      *
      * @param {string} sheetId
      */
     function getSheetProperties(sheetId: string): void;
+    /**
+     * @typedef {object} SheetIndexName
+     *  @property  {string} sheetId
+     *  @property  {number?} sheetIndex
+     *  @property  {string?} sheetName
+     */
+    type SheetIndexName = {
+        sheetId: string;
+        sheetIndex: number;
+        sheetName: string;
+    };
     /**
      * @typedef {object} gridProperties
      * @property {boolean} isValid
@@ -406,18 +441,42 @@ declare module "sheets/sheetOps.js" {
     /**
      * Get the grid properties which is an object with a rowCount and columnCount
      * property.
-     * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
+     * @param {SheetIndexName} sheetInfo
      * @returns {Promise<gridProperties>}
      */
-    function getSheetGridProperties(): Promise<gridProperties>;
+    function getSheetGridProperties(sheetInfo: SheetIndexName): Promise<gridProperties>;
+    /**
+     * @typedef {object} SheetNameSheets
+     *  @property  {string} sheetName
+     *  @property {object} sheets
+    }}
+     */
+    type SheetNameSheets = {
+        sheetName: string;
+        sheets: any;
+    };
+    /**
+     * @typedef {object} IsValidSheet
+     *  @property {boolean} isValid
+     *  @property {any} sheet
+     */
+    type IsValidSheet = {
+        isValid: boolean;
+        sheet: any;
+    };
+    /**
+     * @param {SheetNameSheets} param0
+     * @returns {IsValidSheet}
+     */
+    function getSheetByName(param0: SheetNameSheets): IsValidSheet;
     /**
      * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
      * Note that this returns the ID not the index, although often the id of the first sheet is often 0
      * the other sheets have longer ids
-     * @param {{id:string, sheetName:string}} sheetInfo
+     * @param {SheetIndexName} sheetInfo
      * @returns {Promise<{isValid:boolean, sheetId:number}>}
      */
-    function getSheetIdByName(sheetInfo: any): Promise<{ isValid: boolean; sheetId: number; }>;
+    function getSheetIdByName(sheetInfo: SheetIndexName): Promise<{ isValid: boolean; sheetId: number; }>;
 }
 
 /**

@@ -23,7 +23,7 @@ after(() => {
 })
 
 /** @see sheetOps module */
-describe('INTEGRATION TESTS sheetOps module', function() {
+describe.only('INTEGRATION TESTS sheetOps module', function() {
   this.timeout(10000)
   const SINGLE_CELL = `${testSheet.tabName}!C1`
   const sheetRange = {}
@@ -163,7 +163,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
 
   it('getSheetIdByName() should use sheet name to get index', async () => {
     const sheetName = 'Sheet2'
-    const findSheet = await sheetOps.getSheetIdByName({id:sheetRange.id, sheetName})
+    const findSheet = await sheetOps.getSheetIdByName({sheetId:sheetRange.id, sheetName})
     findSheet.isValid.should.be.true
     findSheet.sheetId.should.equal(898926069)
   })

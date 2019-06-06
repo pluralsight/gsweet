@@ -29,22 +29,22 @@ const autoInit = () => {
 
 /**
  * @typedef IdRangeType
- * @property id:string
- * @property range:string
+ * @property {string} id
+ * @property {string} range
  */
 
 /**
  * @typedef IdRangeDataType
- * @property id:string
- * @property range:string
- * @property data:[][]
+ * @property {string} id
+ * @property {string} range
+ * @property {[][]} data
  */
 
 /**
  * @typedef IdRangeValueType
- * @property id:string
- * @property range:string
- * @property value:any
+ * @property {string} id
+ * @property {string} range
+ * @property {any} value
  */
 
 
@@ -118,7 +118,7 @@ const setSheetCell = async sheetRangeValue => {
  * final cells for a row, the array for that row is shortened. If a row has no
  * data no array for that row is returned.
  * @param {IdRangeType} sheetRange  range property should include name of tab `Tab1!A2:C6`
- * @returns {Promise<Array.<Array>>} an array of rows containing an array for each column of data (even if only one column).
+ * @returns {Promise<Array.<Array<number|string>>>} an array of rows containing an array for each column of data (even if only one column).
  * @example getSheetValues({id:SOME_ID, range:TabName!A:I})
  */
 const getSheetValues = async sheetRange => {
@@ -152,6 +152,13 @@ const getSheetProperties = async sheetId => {
 }
 
 /**
+ * @typedef {object} SheetIndexName
+ *  @property  {string} sheetId
+ *  @property  {number?} sheetIndex
+ *  @property  {string?} sheetName
+ */
+
+/**
  * @typedef {object} gridProperties
  * @property {boolean} isValid
  * @property {number} rowCount
@@ -163,7 +170,7 @@ const getSheetProperties = async sheetId => {
 /**
  * Get the grid properties which is an object with a rowCount and columnCount
  * property. 
- * @param {{sheetId:string, sheetIndex?:number, sheetName?:string}} sheetInfo
+ * @param {SheetIndexName} sheetInfo
  * @returns {Promise<gridProperties>}
  */
 const getSheetGridProperties = async sheetInfo => {
@@ -180,8 +187,15 @@ const getSheetGridProperties = async sheetInfo => {
   return getGridPropertiesByName({sheetName, sheets})
 }
 /**
+ * @typedef {object} SheetNameSheets
+ *  @property  {string} sheetName
+ *  @property {object} sheets
+}} 
+ */
+
+/**
  * @private
- * @param {{sheetName:string, sheets:object}} param0 
+ * @param {SheetNameSheets} param0 
  * @returns {gridProperties}
  */
 const getGridPropertiesByName = ({sheetName, sheets}) => {
@@ -203,6 +217,16 @@ const getGridPropertiesByName = ({sheetName, sheets}) => {
   return result
 }
 
+/**
+ * @typedef {object} IsValidSheet
+ *  @property {boolean} isValid 
+ *  @property {any} sheet 
+ */
+
+/**
+ * @param {SheetNameSheets} param0 
+ * @returns {IsValidSheet}
+ */
 const getSheetByName = ({sheetName, sheets}) => {
   for (const sheet of sheets) {
     const {properties} = sheet
@@ -217,12 +241,12 @@ const getSheetByName = ({sheetName, sheets}) => {
  * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
  * Note that this returns the ID not the index, although often the id of the first sheet is often 0 
  * the other sheets have longer ids
- * @param {{id:string, sheetName:string}} sheetInfo 
+ * @param {SheetIndexName} sheetInfo 
  * @returns {Promise<{isValid:boolean, sheetId:number}>}
 */
 const getSheetIdByName = async sheetInfo => {
-  const {id, sheetName} = sheetInfo
-  const result = await getSheetProperties(id)
+  const {sheetId, sheetName} = sheetInfo
+  const result = await getSheetProperties(sheetId)
   const {sheets} = result.data
   return  extractSheetId({sheetName, sheets})
 }
