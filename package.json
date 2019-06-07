@@ -1,13 +1,13 @@
 {
   "name": "gsweet",
-  "version": "v2.0.1-beta.4",
+  "version": "v2.0.1-beta.5",
   "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
     "url": "git://github.com/pluralsight/gsweet.git"
   },
   "main": "./src/main.js",
-  "types": "./gsweet/index.d.ts",
+  "types": "gsweet/index.d.ts",
   "scripts": {
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
@@ -16,7 +16,7 @@
     "start": "node --use_strict ./src/main.js",
     "lint": "esw src --color",
     "lint:watch": "npm run lint -- --watch",
-    "doc": "jsdoc -c ./jsdoc.config.json src/**/*.js ./ReadMe.md",
+    "doc": "jsdoc -c ./jsdoc.config.json src/*.js src/**/*.js ./ReadMe.md",
     "audit": "npm audit",
     "build:commit": "git commit --all -m 'build commit'",
     "build:ver": "npm version patch",

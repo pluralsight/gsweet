@@ -5,7 +5,7 @@
  *
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later
- * @module
+ * @module sheetOps
  */
 const ss = require('./sheetService')
 const logger = require('../utils/logger')

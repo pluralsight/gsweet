@@ -1,3 +1,41 @@
+/** Only needed for testing
+ */
+declare function forceInitialization(): void;
+
+/** One time initialization to load credentials
+ */
+declare function init(): void;
+
+/** Get the Google Sheet authorization
+ */
+declare function getGoogleSheetAuth(): void;
+
+/** Get the Google Drive authorization
+ */
+declare function getGoogleDriveAuth(): void;
+
+/** @protected
+ * Called for any auth - goes to Google with the needed credentials
+ */
+declare function getOAuth2Client(): void;
+
+/**
+ * @file Rolls up the Gsuite services into one class
+ * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
+ *
+ * @author Tod Gentille <tod-gentille@pluralsight.com>
+ * @license GPL-3.0-or-later
+ * @module GSweet
+ */
+declare module "GSweet" {
+    /**
+     * @param {{pathOrVarName:string, useExistingEnvVar:boolean}} param
+     */
+    class GSweet {
+        constructor(param: any);
+    }
+}
+
 /** @module
  */
 declare module "drive/driveOps" {
@@ -315,9 +353,9 @@ declare module "sheets/sheetFormatOps.js" {
  *
  * @author Tod Gentille <tod-gentille@pluralsight.com>
  * @license GPL-3.0-or-later
- * @module
+ * @module sheetOps
  */
-declare module "sheets/sheetOps.js" {
+declare module "sheetOps" {
     /**
      * Set up this module with the object that allows access to the google sheet
      * calls. Typically from the value returned by sheetService.init(). When testing

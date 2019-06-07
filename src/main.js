@@ -1,8 +1,16 @@
+
+/**
+ * @file Rolls up the Gsuite services into one class
+ * [GPL License Full Text](https://spdx.org/licenses/GPL-3.0-or-later.html)
+ *
+ * @author Tod Gentille <tod-gentille@pluralsight.com>
+ * @license GPL-3.0-or-later
+ * @module GSweet
+ */
 const envCreate = require('env-create')
 const driveOps = require('./drive/driveOps')
 const sheetOps = require('./sheets/sheetOps')
 const sheetFormatOps = require('./sheets/sheetFormatOps')
-
 
 class GSweet {
   /**
