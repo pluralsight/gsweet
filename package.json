@@ -13,7 +13,7 @@
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --reporter list \"src/**/*.test.int.js\" ",
     "test:all": "nyc run-p 'test -- --forbid-only'   'test:int -- --forbid-only'",
-    "start": "node --use_strict ./src/main.js",
+    "start": "node --use_strict $npm_package_main",
     "lint": "esw src --color",
     "lint:watch": "npm run lint -- --watch",
     "doc": "jsdoc -c ./jsdoc.config.json src/*.js src/**/*.js ./ReadMe.md",

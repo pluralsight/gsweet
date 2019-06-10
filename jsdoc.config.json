@@ -5,5 +5,9 @@
     "recurse": true,
     "verbose": true,
     "template": "./node_modules/tsd-jsdoc/dist"
+  },
+  "source": {
+    "include": ["gsweet/src/sheets/*.js"],
+    "excludePattern": "(.*.test.js)"
   }
 }

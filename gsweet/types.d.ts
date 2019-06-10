@@ -29,16 +29,25 @@ declare function getOAuth2Client(): void;
  */
 declare module "GSweet" {
     /**
-     * @param {{pathOrVarName:string, useExistingEnvVar:boolean}} param
+     * @typedef {object} PathOrExisting
+     * @property {string} pathOrVarName
+     * @property {boolean} useExistingEnvVar
+     */
+    type PathOrExisting = {
+        pathOrVarName: string;
+        useExistingEnvVar: boolean;
+    };
+    /**
+     * @param {PathOrExisting} param
      */
     class GSweet {
-        constructor(param: any);
+        constructor(param: PathOrExisting);
     }
 }
 
 /** @module
  */
-declare module "drive/driveOps" {
+declare module "src/drive/driveOps" {
     /** Enum for the currently supported google mime-types
      */
     var mimeType: any;
@@ -149,7 +158,7 @@ declare module "Drive/driveOps Integration Tests" { }
 /**
  * @module
  */
-declare module "drive/driveService" {
+declare module "src/drive/driveService" {
     /**
      * Set up the service used for the Google Drive API. If no parameter passed in
      * uses the real google API, a fake or mock can be passed in for testing.
@@ -166,7 +175,7 @@ declare module "drive/driveService" {
  * @license GPL-3.0-or-later
  * @module
  */
-declare module "sheets/sheetFormatOps.js" {
+declare module "src/sheets/sheetFormatOps.js" {
     /**
      * @typedef {Object} FormatCellsBaseType
      * @property {string} sheetId  // This is the tab id number - starting with 0
@@ -530,7 +539,7 @@ declare module "Sheet/sheetOps Integration Tests" { }
  * @requires ../googleAuthHelper
  * @module
  */
-declare module "sheets/sheetService.js" {
+declare module "src/sheets/sheetService.js" {
     /** holds the sheetService created by init()
      *  @type {Object}
      */

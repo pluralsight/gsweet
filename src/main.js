@@ -11,10 +11,14 @@ const envCreate = require('env-create')
 const driveOps = require('./drive/driveOps')
 const sheetOps = require('./sheets/sheetOps')
 const sheetFormatOps = require('./sheets/sheetFormatOps')
-
+/**
+ * @typedef {object} PathOrExisting
+ * @property {string} pathOrVarName
+ * @property {boolean} useExistingEnvVar
+ */
 class GSweet {
   /**
-   * @param {{pathOrVarName:string, useExistingEnvVar:boolean}} param 
+   * @param {PathOrExisting} param
    */
   constructor(param = {pathOrVarName:'', useExistingEnvVar:false}) {
     if (param.useExistingEnvVar == undefined) {
