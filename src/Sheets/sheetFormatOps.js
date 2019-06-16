@@ -274,7 +274,7 @@ const batchUpdate = async ({id, requests}) => {
     resource:requests,
   })
     .catch((err) => {
-      console.log('Error trying to do batch update', JSON.stringify(err, null, 2))
+      console.error('Error trying to do batch update', err.message) // JSON.stringify(err, null, 2))
       returnObj.isValid = false
       returnObj.message = 'batchUpdate() request failed'
     })
