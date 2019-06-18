@@ -151,6 +151,19 @@ const getSheetProperties = async sheetId => {
   }
 }
 
+const getSheetTitle = async sheetId => {
+  try {
+    const result = await _sheetService.spreadsheets.get({
+      spreadsheetId: sheetId,
+      includeGridData: false,
+    })
+    const {title} = result.data.properties
+    return title
+  } catch (err) {
+    logger.error(err)
+  }
+}
+
 /**
  * @typedef {object} SheetIndexName
  *  @property  {string} sheetId
@@ -251,6 +264,7 @@ const getSheetIdByName = async sheetInfo => {
   return  extractSheetId({sheetName, sheets})
 }
 
+
 const extractSheetId = ({sheetName, sheets}) => {
   const result = {isValid:false,
     sheetId:-1,
@@ -298,6 +312,7 @@ module.exports = {
   setRangeData,
   setSheetCell,
   getSheetProperties,
+  getSheetTitle,
   getSheetGridProperties,
   getSheetIdByName,
 }
