@@ -4,11 +4,13 @@ const Gsweet = require('../main')
 const testData = require('../test-data/integration.json')
 const testSheet = testData.sheet
 
+
 const gsweet = new Gsweet({
   pathOrVarName: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json',
   useExistingEnvVar: false,
 })
 const {sheetFormatOps} = gsweet
+
 
 describe('INTEGRATION TESTS sheetFormatOps module', function() {
   this.timeout(10000)
@@ -60,5 +62,12 @@ describe('INTEGRATION TESTS sheetFormatOps module', function() {
       const result = await sheetFormatOps.makeBatchRequest({id:sheetRange.id, requestArray:requests})
       result.isValid.should.be.true
     })
+  })
+
+  it('renameSheet() should rename the sheet with the given id', async () => {
+    const id = '1pLB4AmPpInCpHy3A_lCwqWkt2jc_itif3gNMyhIy4Do'
+
+    const result = await sheetFormatOps.renameSheet({id, newName:'rename me', sheetId:0})
+    console.log(result)
   })
 })

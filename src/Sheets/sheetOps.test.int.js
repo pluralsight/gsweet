@@ -8,6 +8,11 @@ const Gsweet = require('../main')
 const logger = require('../utils/logger')
 const testData = require('../test-data/integration.json')
 const testSheet = testData.sheet
+const {destSheet} = testData
+// Link to test sheet
+// https://docs.google.com/spreadsheets/d/105LhrjQp75T4Q4mZ337ydosno6tjKjDzXNutXf24c1c/edit#gid=0
+// Link to dest sheet
+// https://docs.google.com/spreadsheets/d/1pLB4AmPpInCpHy3A_lCwqWkt2jc_itif3gNMyhIy4Do/edit#gid=0
 
 const gsweet = new Gsweet({
   pathOrVarName: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json',
@@ -23,7 +28,7 @@ after(() => {
 })
 
 /** @see sheetOps module */
-describe.only('INTEGRATION TESTS sheetOps module', function() {
+describe('INTEGRATION TESTS sheetOps module', function() {
   this.timeout(10000)
   const SINGLE_CELL = `${testSheet.tabName}!C1`
   const sheetRange = {}
@@ -166,5 +171,34 @@ describe.only('INTEGRATION TESTS sheetOps module', function() {
     const findSheet = await sheetOps.getSheetIdByName({sheetId:sheetRange.id, sheetName})
     findSheet.isValid.should.be.true
     findSheet.sheetId.should.equal(898926069)
+  })
+
+  it('getSheetByName() should find and return a sheet', async () => {
+    const sheetName = 'Sheet2'
+    const findSheet = await sheetOps.getSheetByName({spreadsheetId:sheetRange.id, sheetName})
+    findSheet.isValid.should.be.true
+  })
+
+  it('copySheetFromTo() should copy a sheet', async () => {
+    const sheetName = 'Sheet1'
+    const foundSheet = await sheetOps.getSheetIdByName({sheetId:sheetRange.id, sheetName})
+    foundSheet.sheetId.should.equal(0)
+
+    const result = await sheetOps.copySheetFromTo({fromSpreadsheetId:sheetRange.id, 
+      fromSheetId:foundSheet.sheetId,
+      toSpreadsheetId: destSheet.id})
+    result.success.should.be.true
+  })
+
+  it.skip('copySheetByNameFromTo() should copy a sheet', async () => {
+    const result = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
+      fromSheetName:'Data Validation',
+      toSpreadsheetId: destSheet.id})
+    result.success.should.be.true
+    const result2 = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
+      fromSheetName:'Course Plan',
+      toSpreadsheetId: destSheet.id})
+    result2.success.should.be.true
+    console.log(result2)
   })
 })

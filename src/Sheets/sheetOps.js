@@ -152,16 +152,9 @@ const getSheetProperties = async sheetId => {
 }
 
 const getSheetTitle = async sheetId => {
-  try {
-    const result = await _sheetService.spreadsheets.get({
-      spreadsheetId: sheetId,
-      includeGridData: false,
-    })
-    const {title} = result.data.properties
-    return title
-  } catch (err) {
-    logger.error(err)
-  }
+  const result = await getSheetProperties(sheetId)
+  const {title} = result.data.properties
+  return title
 }
 
 /**
@@ -199,6 +192,19 @@ const getSheetGridProperties = async sheetInfo => {
   }
   return getGridPropertiesByName({sheetName, sheets})
 }
+
+/**
+ * Find a sheet by name on a spreadsheet and return the sheet and status
+ * of it if was found.
+ * @param {{spreadsheetId: string, sheetName:string }} sheetInfo 
+ * @returns {Promise<IsValidSheet>}
+ */
+const getSheetByName = async sheetInfo => {
+  const {spreadsheetId, sheetName} = sheetInfo
+  const result = await getSheetProperties(spreadsheetId)
+  const {sheets} = result.data
+  return getSheetByNameFromSheets({sheetName, sheets})
+}
 /**
  * @typedef {object} SheetNameSheets
  *  @property  {string} sheetName
@@ -218,7 +224,7 @@ const getGridPropertiesByName = ({sheetName, sheets}) => {
     columnCount:0,
   } 
 
-  const {isValid, sheet} = getSheetByName({sheetName, sheets})
+  const {isValid, sheet} = getSheetByNameFromSheets({sheetName, sheets})
   if (isValid) {
     const gp = sheet.properties.gridProperties
     result.rowCount = gp.rowCount
@@ -240,7 +246,7 @@ const getGridPropertiesByName = ({sheetName, sheets}) => {
  * @param {SheetNameSheets} param0 
  * @returns {IsValidSheet}
  */
-const getSheetByName = ({sheetName, sheets}) => {
+const getSheetByNameFromSheets = ({sheetName, sheets}) => {
   for (const sheet of sheets) {
     const {properties} = sheet
     if (properties.title === sheetName) {
@@ -254,8 +260,8 @@ const getSheetByName = ({sheetName, sheets}) => {
  * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
  * Note that this returns the ID not the index, although often the id of the first sheet is often 0 
  * the other sheets have longer ids
- * @param {SheetIndexName} sheetInfo 
- * @returns {Promise<{isValid:boolean, sheetId:number}>}
+ * @param {{sheetId:string, sheetName:string}} sheetInfo 
+ * @returns {Promise<{isValid:boolean, sheetId:string}>}
 */
 const getSheetIdByName = async sheetInfo => {
   const {sheetId, sheetName} = sheetInfo
@@ -267,7 +273,7 @@ const getSheetIdByName = async sheetInfo => {
 
 const extractSheetId = ({sheetName, sheets}) => {
   const result = {isValid:false,
-    sheetId:-1,
+    sheetId:'-1',
   } 
   for (const sheet of sheets) {
     const {properties} = sheet
@@ -305,6 +311,62 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
   return  result
 }
 
+/**
+ * 
+ * @param {{fromSpreadsheetId:string, fromSheetName:string, toSpreadsheetId:string}} param0 
+ */
+const  copySheetByNameFromTo = async({fromSpreadsheetId, fromSheetName, toSpreadsheetId}) => {
+  const foundSheet = await getSheetIdByName({sheetId:fromSpreadsheetId, sheetName:fromSheetName})
+  if (!foundSheet.isValid) {
+    return {success:false, message:`Could not find destination sheet with name ${fromSheetName}`, sheetInfo:null}
+  }
+
+  return copySheetFromTo({fromSpreadsheetId, fromSheetId:foundSheet.sheetId, toSpreadsheetId})
+}
+
+
+/**
+ * @typdef CopySheetResult
+ * @property {boolean} success
+ * @property {string} sheetId
+ * @property {string} title
+ * @property {index} number
+ * @property {string} sheetType
+ * @property {{rowCount:number, columnCount:number}} gridProperties
+ */
+/**
+ * 
+ * @param {{fromSpreadsheetId:string, fromSheetId:string, toSpreadsheetId:string}} param0 
+ * @returns Promise<CopySheetResult>
+ */
+const  copySheetFromTo = async({fromSpreadsheetId, fromSheetId, toSpreadsheetId}) => {
+  const resultObj = {
+    success: false,
+    sheetId:'',
+    title:'',
+    index:-1,
+    sheetType:'',
+    gridProperties: {rowCount:0, columnCount:0},
+  }
+
+  const request =  {
+    spreadsheetId :fromSpreadsheetId,
+    sheetId : fromSheetId,
+    resource:{
+      destinationSpreadsheetId: toSpreadsheetId,
+    },
+  }
+  const result = await  _sheetService.spreadsheets.sheets.copyTo(request)
+    .catch((err) => err.message)
+  if (typeof result === 'string') { // The catch happened 
+    resultObj.title = result
+    return resultObj
+  }
+
+  const successObj = {success:true, ...result.data}
+  return successObj
+}
+
 module.exports = {
   init,
   autoInit,
@@ -314,5 +376,8 @@ module.exports = {
   getSheetProperties,
   getSheetTitle,
   getSheetGridProperties,
+  getSheetByName,
   getSheetIdByName,
+  copySheetFromTo,
+  copySheetByNameFromTo,
 }

@@ -20,14 +20,14 @@ let _driveService
 
 
 /** Enum for the currently supported google mime-types */
-const mimeType = {
+const mimeType = { /** @type any */
   /** @type {number} */
   FOLDER: 1, /**  FILE is not a google recognized value, used to mean anything other than a folder. */
   FILE: 2, /** @type {number} */
   SPREADSHEET: 3, /** @type {number} */
-  DOC: 4,
+  DOC: 4, /** @type {number} */
   /** place to store the actual strings that google uses for mime-types */
-  properties: {
+  properties: { /** @type object */
     1: {type: 'application/vnd.google-apps.folder'},
     2: {type: 'N/A'},
     3: {type: 'application/vnd.google-apps.spreadsheet'},

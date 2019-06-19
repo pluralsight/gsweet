@@ -493,6 +493,13 @@ declare module "sheetOps" {
      */
     function getSheetGridProperties(sheetInfo: SheetIndexName): Promise<gridProperties>;
     /**
+     * Find a sheet by name on a spreadsheet and return the sheet and status
+     * of it if was found.
+     * @param {{spreadsheetId: string, sheetName:string }} sheetInfo
+     * @returns {Promise<IsValidSheet>}
+     */
+    function getSheetByName(sheetInfo: any): Promise<IsValidSheet>;
+    /**
      * @typedef {object} SheetNameSheets
      *  @property  {string} sheetName
      *  @property {object} sheets
@@ -515,15 +522,26 @@ declare module "sheetOps" {
      * @param {SheetNameSheets} param0
      * @returns {IsValidSheet}
      */
-    function getSheetByName(param0: SheetNameSheets): IsValidSheet;
+    function getSheetByNameFromSheets(param0: SheetNameSheets): IsValidSheet;
     /**
      * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
      * Note that this returns the ID not the index, although often the id of the first sheet is often 0
      * the other sheets have longer ids
-     * @param {SheetIndexName} sheetInfo
-     * @returns {Promise<{isValid:boolean, sheetId:number}>}
+     * @param {{sheetId:string, sheetName:string}} sheetInfo
+     * @returns {Promise<{isValid:boolean, sheetId:string}>}
      */
-    function getSheetIdByName(sheetInfo: SheetIndexName): Promise<{ isValid: boolean; sheetId: number; }>;
+    function getSheetIdByName(sheetInfo: any): Promise<{ isValid: boolean; sheetId: string; }>;
+    /**
+     *
+     * @param {{fromSpreadsheetId:string, fromSheetName:string, toSpreadsheetId:string}} param0
+     */
+    function copySheetByNameFromTo(param0: any): void;
+    /**
+     *
+     * @param {{fromSpreadsheetId:string, fromSheetId:string, toSpreadsheetId:string}} param0
+     * @returns Promise<CopySheetResult>
+     */
+    function copySheetFromTo(param0: any): any;
 }
 
 /**
