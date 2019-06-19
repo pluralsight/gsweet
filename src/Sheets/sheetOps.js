@@ -283,7 +283,6 @@ const extractSheetId = ({sheetName, sheets}) => {
       return result
     }
   }
-  console.error(`Something went wrong. There was no sheet named: ${sheetName}.`)
   return result
 }
 
@@ -326,9 +325,9 @@ const  copySheetByNameFromTo = async({fromSpreadsheetId, fromSheetName, toSpread
 
 
 /**
- * @typdef CopySheetResult
+ * @typedef CopySheetResult
  * @property {boolean} success
- * @property {string} sheetId
+ * @property {number} sheetId
  * @property {string} title
  * @property {index} number
  * @property {string} sheetType

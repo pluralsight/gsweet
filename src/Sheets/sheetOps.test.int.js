@@ -188,6 +188,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       fromSheetId:foundSheet.sheetId,
       toSpreadsheetId: destSheet.id})
     result.success.should.be.true
+    console.log(result)
   })
 
   it.skip('copySheetByNameFromTo() should copy a sheet', async () => {
