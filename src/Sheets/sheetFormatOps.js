@@ -167,7 +167,6 @@ const getAddNoteRequest = noteOptions => {
       fields: 'note',
     },
   }
-
   return request
 }
 
@@ -308,5 +307,6 @@ module.exports = {
   formatCells,
   addNoteToCell,
   makeBatchRequest,
+  makeSingleObjBatchRequest,
   renameSheet,
 }

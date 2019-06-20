@@ -9,6 +9,7 @@
  */
 const ss = require('./sheetService')
 const logger = require('../utils/logger')
+const sheetFormat = require('./sheetFormatOps') // TODO refactor out the batch stuff to its own class
 
 let _sheetService
 
@@ -366,6 +367,48 @@ const  copySheetFromTo = async({fromSpreadsheetId, fromSheetId, toSpreadsheetId}
   return successObj
 }
 
+/**
+ * @typedef rowColumnInfo
+ * @property {number} startRow
+ * @property {number | undefined} endRow
+ * @property {number} startCol
+ * @property {number | undefined} endCol
+ */
+const setListDataValidation = async({spreadsheetId, sheetId, rcInfo, valuesList}) => {
+  const  gridRange = {
+    sheetId,
+    startRowIndex: rcInfo.row,
+    startColumnIndex: rcInfo.col,
+  }
+
+  if (rcInfo.numRows != undefined) {
+    gridRange['endRowIndex'] = rcInfo.row + rcInfo.numRows
+  }
+  if (rcInfo.numCols != undefined) {
+    gridRange['endColumnIndex'] = rcInfo.col + rcInfo.numCols
+  }
+
+  const values = valuesList.map(value => ({userEnteredValue:`${value}`}))
+  const request = 
+    {
+      setDataValidation: {
+        range: gridRange,
+        rule: {
+          condition: {
+            type: 'ONE_OF_LIST',
+            values,
+          },
+          showCustomUi:true,
+          strict: false,
+        },
+      },
+    }
+  
+  const result = await sheetFormat.makeSingleObjBatchRequest({id:spreadsheetId, requestObj:request})
+
+  return result
+}
+
 module.exports = {
   init,
   autoInit,
@@ -379,4 +422,5 @@ module.exports = {
   getSheetIdByName,
   copySheetFromTo,
   copySheetByNameFromTo,
+  setListDataValidation,
 }

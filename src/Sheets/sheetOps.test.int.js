@@ -216,7 +216,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         fromSpreadsheetId:'1r8CtuoJKEQLhZXQvcG7THGxGlRvJabMAFWIbYEB2pQY', 
         fromSheetId:0, // The Data Entry Sheet
         toSpreadsheetId: tempDestSheetId})
-      // const dataEntrySheetId = result.sheetId
+
       result.success.should.be.true
       result = await sheetOps.copySheetFromTo({
         fromSpreadsheetId:'1r8CtuoJKEQLhZXQvcG7THGxGlRvJabMAFWIbYEB2pQY', 
@@ -231,6 +231,20 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         id:tempDestSheetId,
         newName:'Data Validation', 
         sheetId: dataValidationSheetId})
+
+      console.log(result)
+    })
+  })
+  describe.only('Data Validation ',   () => {
+    it('setListDataValidation() should set up a list dropdown', async () => {
+      const valuesList = ['Scalzi', 'Hearne', 'Rothfuss']
+      
+      const result = await sheetOps.setListDataValidation({
+        spreadsheetId: destSheet.id,
+        sheetId: 0,
+        rcInfo:{row:1, col:1, numCols:1},
+        valuesList,
+      })
 
       console.log(result)
     })
