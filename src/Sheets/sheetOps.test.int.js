@@ -18,7 +18,7 @@ const gsweet = new Gsweet({
   pathOrVarName: '/Users/tod-gentille/dev/node/ENV_VARS/gsweet.env.json',
   useExistingEnvVar: false,
 })
-const {sheetOps} = gsweet
+const {sheetOps, sheetFormatOps} = gsweet
 
 before(() => {
   logger.level = 'info'
@@ -179,27 +179,60 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     findSheet.isValid.should.be.true
   })
 
-  it('copySheetFromTo() should copy a sheet', async () => {
-    const sheetName = 'Sheet1'
-    const foundSheet = await sheetOps.getSheetIdByName({sheetId:sheetRange.id, sheetName})
-    foundSheet.sheetId.should.equal(0)
+  describe('copySheetFromTo() should ', () => {
+    it('copy a test sheet', async () => {
+      const sheetName = 'Sheet1'
+      const foundSheet = await sheetOps.getSheetIdByName({sheetId:sheetRange.id, sheetName})
+      foundSheet.sheetId.should.equal(0)
+  
+      const result = await sheetOps.copySheetFromTo({fromSpreadsheetId:sheetRange.id, 
+        fromSheetId:foundSheet.sheetId,
+        toSpreadsheetId: destSheet.id})
+      result.success.should.be.true
+      console.log(result)
+    })
 
-    const result = await sheetOps.copySheetFromTo({fromSpreadsheetId:sheetRange.id, 
-      fromSheetId:foundSheet.sheetId,
-      toSpreadsheetId: destSheet.id})
-    result.success.should.be.true
-    console.log(result)
-  })
+  
+    it.skip('copySheetByNameFromTo() should copy both sheets from the IP Template', async () => {
+      const result = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
+        fromSheetName:'Data Validation',
+        toSpreadsheetId: destSheet.id})
+      result.success.should.be.true
+      const result2 = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
+        fromSheetName:'Course Plan',
+        toSpreadsheetId: destSheet.id})
+      result2.success.should.be.true
+      console.log(result2)
+    })
 
-  it.skip('copySheetByNameFromTo() should copy a sheet', async () => {
-    const result = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
-      fromSheetName:'Data Validation',
-      toSpreadsheetId: destSheet.id})
-    result.success.should.be.true
-    const result2 = await sheetOps.copySheetByNameFromTo({fromSpreadsheetId:'1tWjA_JrIH480II4itMu1H6q20AMc3QO6k03OJOKzl0M', 
-      fromSheetName:'Course Plan',
-      toSpreadsheetId: destSheet.id})
-    result2.success.should.be.true
-    console.log(result2)
+
+    it.skip('DEBUGGING TEST: copy Data Entry/Data Validation test sheets', async () => {
+      // Link to test source sheet
+      // https://docs.google.com/spreadsheets/d/1r8CtuoJKEQLhZXQvcG7THGxGlRvJabMAFWIbYEB2pQY/edit#gid=0
+      // Link to test destination sheet
+      // https://docs.google.com/spreadsheets/d/1T6AjEMs3goccHvt54ecoXdrkESCdx3xH7LFxvL9TGcI/edit#gid=0
+      const tempDestSheetId = '1T6AjEMs3goccHvt54ecoXdrkESCdx3xH7LFxvL9TGcI'
+      let  result = await sheetOps.copySheetFromTo({
+        fromSpreadsheetId:'1r8CtuoJKEQLhZXQvcG7THGxGlRvJabMAFWIbYEB2pQY', 
+        fromSheetId:0, // The Data Entry Sheet
+        toSpreadsheetId: tempDestSheetId})
+      // const dataEntrySheetId = result.sheetId
+      result.success.should.be.true
+      result = await sheetOps.copySheetFromTo({
+        fromSpreadsheetId:'1r8CtuoJKEQLhZXQvcG7THGxGlRvJabMAFWIbYEB2pQY', 
+        fromSheetId:1105675139, // The Data Validation Sheet
+        toSpreadsheetId: tempDestSheetId})
+      const dataValidationSheetId = result.sheetId
+      result.success.should.be.true
+
+      // NOTE  This is a troubleshooting test. It will only work once. After that
+      // the rename will fail because the destination sheet will have a sheet with this name. 
+      result = await sheetFormatOps.renameSheet({
+        id:tempDestSheetId,
+        newName:'Data Validation', 
+        sheetId: dataValidationSheetId})
+
+      console.log(result)
+    })
   })
 })
