@@ -7,11 +7,15 @@
  * @license GPL-3.0-or-later
  * @module sheetOps
  */
-const ss = require('./sheetService')
-const logger = require('../utils/logger')
-const sheetFormat = require('./sheetFormatOps') // TODO refactor out the batch stuff to its own class
+// const ss = require('./sheetService')
+import * as ss from "./sheetService"
+import * as logger from "../utils/logger"
+import * as sheetFormat from "./sheetFormatOps" // TODO refactor out the batch stuff to its own class
+import {sheets_v4} from "googleapis"
+// const logger = require('../utils/logger')
+// const sheetFormat = require("./sheetFormatOps")
 
-let _sheetService
+let _sheetService: sheets_v4.Sheets
 
 /**
  * Set up this module with the object that allows access to the google sheet
@@ -47,7 +51,6 @@ const autoInit = () => {
  * @property {string} range
  * @property {any} value
  */
-
 
 /**
  * Set a range of data in a target sheet with an array of arrays of data
@@ -86,13 +89,15 @@ const setRangeData = async sheetRangeData => {
   const resource = {
     values: sheetRangeData.data,
   }
+  const updateParam: sheets_v4.Params$Resource$Spreadsheets$Values$Update = {
+    spreadsheetId: sheetRangeData.id,
+    range: sheetRangeData.range,
+    valueInputOption: "USER_ENTERED",
+    resource: resource,
+  } as sheets_v4.Params$Resource$Spreadsheets$Values$Update
+
   try {
-    const result = await _sheetService.spreadsheets.values.update({
-      spreadsheetId: sheetRangeData.id,
-      range: sheetRangeData.range,
-      valueInputOption: 'USER_ENTERED',
-      resource,
-    })
+    const result = await _sheetService.spreadsheets.values.update(updateParam)
     // logger.info(JSON.stringify(result, null, 2));
     return result // only needed for testing
   } catch (err) {
@@ -109,7 +114,7 @@ const setRangeData = async sheetRangeData => {
  * @example setSheetCell({id:SHEET_ID, range:Tab!A1, value:"SomeValue"})
  */
 const setSheetCell = async sheetRangeValue => {
-  sheetRangeValue['data'] = [[sheetRangeValue.value]]
+  sheetRangeValue["data"] = [[sheetRangeValue.value]]
   // @ts-ignore
   return await setRangeData(sheetRangeValue)
 }
@@ -170,13 +175,12 @@ const getSheetTitle = async sheetId => {
  * @property {boolean} isValid
  * @property {number} rowCount
  * @property {number} columnCount
- * @property {string} message  
+ * @property {string} message
  */
-
 
 /**
  * Get the grid properties which is an object with a rowCount and columnCount
- * property. 
+ * property.
  * @param {SheetIndexName} sheetInfo
  * @returns {Promise<gridProperties>}
  */
@@ -184,20 +188,21 @@ const getSheetGridProperties = async sheetInfo => {
   const {sheetId} = sheetInfo
   const result = await getSheetProperties(sheetId)
   const {sheets} = result.data
-  const {sheetIndex, sheetName} = sheetInfo
+  let {sheetIndex, sheetName} = sheetInfo
   // The full properties includes properties for title, gridProperties, and tabColor
   // The tabColor has properties for red, green, and blue (0->1)
   // we're only after the rowCount and ColumnCount properties on gridProperties
-  if (sheetInfo.sheetIndex !== undefined) {
+  if (sheetInfo.sheetIndex != null) {
     return getGridPropertiesByIndex({sheetIndex, sheets})
   }
+
   return getGridPropertiesByName({sheetName, sheets})
 }
 
 /**
  * Find a sheet by name on a spreadsheet and return the sheet and status
  * of it if was found.
- * @param {{spreadsheetId: string, sheetName:string }} sheetInfo 
+ * @param {{spreadsheetId: string, sheetName:string }} sheetInfo
  * @returns {Promise<IsValidSheet>}
  */
 const getSheetByName = async sheetInfo => {
@@ -215,67 +220,60 @@ const getSheetByName = async sheetInfo => {
 
 /**
  * @private
- * @param {SheetNameSheets} param0 
+ * @param {SheetNameSheets} param0
  * @returns {gridProperties}
  */
 const getGridPropertiesByName = ({sheetName, sheets}) => {
-  const result = {isValid:true,
-    message:'',
-    rowCount:0,
-    columnCount:0,
-  } 
+  const result = {isValid: true, message: "", rowCount: 0, columnCount: 0}
 
   const {isValid, sheet} = getSheetByNameFromSheets({sheetName, sheets})
   if (isValid) {
     const gp = sheet.properties.gridProperties
     result.rowCount = gp.rowCount
-    result.columnCount = gp.columnCount 
+    result.columnCount = gp.columnCount
     return result
   }
   result.isValid = false
-  result.message = 'Error: request for sheet name that does not exist'
+  result.message = "Error: request for sheet name that does not exist"
   return result
 }
 
 /**
  * @typedef {object} IsValidSheet
- *  @property {boolean} isValid 
- *  @property {any} sheet 
+ *  @property {boolean} isValid
+ *  @property {any} sheet
  */
 
 /**
- * @param {SheetNameSheets} param0 
+ * @param {SheetNameSheets} param0
  * @returns {IsValidSheet}
  */
 const getSheetByNameFromSheets = ({sheetName, sheets}) => {
   for (const sheet of sheets) {
     const {properties} = sheet
     if (properties.title === sheetName) {
-      return {isValid:true, sheet}
+      return {isValid: true, sheet}
     }
   }
-  return {isValid:false, sheet:null}
+  return {isValid: false, sheet: null}
 }
 
-/** 
+/**
  * From the id passed for the SPREADSHEET, find the id of the Sheet (aka tab) with the passed name.
- * Note that this returns the ID not the index, although often the id of the first sheet is often 0 
+ * Note that this returns the ID not the index, although often the id of the first sheet is often 0
  * the other sheets have longer ids
- * @param {{sheetId:string, sheetName:string}} sheetInfo 
+ * @param {{sheetId:string, sheetName:string}} sheetInfo
  * @returns {Promise<{isValid:boolean, sheetId:string}>}
-*/
+ */
 const getSheetIdByName = async sheetInfo => {
   const {sheetId, sheetName} = sheetInfo
   const result = await getSheetProperties(sheetId)
   const {sheets} = result.data
-  return  extractSheetId({sheetName, sheets})
+  return extractSheetId({sheetName, sheets})
 }
 
-
 const extractSheetId = ({sheetName, sheets}) => {
-  const result = {isValid:false,
-    sheetId:'-1',
-  } 
+  const result = {isValid: false, sheetId: "-1"}
   for (const sheet of sheets) {
     const {properties} = sheet
     if (properties.title === sheetName) {
@@ -295,11 +293,7 @@ const extractSheetId = ({sheetName, sheets}) => {
  * @returns {gridProperties}
  */
 const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
-  const result = {isValid:false,
-    message:'',
-    rowCount:0,
-    columnCount:0,
-  }   
+  const result = {isValid: false, message: "", rowCount: 0, columnCount: 0}
   if (sheets.length > sheetIndex) {
     const gp = sheets[sheetIndex].properties.gridProperties
     result.isValid = true
@@ -307,23 +301,22 @@ const getGridPropertiesByIndex = ({sheetIndex, sheets}) => {
     result.columnCount = gp.columnCount
     return result
   }
-  result.message = 'Error: request for sheetIndex that does not exist'
-  return  result
+  result.message = "Error: request for sheetIndex that does not exist"
+  return result
 }
 
 /**
- * 
- * @param {{fromSpreadsheetId:string, fromSheetName:string, toSpreadsheetId:string}} param0 
+ *
+ * @param {{fromSpreadsheetId:string, fromSheetName:string, toSpreadsheetId:string}} param0
  */
-const  copySheetByNameFromTo = async({fromSpreadsheetId, fromSheetName, toSpreadsheetId}) => {
-  const foundSheet = await getSheetIdByName({sheetId:fromSpreadsheetId, sheetName:fromSheetName})
+const copySheetByNameFromTo = async ({fromSpreadsheetId, fromSheetName, toSpreadsheetId}) => {
+  const foundSheet = await getSheetIdByName({sheetId: fromSpreadsheetId, sheetName: fromSheetName})
   if (!foundSheet.isValid) {
-    return {success:false, message:`Could not find destination sheet with name ${fromSheetName}`, sheetInfo:null}
+    return {success: false, message: `Could not find destination sheet with name ${fromSheetName}`, sheetInfo: null}
   }
 
-  return copySheetFromTo({fromSpreadsheetId, fromSheetId:foundSheet.sheetId, toSpreadsheetId})
+  return copySheetFromTo({fromSpreadsheetId, fromSheetId: foundSheet.sheetId, toSpreadsheetId})
 }
-
 
 /**
  * @typedef CopySheetResult
@@ -335,35 +328,35 @@ const  copySheetByNameFromTo = async({fromSpreadsheetId, fromSheetName, toSpread
  * @property {{rowCount:number, columnCount:number}} gridProperties
  */
 /**
- * 
- * @param {{fromSpreadsheetId:string, fromSheetId:string, toSpreadsheetId:string}} param0 
+ *
+ * @param {{fromSpreadsheetId:string, fromSheetId:string, toSpreadsheetId:string}} param0
  * @returns Promise<CopySheetResult>
  */
-const  copySheetFromTo = async({fromSpreadsheetId, fromSheetId, toSpreadsheetId}) => {
+const copySheetFromTo = async ({fromSpreadsheetId, fromSheetId, toSpreadsheetId}) => {
   const resultObj = {
     success: false,
-    sheetId:'',
-    title:'',
-    index:-1,
-    sheetType:'',
-    gridProperties: {rowCount:0, columnCount:0},
+    sheetId: "",
+    title: "",
+    index: -1,
+    sheetType: "",
+    gridProperties: {rowCount: 0, columnCount: 0},
   }
 
-  const request =  {
-    spreadsheetId :fromSpreadsheetId,
-    sheetId : fromSheetId,
-    resource:{
+  const request = {
+    spreadsheetId: fromSpreadsheetId,
+    sheetId: fromSheetId,
+    resource: {
       destinationSpreadsheetId: toSpreadsheetId,
     },
   }
-  const result = await  _sheetService.spreadsheets.sheets.copyTo(request)
-    .catch((err) => err.message)
-  if (typeof result === 'string') { // The catch happened 
+  const result = await _sheetService.spreadsheets.sheets.copyTo(request).catch(err => err.message)
+  if (typeof result === "string") {
+    // The catch happened
     resultObj.title = result
     return resultObj
   }
 
-  const successObj = {success:true, ...result.data}
+  const successObj = {success: true, ...result.data}
   return successObj
 }
 
@@ -374,37 +367,36 @@ const  copySheetFromTo = async({fromSpreadsheetId, fromSheetId, toSpreadsheetId}
  * @property {number} startCol
  * @property {number | undefined} endCol
  */
-const setListDataValidation = async({spreadsheetId, sheetId, rcInfo, valuesList}) => {
-  const  gridRange = {
+const setListDataValidation = async ({spreadsheetId, sheetId, rcInfo, valuesList}) => {
+  const gridRange = {
     sheetId,
     startRowIndex: rcInfo.row,
     startColumnIndex: rcInfo.col,
   }
 
   if (rcInfo.numRows != undefined) {
-    gridRange['endRowIndex'] = rcInfo.row + rcInfo.numRows
+    gridRange["endRowIndex"] = rcInfo.row + rcInfo.numRows
   }
   if (rcInfo.numCols != undefined) {
-    gridRange['endColumnIndex'] = rcInfo.col + rcInfo.numCols
+    gridRange["endColumnIndex"] = rcInfo.col + rcInfo.numCols
   }
 
-  const values = valuesList.map(value => ({userEnteredValue:`${value}`}))
-  const request = 
-    {
-      setDataValidation: {
-        range: gridRange,
-        rule: {
-          condition: {
-            type: 'ONE_OF_LIST',
-            values,
-          },
-          showCustomUi:true,
-          strict: false,
+  const values = valuesList.map(value => ({userEnteredValue: `${value}`}))
+  const request = {
+    setDataValidation: {
+      range: gridRange,
+      rule: {
+        condition: {
+          type: "ONE_OF_LIST",
+          values,
         },
+        showCustomUi: true,
+        strict: false,
       },
-    }
-  
-  const result = await sheetFormat.makeSingleObjBatchRequest({id:spreadsheetId, requestObj:request})
+    },
+  }
+
+  const result = await sheetFormat.makeSingleObjBatchRequest({id: spreadsheetId, requestObj: request})
 
   return result
 }

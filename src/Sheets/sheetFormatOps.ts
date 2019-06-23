@@ -1,5 +1,5 @@
 // @ts-check
-const ss = require('./sheetService')
+const ss = require("./sheetService")
 let _sheetService
 /**
  * @file Handles talking to the Google Drive API
@@ -62,14 +62,14 @@ let _sheetService
  */
 
 /** just get the default service and use it */
-const autoInit = () => {
+export const autoInit = () => {
   _sheetService = ss.init()
 }
 /**
  *
  * @param {FormatCellsColorType} param
  */
-const getBgColorRequest = param => {
+export const getBgColorRequest = param => {
   const {sheetId, row, col, numRows, numCols, color} = param
   const singleRequest = {
     repeatCell: {
@@ -89,7 +89,7 @@ const getBgColorRequest = param => {
           },
         },
       },
-      fields: 'userEnteredFormat(backgroundColor)',
+      fields: "userEnteredFormat(backgroundColor)",
     },
   }
 
@@ -104,7 +104,7 @@ const getBgColorRequest = param => {
  * will get reset to the google sheet default value for that formatting property
  * @param {FormatCellsColorType} param
  */
-const getFormatCellsRequest = param => {
+export const getFormatCellsRequest = param => {
   const {sheetId, row, col, numRows, numCols, color} = param
   const request = {
     repeatCell: {
@@ -122,7 +122,7 @@ const getFormatCellsRequest = param => {
             green: 1.0,
             blue: 1.0,
           },
-          horizontalAlignment: 'CENTER',
+          horizontalAlignment: "CENTER",
           textFormat: {
             foregroundColor: {
               red: color.r,
@@ -134,8 +134,7 @@ const getFormatCellsRequest = param => {
           },
         },
       },
-      fields:
-        'userEnteredFormat(backgroundColor ,textFormat ,horizontalAlignment)',
+      fields: "userEnteredFormat(backgroundColor ,textFormat ,horizontalAlignment)",
     },
   }
 
@@ -146,7 +145,7 @@ const getFormatCellsRequest = param => {
  *
  * @noteOptions {FormatCellsNoteType} noteOptions
  */
-const getAddNoteRequest = noteOptions => {
+export const getAddNoteRequest = noteOptions => {
   const {sheetId, row, col, note} = noteOptions
   const request = {
     updateCells: {
@@ -161,10 +160,10 @@ const getAddNoteRequest = noteOptions => {
         values: [
           {
             note,
-          }
+          },
         ],
       },
-      fields: 'note',
+      fields: "note",
     },
   }
   return request
@@ -177,13 +176,13 @@ const getRenameSheetRequest = ({newName, sheetId}) => {
         sheetId,
         title: newName,
       },
-      fields:'title',
+      fields: "title",
     },
   }
   return request
 }
 
-const renameSheet = async ({id, newName, sheetId}) => {
+export const renameSheet = async ({id, newName, sheetId}) => {
   const requestObj = getRenameSheetRequest({newName, sheetId})
   return makeSingleObjBatchRequest({id, requestObj})
 }
@@ -191,7 +190,7 @@ const renameSheet = async ({id, newName, sheetId}) => {
 /**
  * @param {{id:string, formatOptions:FormatCellsColorType}} param0
  */
-const formatCellsBgColor = async ({id, formatOptions}) => {
+export const formatCellsBgColor = async ({id, formatOptions}) => {
   const requestObj = getBgColorRequest(formatOptions)
   return makeSingleObjBatchRequest({id, requestObj})
 }
@@ -201,7 +200,7 @@ const formatCellsBgColor = async ({id, formatOptions}) => {
  * @param {string} obj.id
  * @param {FormatSingleColorType} obj.singleCellOptions
  */
-const formatSingleBgColor = async ({id, singleCellOptions}) => {
+export const formatSingleBgColor = async ({id, singleCellOptions}) => {
   const formatOptions = {...singleCellOptions}
   // @ts-ignore
   formatOptions.numRows = 1
@@ -221,7 +220,7 @@ const formatSingleBgColor = async ({id, singleCellOptions}) => {
  * @param {string} obj.id  spreadsheet id
  * @param {FormatCellsColorType} obj.formatOptions
  */
-const formatCells = async ({id, formatOptions}) => {
+export const formatCells = async ({id, formatOptions}) => {
   const requestObj = getFormatCellsRequest(formatOptions)
   return makeSingleObjBatchRequest({id, requestObj})
 }
@@ -231,7 +230,7 @@ const formatCells = async ({id, formatOptions}) => {
  * @param {string} obj.id  id of the google spreadsheet
  * @param {FormatCellsNoteType} obj.noteOptions  google API request with `notes` field
  */
-const addNoteToCell = async ({id, noteOptions}) => {
+export const addNoteToCell = async ({id, noteOptions}) => {
   const requestObj = getAddNoteRequest(noteOptions)
   return makeSingleObjBatchRequest({id, requestObj})
 }
@@ -243,7 +242,7 @@ const addNoteToCell = async ({id, noteOptions}) => {
  * @param {string} obj.id the id of the spreadsheet
  * @param {object} obj.requestObj a single object that represents a google API request
  */
-const makeSingleObjBatchRequest = async ({id, requestObj}) => {
+export const makeSingleObjBatchRequest = async ({id, requestObj}) => {
   const singleRequest = [requestObj]
   const requests = prepareBatchRequest(singleRequest)
   return batchUpdate({id, requests})
@@ -255,7 +254,7 @@ const makeSingleObjBatchRequest = async ({id, requestObj}) => {
  * @param {string} obj.id the spreadsheet ID
  * @param {[object]} obj.requestArray
  */
-const makeBatchRequest = async ({id, requestArray}) => {
+export const makeBatchRequest = async ({id, requestArray}) => {
   const requests = prepareBatchRequest(requestArray)
   return batchUpdate({id, requests})
 }
@@ -281,7 +280,7 @@ const prepareBatchRequest = requests => {
 const batchUpdate = async ({id, requests}) => {
   const returnObj = {
     isValid: true,
-    message: 'OK',
+    message: "OK",
   }
   _sheetService.spreadsheets
     .batchUpdate({
@@ -289,24 +288,10 @@ const batchUpdate = async ({id, requests}) => {
       resource: requests,
     })
     .catch(err => {
-      console.error('Error trying to do batch update', err.message) // JSON.stringify(err, null, 2))
+      console.error("Error trying to do batch update", err.message) // JSON.stringify(err, null, 2))
       returnObj.isValid = false
-      returnObj.message = 'batchUpdate() request failed'
+      returnObj.message = "batchUpdate() request failed"
     })
 
   return returnObj
-}
-
-module.exports = {
-  autoInit,
-  getBgColorRequest,
-  getFormatCellsRequest,
-  getAddNoteRequest,
-  formatCellsBgColor,
-  formatSingleBgColor,
-  formatCells,
-  addNoteToCell,
-  makeBatchRequest,
-  makeSingleObjBatchRequest,
-  renameSheet,
 }

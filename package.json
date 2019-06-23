@@ -9,7 +9,7 @@
   "main": "./src/main.js",
   "types": "gsweet/index.d.ts",
   "scripts": {
-    "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
+    "test": "mocha  ",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --reporter list \"src/**/*.test.int.js\" ",
     "test:all": "nyc run-p 'test -- --forbid-only'   'test:int -- --forbid-only'",
@@ -47,8 +47,13 @@
     "google"
   ],
   "devDependencies": {
+    "@types/chai": "^4.1.7",
     "@types/gapi": "0.0.36",
+    "@types/mocha": "^5.2.7",
     "@types/node": "^11.11.0",
+    "@types/sinon": "^7.0.13",
+    "@typescript-eslint/eslint-plugin": "^1.10.2",
+    "@typescript-eslint/parser": "^1.10.2",
     "chai": "x.2.0",
     "eslint": "x.15.1",
     "eslint-watch": "^5.0.1",
@@ -57,6 +62,8 @@
     "npm-run-all": "x.1.5",
     "nyc": "^14.1.1",
     "sinon": "x.2.7",
-    "tsd-jsdoc": "^2.3.0"
+    "ts-node": "^8.3.0",
+    "tsd-jsdoc": "^2.3.0",
+    "typescript": "^3.5.2"
   }
 }

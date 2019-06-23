@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": { "*": ["types/*"] },
+    "rootDir": "./src",
+    "outDir": "./build",
+    "module": "commonjs",
+    "target": "es6",
+    "sourceMap": false,
+    //  "declaration": true,
+    "moduleResolution": "node",
+    "checkJs": false,
+    "allowJs": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "watch": false,
+    // "experimentalDecorators": true,
+    "strictNullChecks": false
+  },
+  "include": ["./**/*"],
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*",
+    "./build/*",
+    "./documentation/"
+  ]
+}
