@@ -235,7 +235,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       console.log(result)
     })
   })
-  describe.only('Data Validation ',   () => {
+  describe('Data Validation ',   () => {
     it('setListDataValidation() should set up a list dropdown', async () => {
       const valuesList = ['Scalzi', 'Hearne', 'Rothfuss']
       
