@@ -22,7 +22,7 @@ before(() => {logger.level = 'info'})
 after(() => {logger.level = 'debug'})
 
 describe('INTEGRATION TEST driveOps module', function () {
-  this.timeout(10000)
+  this.timeout(20000)
   const {mimeType} = driveOps
   const FOLDER_TYPE = mimeType.getType(mimeType.FOLDER)
   const SPREADSHEET_TYPE = mimeType.getType(mimeType.SPREADSHEET)
