@@ -21,13 +21,13 @@ const {driveOps} = gsweet
 before(() => {logger.level = 'info'})
 after(() => {logger.level = 'debug'})
 
-describe('INTEGRATION TEST driveOps module', function () {
+describe.only('INTEGRATION TEST driveOps module', function () {
   this.timeout(20000)
   const {mimeType} = driveOps
   const FOLDER_TYPE = mimeType.getType(mimeType.FOLDER)
   const SPREADSHEET_TYPE = mimeType.getType(mimeType.SPREADSHEET)
 
-  it('fileList() should return MAX_FILES_PER_QUERY files', async () => {
+  it.only('fileList() should return MAX_FILES_PER_QUERY files', async () => {
     const fileList = await driveOps.listFiles()
     fileList.length.should.equal(MAX_FILES_PER_QUERY)
   })
