@@ -25,7 +25,6 @@ const init = () => {
     initialized = true
   } catch (error) {
     console.log('problem parsing environment variable gsweet')
-    console.log(process.env.GSWEET)
   }
 }
 
