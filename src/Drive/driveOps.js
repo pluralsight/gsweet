@@ -52,14 +52,13 @@ const autoInit = () => {
   _driveService = ds.init()
 }
 
-
 const createSpreadsheet= async (sheetNameAndFolderId) =>{
   const {name, folderId} = sheetNameAndFolderId
   const fileMetaData = {
     name,
     parents: folderId
   }
-  const ssType = mimeType.SPREADSHEET
+
   const media = {
     mimeType: mimeType.getType(mimeType.SPREADSHEET)
   }
