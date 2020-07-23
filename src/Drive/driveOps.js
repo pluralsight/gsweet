@@ -1,7 +1,7 @@
 // @ts-check
 /** @module */
 /**
- * @file Handles talking to the Google Spreadsheet API 
+ * @file Handles talking to the Google Drive API 
  *  ## Links to Google Drive documentation   
  * [mime-types](https://developers.google.com/drive/api/v3/mime-types)   
  * [all file meta data](https://developers.google.com/drive/api/v3/reference/files)   
@@ -14,6 +14,7 @@
  */
 const ds = require('./driveService')
 const logger = require('../utils/logger')
+const { drive } = require('googleapis/build/src/apis/drive')
 const MAX_FILES_PER_PAGE = 1000
 
 let _driveService
@@ -51,6 +52,24 @@ const autoInit = () => {
   _driveService = ds.init()
 }
 
+const createSpreadsheet= async (sheetNameAndFolderId) =>{
+  const {name, folderId} = sheetNameAndFolderId
+  const fileMetaData = {
+    name,
+    parents: folderId
+  }
+
+  const media = {
+    mimeType: mimeType.getType(mimeType.SPREADSHEET)
+  }
+  const createData= {
+    resource: fileMetaData,
+    media,
+    fields: `id`,
+  }
+
+ return await _driveService.files.create(createData)
+} 
 /**
 * @typedef {object} WithNameExactMatch
 * @property {string} withName

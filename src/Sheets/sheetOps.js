@@ -130,9 +130,10 @@ const getSheetValues = async sheetRange => {
     })
     return result.data.values
   } catch (err) {
-    const msg = `${err.response.data.error.message}`
+    const msg = `gsweet ${err.response.data.error.message}`
+    
     logger.error(msg)
-    throw msg
+    throw new Error (msg)
   }
 }
 
@@ -178,7 +179,7 @@ const getSheetTitle = async sheetId => {
  * Get the grid properties which is an object with a rowCount and columnCount
  * property. 
  * @param {SheetIndexName} sheetInfo
- * @returns {Promise<gridProperties>}
+ * @returns {Promise<Pro>}
  */
 const getSheetGridProperties = async sheetInfo => {
   const {sheetId} = sheetInfo
@@ -323,6 +324,7 @@ const  copySheetByNameFromTo = async({fromSpreadsheetId, fromSheetName, toSpread
 
   return copySheetFromTo({fromSpreadsheetId, fromSheetId:foundSheet.sheetId, toSpreadsheetId})
 }
+
 
 
 /**
