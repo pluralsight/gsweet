@@ -537,11 +537,41 @@ declare module "sheetOps" {
      */
     function copySheetByNameFromTo(param0: any): void;
     /**
+     * @typedef CopySheetResult
+     * @property {boolean} success
+     * @property {number} sheetId
+     * @property {string} title
+     * @property {index} number
+     * @property {string} sheetType
+     * @property {{rowCount:number, columnCount:number}} gridProperties
+     */
+    type CopySheetResult = {
+        success: boolean;
+        sheetId: number;
+        title: string;
+        number: index;
+        sheetType: string;
+        gridProperties: any;
+    };
+    /**
      *
      * @param {{fromSpreadsheetId:string, fromSheetId:string, toSpreadsheetId:string}} param0
      * @returns Promise<CopySheetResult>
      */
     function copySheetFromTo(param0: any): any;
+    /**
+     * @typedef rowColumnInfo
+     * @property {number} startRow
+     * @property {number | undefined} endRow
+     * @property {number} startCol
+     * @property {number | undefined} endCol
+     */
+    type rowColumnInfo = {
+        startRow: number;
+        endRow: number | undefined;
+        startCol: number;
+        endCol: number | undefined;
+    };
 }
 
 /**
