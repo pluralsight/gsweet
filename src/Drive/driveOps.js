@@ -77,7 +77,7 @@ const getFiles = async (fileOptions) => {
     .catch(googleError => {
       const {errors} = googleError.response.data.error
       const errMsg = JSON.stringify(errors[0], null, 2)
-      logger.error(errMsg)
+      // logger.error(errMsg)
       throw (`For ${withName} - The Google Drive API returned:${errMsg}`)
     })
   const {files} = response.data

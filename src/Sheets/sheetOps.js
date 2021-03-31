@@ -149,7 +149,7 @@ const getSheetProperties = async sheetId => {
     })
     return result
   } catch (err) {
-    logger.error(err)
+    // logger.error(err)
   }
 }
 
