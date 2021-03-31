@@ -102,7 +102,6 @@ describe('sheetOps module', () => {
       sheetOps.init(throwSheetService)
       await sheetOps.getSheetValues(sheetRange)
         .catch(err => {
-          console.log(err)
           err.should.contain('test throw')
         })
     })

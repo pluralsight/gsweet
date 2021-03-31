@@ -68,6 +68,6 @@ describe('INTEGRATION TESTS sheetFormatOps module', function() {
     const id = '1pLB4AmPpInCpHy3A_lCwqWkt2jc_itif3gNMyhIy4Do'
 
     const result = await sheetFormatOps.renameSheet({id, newName:'rename me', sheetId:0})
-    console.log(result)
+
   })
 })

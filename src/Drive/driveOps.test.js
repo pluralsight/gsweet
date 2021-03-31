@@ -13,7 +13,6 @@ const logger = require('../utils/logger')
 const fakeDriveService = {
   files: {
     list: async ({q, pageSize, fields}) => {
-      // console.log(q, pageSize, fields);
       fakeDriveService.q = q
       fakeDriveService.pageSize = pageSize
       fakeDriveService.fields = fields
@@ -77,7 +76,6 @@ describe('driveOps module', () => {
 
     it('should have a get function that returns element of properties property', () => {
       const {mimeType} = driveOps
-      console.log(mimeType.getType(1))
       mimeType.getType(mimeType.FOLDER).should.contain('folder')
       mimeType.getType(mimeType.FILE).should.contain('N/A')
       mimeType.getType(mimeType.SPREADSHEET).should.contain('spreadsheet')
@@ -146,7 +144,6 @@ describe('driveOps module', () => {
         withFolderId: 'anyFolderId',
         ofType: mimeType.FILE,
       })
-      logger.debug(fakeDriveService.q)
       const query = fakeDriveService.q
       const clause = new RegExp(`anyFolderId.+ mimeType != \\'${mimeType.getType(mimeType.FOLDER)}`)
       query.should.match(clause)

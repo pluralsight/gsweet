@@ -92,8 +92,6 @@ describe('INTEGRATION TESTS sheetOps module', function() {
       sheetRange.range = SINGLE_CELL
       await sheetOps.setSheetCell(sheetRange)
       const result = await sheetOps.getSheetValues(sheetRange)
-      console.log(result[0][0])
-      console.log(sheetRange.value)
       result[0][0].should.equal(sheetRange.value)
     })
 
@@ -133,9 +131,7 @@ describe('INTEGRATION TESTS sheetOps module', function() {
     beforeEach(() => {})
     it('getSheetProperties() should return some meta data.', async () => {
       const result = await sheetOps.getSheetProperties(sheetRange.id)
-      // console.log('>>>', JSON.stringify(result.data, null, 2))
       result.data.sheets.should.exist
-      // console.log(result.data.sheets[0].properties.gridProperties.rowCount)
     })
 
     it('getSheetGridProperties() with good index should return grid data', async () => {
@@ -189,7 +185,6 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         fromSheetId:foundSheet.sheetId,
         toSpreadsheetId: destSheet.id})
       result.success.should.be.true
-      console.log(result)
     })
 
   
@@ -202,7 +197,6 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         fromSheetName:'Course Plan',
         toSpreadsheetId: destSheet.id})
       result2.success.should.be.true
-      console.log(result2)
     })
 
 
@@ -232,7 +226,6 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         newName:'Data Validation', 
         sheetId: dataValidationSheetId})
 
-      console.log(result)
     })
   })
   describe('Data Validation ',   () => {
@@ -246,7 +239,6 @@ describe('INTEGRATION TESTS sheetOps module', function() {
         valuesList,
       })
 
-      console.log(result)
     })
   })
 })

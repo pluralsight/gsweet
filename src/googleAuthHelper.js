@@ -24,7 +24,7 @@ const init = () => {
     driveCreds = gsweet.drive_credentials
     initialized = true
   } catch (error) {
-    console.log('problem parsing environment variable gsweet')
+
   }
 }
 

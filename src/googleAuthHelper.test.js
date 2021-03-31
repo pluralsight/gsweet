@@ -42,7 +42,6 @@ describe('googleAuthHelper', () => {
 
   it('getGooleDriveAuth should throw if no process.env.GSWEET', () => {
     delete process.env.GSWEET
-    console.log('the GSWEET:', process.env.GSWEET)
     authHelper.forceInitialization()
     authHelper.getGoogleDriveAuth.bind().should.throw()
   })
