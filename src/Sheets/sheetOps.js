@@ -96,7 +96,7 @@ const setRangeData = async sheetRangeData => {
     // logger.info(JSON.stringify(result, null, 2));
     return result // only needed for testing
   } catch (err) {
-    logger.error(JSON.stringify(err, null, 2))
+    // logger.error(JSON.stringify(err, null, 2))
     throw err
   }
 }
@@ -131,7 +131,8 @@ const getSheetValues = async sheetRange => {
     return result.data.values
   } catch (err) {
     const msg = `${err.response.data.error.message}`
-    logger.error(msg)
+    // logger.error(`GSWEET Package: sheetOps.js`)
+    // logger.error(msg)
     throw msg
   }
 }
