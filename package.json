@@ -1,6 +1,6 @@
 {
   "name": "gsweet",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
@@ -61,7 +61,6 @@
     "npm-run-all": "4.1",
     "nyc": "^15.1.0",
     "sinon": "^11.1.2",
-    "tsd-jsdoc": "^2.5.0",
-    "npm-force-resolutions": "^0.0.10"
+    "tsd-jsdoc": "^2.5.0"
   }
 }
