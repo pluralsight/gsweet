@@ -49,7 +49,7 @@
   ],
   "devDependencies": {
     "@types/gapi": "0.0.39",
-    "@types/node": "^15.6.1",
+    "@types/node": "^16.7.10",
     "chai": "4.3",
     "eslint": "^7.27.0",
     "eslint-watch": "^7.0.0",
