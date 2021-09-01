@@ -9,6 +9,7 @@
   "main": "./src/main.js",
   "types": "gsweet/index.d.ts",
   "scripts": {
+    "preinstall": "npx npm-force-resolutions",
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --reporter list \"src/**/*.test.int.js\" ",
@@ -26,6 +27,9 @@
   },
   "author": "Tod Gentille",
   "license": "GPL-3.0-or-later",
+  "resolutions": {
+   "color-string":"1.6.0" 
+  },
   "dependencies": {
     "env-create": "^1.1.1",
     "google-auth-library": "^7.1.0",
@@ -58,6 +62,7 @@
     "npm-run-all": "4.1",
     "nyc": "^15.1.0",
     "sinon": "^11.1.1",
-    "tsd-jsdoc": "^2.5.0"
+    "tsd-jsdoc": "^2.5.0",
+    "npm-force-resolutions": "^0.0.10"
   }
 }
