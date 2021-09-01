@@ -29,7 +29,7 @@
   "dependencies": {
     "env-create": "^1.1.1",
     "google-auth-library": "^7.1.0",
-    "googleapis": "^74.2.0",
+    "googleapis": "^85.0.0",
     "winston": "^3.3.3"
   },
   "keywords": [
