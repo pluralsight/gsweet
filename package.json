@@ -1,6 +1,6 @@
 {
   "name": "gsweet",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Help with writing scripts to run against gSuite ",
   "repository": {
     "type": "git",
@@ -9,7 +9,6 @@
   "main": "./src/main.js",
   "types": "gsweet/index.d.ts",
   "scripts": {
-    "preinstall": "npx npm-force-resolutions",
     "test": "mocha  --use_strict --reporter list  \"src/**/*.test.js\"",
     "test:cov": "nyc mocha  --use_strict   \"src/**/*.test.js\"",
     "test:int": "mocha --reporter list \"src/**/*.test.int.js\" ",
