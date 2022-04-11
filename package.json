@@ -33,7 +33,7 @@
     "env-create": "^1.1.4",
     "google-auth-library": "^7.8.0",
     "googleapis": "^85.0.0",
-    "winston": "^3.3.3"
+    "winston": "^3.7.2"
   },
   "keywords": [
     "gsuite",
