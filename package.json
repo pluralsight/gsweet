@@ -31,7 +31,7 @@
   },
   "dependencies": {
     "env-create": "^1.1.4",
-    "google-auth-library": "^7.8.0",
+    "google-auth-library": "^8.0.2",
     "googleapis": "^85.0.0",
     "winston": "^3.7.2"
   },
